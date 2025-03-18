@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+
 
 
 
@@ -133,7 +135,7 @@ class _HomePageState extends State<HomePage> {
 
                 SizedBox(height: 25,),
                  DefaultTabController(
-                  length: 8, // Number of tabs
+                  length: 8,
                   initialIndex: 0,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +485,7 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   onTap: ()
                                                   {
-                                                    homeController.makedirectcall(single['Mobile']);
+                                                    FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                   },
                                                 )
                                               ],
@@ -535,7 +537,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  homeController.makedirectcall(single['Mobile']);
+                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -595,7 +597,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  homeController.makedirectcall(single['Mobile']);
+                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -654,7 +656,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  homeController.makedirectcall(single['Mobile']);
+                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -713,7 +715,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  homeController.makedirectcall(single['Mobile']);
+                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -773,7 +775,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  homeController.makedirectcall(single['Mobile']);
+                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,

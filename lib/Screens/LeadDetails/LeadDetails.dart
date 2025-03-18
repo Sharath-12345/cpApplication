@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 
 class LeadDetailsScreen extends StatefulWidget
@@ -12,16 +14,17 @@ class LeadDetailsScreen extends StatefulWidget
 
 class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   final HomeController homeController=Get.find<HomeController>();
-
-
+  var receivedList = Get.arguments ?? [];
+  var currentStatus="new";
 
 
   @override
   Widget build(BuildContext context) {
-    var receivedList = Get.arguments ?? [];
     String fetchedText='${receivedList['Project']}';
+    print("${receivedList['Status']}");
+    currentStatus="${receivedList['Status']}";
 
-    print('${receivedList['assignedToObj']['roles'][0]}');
+
     return Scaffold(
       backgroundColor:  const Color(0xff0D0D0D),
       body: Padding(
@@ -72,9 +75,6 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                      ],
                    ),
 
-
-
-
                  ],
                ),
                 Spacer(),
@@ -83,7 +83,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                   child: InkWell(
                     onTap: ()
                     {
-                      homeController.makedirectcall(receivedList['Mobile']);
+                      FlutterPhoneDirectCaller.callNumber(receivedList['Mobile']);
                     },
                     child: Container(
                       width: 35,
@@ -106,77 +106,136 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
               ],
             ),
             SizedBox(height: 20,),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                    child: Text("New",style: TextStyle(
-                      color: Colors.white,fontFamily: 'SpaceGrotesk'
-                    ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
-                  SizedBox(width: 7,),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text("Followup",style: TextStyle(
-                          color: Colors.lightGreen,
-                          fontFamily: 'SpaceGrotesk'
-                      ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
-                  SizedBox(width: 7,),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text("Visit Done",style: TextStyle(
-                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                      ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
-                  SizedBox(width: 7,),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text("Visit Fixed",style: TextStyle(
-                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                      ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
-                  SizedBox(width: 7,),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text("Not Intrested",style: TextStyle(
-                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                      ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
-                  SizedBox(width: 7,),
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                      child: Text("Bunk",style: TextStyle(
-                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                      ),),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white, width: 2),
-                      )
-                  ),
 
+            DefaultTabController(
+                length: 6,
+                initialIndex: 0,
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TabBar(
+                        indicatorColor: Colors.black,
+                          dividerColor: Colors.black,
+                          tabAlignment: TabAlignment.start,
+                          isScrollable: true,
+                          tabs: [
+                            Tab(child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                child: Text("New",style: TextStyle(
+                                    color:  currentStatus=="new"?Colors.green: Colors.white,
+                                   fontFamily: 'SpaceGrotesk'
+                                ),),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.white,
+                                      width: 2),
+                                )
+                            ),),
+                            Tab(child: InkWell(
+                              onTap: ()
+                              {
+                                if(!(currentStatus=="followup"))
+                                  {
+                                    showBottomPopup(context,"Followup");
+                                  }
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  child: Text("Followup",style: TextStyle(
+                                      color:  currentStatus=="followup"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
 
-                ],
-              ),
+                                        color: Colors.white,
+                                        width: 2),
+                                  )
+                              ),
+                            ),),
+                            Tab(
+                              child: InkWell(
+                                onTap: ()
+                                {
+                                  if(!(currentStatus=="visitfixed"))
+                                  {
+                                    showBottomPopup(context,"Visit Fixed");
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  child: Text("Visit Fixed",style: TextStyle(
+                                      color:  currentStatus=="visitfixed"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  )
+                                                            ),
+                              ),),
+                            Tab(
+                              child: InkWell(
+                                onTap: ()
+                                {
+
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  child: Text("Visit Done",style: TextStyle(
+                                      color:  currentStatus=="visitdone"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  )
+                                                            ),
+                              ),),
+                            Tab(child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                child: Text("Not Intrested",style: TextStyle(
+                                    color:  currentStatus=="notintrested"?Colors.green: Colors.white,
+                                    fontFamily: 'SpaceGrotesk'
+                                ),),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 2),
+                                )
+                            ),),
+                            Tab(child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                child: Text("Junk", style: TextStyle(
+                                    color:  currentStatus=="new"?Colors.green: Colors.white,
+                                    fontFamily: 'SpaceGrotesk'
+                                ),),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 2),
+                                )
+                            ),),
+
+                          ]
+                      )
+                    ]
+                )
             ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             SizedBox(height: 15,),
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
