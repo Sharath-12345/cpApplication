@@ -10,7 +10,7 @@ class NotIntrestedLeads extends StatelessWidget
      return Scaffold(
        body:
        Padding(
-         padding: EdgeInsets.fromLTRB(0, 40,10, 0),
+         padding: EdgeInsets.fromLTRB(0, 40,0, 0),
          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
            children: [
