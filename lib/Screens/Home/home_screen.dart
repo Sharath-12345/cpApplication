@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 
 
@@ -17,6 +16,8 @@ import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 
 class HomePage extends StatefulWidget
 {
+  const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -40,7 +41,6 @@ class _HomePageState extends State<HomePage> {
     return Obx(()=>
       Scaffold(
         backgroundColor: const Color(0xff0D0D0D),
-
         body: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.fromLTRB(11, 50, 0, 8),
@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                   //height: 0.8461538461538461
                 ),),
 
-                SizedBox(height: 9,),
+                SizedBox(height: 6,),
 
                 Row(
                   children: [
@@ -65,6 +65,9 @@ class _HomePageState extends State<HomePage> {
 
                         height: MediaQuery.of(context).size.height* 0.120,
                         width: MediaQuery.of(context).size.width * 0.45,
+                        decoration: BoxDecoration(
+                          color : Color.fromRGBO(28, 28, 30, 1),
+                        ),
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
                           child: Column(
@@ -90,9 +93,6 @@ class _HomePageState extends State<HomePage> {
                               ),)
                             ],
                           ),
-                        ),
-                        decoration: BoxDecoration(
-                          color : Color.fromRGBO(28, 28, 30, 1),
                         )
 
                     ),
@@ -100,6 +100,9 @@ class _HomePageState extends State<HomePage> {
                     Container(
                         width: MediaQuery.of(context).size.width * 0.45,
                         height: MediaQuery.of(context).size.height* 0.120,
+                        decoration: BoxDecoration(
+                          color : Color.fromRGBO(89, 66, 60, 1),
+                        ),
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
                           child: Column(
@@ -125,15 +128,12 @@ class _HomePageState extends State<HomePage> {
                               ),)
                             ],
                           ),
-                        ),
-                        decoration: BoxDecoration(
-                          color : Color.fromRGBO(89, 66, 60, 1),
                         )
                     )
                   ],
                 ),
 
-                SizedBox(height: 25,),
+                SizedBox(height: 23,),
                  DefaultTabController(
                   length: 8,
                   initialIndex: 0,
@@ -145,13 +145,17 @@ class _HomePageState extends State<HomePage> {
 
                         tabAlignment: TabAlignment.start,
                         isScrollable: true,
+                        labelPadding: EdgeInsets.symmetric(horizontal: 4),
                         tabs: [
                           Tab(
-
-
                             child:  Container(
-                              height: MediaQuery.of(context).size.height* 0.06,
+                              height: MediaQuery.of(context).size.height* 0.07,
                               width: MediaQuery.of(context).size.width * 0.25,
+                              decoration: BoxDecoration(
+                                  color: homeController.tabIndex == 0
+                                      ?  Color.fromRGBO(89, 66, 60, 1)
+                                      : Color.fromRGBO(30, 30, 30, 1),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                 child: Column(
@@ -177,17 +181,16 @@ class _HomePageState extends State<HomePage> {
                                     ),)
                                   ],
                                 ),
-                              ),
-
-                              decoration: BoxDecoration(
-                                  color: homeController.tabIndex == 0
-                                      ?  Color.fromRGBO(89, 66, 60, 1)
-                                      : Color.fromRGBO(30, 30, 30, 1),
                               )
                           ),),
                           Tab(child:  Container(
-                              height: MediaQuery.of(context).size.height* 0.06,
+                              height: MediaQuery.of(context).size.height* 0.07,
                               width: MediaQuery.of(context).size.width * 0.25,
+                              decoration: BoxDecoration(
+                                color: homeController.tabIndex == 1
+                                    ?  Color.fromRGBO(89, 66, 60, 1)
+                                    : Color.fromRGBO(30, 30, 30, 1),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                 child: Column(
@@ -213,16 +216,16 @@ class _HomePageState extends State<HomePage> {
                                     ),)
                                   ],
                                 ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: homeController.tabIndex == 1
-                                    ?  Color.fromRGBO(89, 66, 60, 1)
-                                    : Color.fromRGBO(30, 30, 30, 1),
                               )
                           ),),
                           Tab(child:  Container(
-                              height: MediaQuery.of(context).size.height* 0.06,
+                              height: MediaQuery.of(context).size.height* 0.07,
                               width: MediaQuery.of(context).size.width * 0.25,
+                              decoration: BoxDecoration(
+                                color: homeController.tabIndex == 2
+                                    ?  Color.fromRGBO(89, 66, 60, 1)
+                                    : Color.fromRGBO(30, 30, 30, 1),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                 child: Column(
@@ -248,16 +251,16 @@ class _HomePageState extends State<HomePage> {
                                     ),)
                                   ],
                                 ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: homeController.tabIndex == 2
-                                    ?  Color.fromRGBO(89, 66, 60, 1)
-                                    : Color.fromRGBO(30, 30, 30, 1),
                               )
                           ),),
                           Tab(child:  Container(
-                              height: MediaQuery.of(context).size.height* 0.06,
+                              height: MediaQuery.of(context).size.height* 0.07,
                               width: MediaQuery.of(context).size.width * 0.25,
+                              decoration: BoxDecoration(
+                                color: homeController.tabIndex == 3
+                                    ?  Color.fromRGBO(89, 66, 60, 1)
+                                    : Color.fromRGBO(30, 30, 30, 1),
+                              ),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                 child: Column(
@@ -283,19 +286,19 @@ class _HomePageState extends State<HomePage> {
                                     ),)
                                   ],
                                 ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: homeController.tabIndex == 3
-                                    ?  Color.fromRGBO(89, 66, 60, 1)
-                                    : Color.fromRGBO(30, 30, 30, 1),
                               )
                           ),
                           ),
                           Tab(
 
                             child:  Container(
-                              height: MediaQuery.of(context).size.height* 0.06,
+                              height: MediaQuery.of(context).size.height* 0.07,
                               width: MediaQuery.of(context).size.width * 0.25,
+                                decoration: BoxDecoration(
+                                  color: homeController.tabIndex == 4
+                                      ?  Color.fromRGBO(89, 66, 60, 1)
+                                      : Color.fromRGBO(30, 30, 30, 1),
+                                ),
                               child: Padding(
                                 padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                 child: Column(
@@ -321,18 +324,18 @@ class _HomePageState extends State<HomePage> {
                                     ),)
                                   ],
                                 ),
-                              ),
-                                decoration: BoxDecoration(
-                                  color: homeController.tabIndex == 4
-                                      ?  Color.fromRGBO(89, 66, 60, 1)
-                                      : Color.fromRGBO(30, 30, 30, 1),
-                                )
+                              )
                           ),),
                           Tab(
 
                             child:  Container(
-                                height: MediaQuery.of(context).size.height* 0.06,
+                                height: MediaQuery.of(context).size.height* 0.07,
                                 width: MediaQuery.of(context).size.width * 0.27,
+                                decoration: BoxDecoration(
+                                  color: homeController.tabIndex == 5
+                                      ?  Color.fromRGBO(89, 66, 60, 1)
+                                      : Color.fromRGBO(30, 30, 30, 1),
+                                ),
                                 child: Padding(
                                   padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
                                   child: Column(
@@ -358,19 +361,19 @@ class _HomePageState extends State<HomePage> {
                                       ),)
                                     ],
                                   ),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: homeController.tabIndex == 5
-                                      ?  Color.fromRGBO(89, 66, 60, 1)
-                                      : Color.fromRGBO(30, 30, 30, 1),
                                 )
                             ),),
 
 
                           Tab(
                            child:     Container(
-                               height: MediaQuery.of(context).size.height* 0.06,
+                               height: MediaQuery.of(context).size.height* 0.07,
                                width: MediaQuery.of(context).size.width * 0.25,
+                               decoration: BoxDecoration(
+                                 color: homeController.tabIndex == 6
+                                     ?  Color.fromRGBO(89, 66, 60, 1)
+                                     : Color.fromRGBO(30, 30, 30, 1),
+                               ),
                                child:  Center(
                                  child: Text("Projects",style: TextStyle(
                                    color: Color.fromRGBO(255, 255, 255, 1),
@@ -380,18 +383,18 @@ class _HomePageState extends State<HomePage> {
                                    fontWeight: FontWeight.bold,
                                    //height: 0.8461538461538461
                                  ),),
-                               ),
-                               decoration: BoxDecoration(
-                                 color: homeController.tabIndex == 6
-                                     ?  Color.fromRGBO(89, 66, 60, 1)
-                                     : Color.fromRGBO(30, 30, 30, 1),
                                )
                            ),
                           ),
                           Tab(
                             child:  Container(
-                                height: MediaQuery.of(context).size.height* 0.06,
+                                height: MediaQuery.of(context).size.height* 0.07,
                                 width: MediaQuery.of(context).size.width * 0.25,
+                                decoration: BoxDecoration(
+                                  color: homeController.tabIndex == 7
+                                      ?  Color.fromRGBO(89, 66, 60, 1)
+                                      : Color.fromRGBO(30, 30, 30, 1),
+                                ),
                                 child:  Center(
                                   child: Text("Participants",style: TextStyle(
                                     color: Color.fromRGBO(255, 255, 255, 1),
@@ -401,11 +404,6 @@ class _HomePageState extends State<HomePage> {
                                     fontWeight: FontWeight.bold,
                                     //height: 0.8461538461538461
                                   ),),
-                                ),
-                                decoration: BoxDecoration(
-                                  color: homeController.tabIndex == 7
-                                      ?  Color.fromRGBO(89, 66, 60, 1)
-                                      : Color.fromRGBO(30, 30, 30, 1),
                                 )
                             ),
 
@@ -418,8 +416,8 @@ class _HomePageState extends State<HomePage> {
                         unselectedLabelColor: Colors.grey,
                         indicatorColor: Colors.black,
                       ),
-                      SizedBox(height: 25,),
-                      Text('you have 0 due events', style: TextStyle(
+                      SizedBox(height: 15,),
+                      Text('you have ${homeController.showingLeadsCount.value} due events', style: TextStyle(
                         color: Color.fromRGBO(255, 255, 255, 1),
                         fontFamily: 'SpaceGrotesk',
                         fontSize: 22,
@@ -429,7 +427,7 @@ class _HomePageState extends State<HomePage> {
                       ),),
 
                       // TabBarView must be inside a constrained widget like Expanded
-                      Container(
+                      SizedBox(
                         height: MediaQuery.of(context).size.height*0.7,
                         child: TabBarView(
                           children: [
@@ -454,6 +452,9 @@ class _HomePageState extends State<HomePage> {
                                       child: Container(
                                           width: MediaQuery.of(context).size.width*90,
                                           height: MediaQuery.of(context).size.height*0.1,
+                                          decoration: BoxDecoration(
+                                            color : Color.fromRGBO(28, 28, 30, 1),
+                                          ),
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                             child: Row(
@@ -485,14 +486,11 @@ class _HomePageState extends State<HomePage> {
                                                   ),
                                                   onTap: ()
                                                   {
-                                                    FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                    // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                   },
                                                 )
                                               ],
                                             ),
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color : Color.fromRGBO(28, 28, 30, 1),
                                           )
 
                                       ),
@@ -514,6 +512,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Container(
                                         width: MediaQuery.of(context).size.width*90,
                                         height: MediaQuery.of(context).size.height*0.1,
+                                        decoration: BoxDecoration(
+                                          color : Color.fromRGBO(28, 28, 30, 1),
+                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                           child: Row(
@@ -537,7 +538,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                  // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -550,9 +551,6 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color : Color.fromRGBO(28, 28, 30, 1),
                                         )
 
                                     ),
@@ -574,6 +572,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Container(
                                         width: MediaQuery.of(context).size.width*90,
                                         height: MediaQuery.of(context).size.height*0.1,
+                                        decoration: BoxDecoration(
+                                          color : Color.fromRGBO(28, 28, 30, 1),
+                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                           child: Row(
@@ -597,7 +598,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                  // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -610,9 +611,6 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color : Color.fromRGBO(28, 28, 30, 1),
                                         )
 
                                     ),
@@ -633,6 +631,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Container(
                                         width: MediaQuery.of(context).size.width*90,
                                         height: MediaQuery.of(context).size.height*0.1,
+                                        decoration: BoxDecoration(
+                                          color : Color.fromRGBO(28, 28, 30, 1),
+                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                           child: Row(
@@ -656,7 +657,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                  // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -669,9 +670,6 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color : Color.fromRGBO(28, 28, 30, 1),
                                         )
 
                                     ),
@@ -692,6 +690,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Container(
                                         width: MediaQuery.of(context).size.width*90,
                                         height: MediaQuery.of(context).size.height*0.1,
+                                        decoration: BoxDecoration(
+                                          color : Color.fromRGBO(28, 28, 30, 1),
+                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                           child: Row(
@@ -715,7 +716,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                  // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -728,9 +729,6 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color : Color.fromRGBO(28, 28, 30, 1),
                                         )
 
                                     ),
@@ -752,6 +750,9 @@ class _HomePageState extends State<HomePage> {
                                     child: Container(
                                         width: MediaQuery.of(context).size.width*90,
                                         height: MediaQuery.of(context).size.height*0.1,
+                                        decoration: BoxDecoration(
+                                          color : Color.fromRGBO(28, 28, 30, 1),
+                                        ),
                                         child: Padding(
                                           padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
                                           child: Row(
@@ -775,7 +776,7 @@ class _HomePageState extends State<HomePage> {
                                               InkWell(
                                                 onTap: ()
                                                 {
-                                                  FlutterPhoneDirectCaller.callNumber(single['Mobile']);
+                                                  // FlutterPhoneDirectCaller.callNumber(single['Mobile']);
                                                 },
                                                 child: Container(
                                                     width: 55,
@@ -788,9 +789,6 @@ class _HomePageState extends State<HomePage> {
                                               )
                                             ],
                                           ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color : Color.fromRGBO(28, 28, 30, 1),
                                         )
 
                                     ),

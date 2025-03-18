@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
@@ -8,6 +7,8 @@ import 'package:saleapp/Screens/Home/home_controller.dart';
 
 class LeadDetailsScreen extends StatefulWidget
 {
+  const LeadDetailsScreen({super.key});
+
   @override
   State<LeadDetailsScreen> createState() => _LeadDetailsScreenState();
 }
@@ -83,7 +84,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                   child: InkWell(
                     onTap: ()
                     {
-                      FlutterPhoneDirectCaller.callNumber(receivedList['Mobile']);
+                      // FlutterPhoneDirectCaller.callNumber(receivedList['Mobile']);
                     },
                     child: Container(
                       width: 35,
@@ -110,10 +111,12 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
             DefaultTabController(
                 length: 6,
                 initialIndex: 0,
+                
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TabBar(
+                        labelPadding: EdgeInsets.symmetric(horizontal: 5),
                         indicatorColor: Colors.black,
                           dividerColor: Colors.black,
                           tabAlignment: TabAlignment.start,
@@ -121,15 +124,15 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                           tabs: [
                             Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                child: Text("New",style: TextStyle(
-                                    color:  currentStatus=="new"?Colors.green: Colors.white,
-                                   fontFamily: 'SpaceGrotesk'
-                                ),),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.white,
                                       width: 2),
-                                )
+                                ),
+                                child: Text("New",style: TextStyle(
+                                    color:  currentStatus=="new"?Colors.green: Colors.white,
+                                   fontFamily: 'SpaceGrotesk'
+                                ),)
                             ),),
                             Tab(child: InkWell(
                               onTap: ()
@@ -141,16 +144,16 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                               },
                               child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                  child: Text("Followup",style: TextStyle(
-                                      color:  currentStatus=="followup"?Colors.green: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'
-                                  ),),
                                   decoration: BoxDecoration(
                                     border: Border.all(
 
                                         color: Colors.white,
                                         width: 2),
-                                  )
+                                  ),
+                                  child: Text("Followup",style: TextStyle(
+                                      color:  currentStatus=="followup"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),)
                               ),
                             ),),
                             Tab(
@@ -164,13 +167,13 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  ),
                                   child: Text("Visit Fixed",style: TextStyle(
                                       color:  currentStatus=="visitfixed"?Colors.green: Colors.white,
                                       fontFamily: 'SpaceGrotesk'
-                                  ),),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white, width: 2),
-                                  )
+                                  ),)
                                                             ),
                               ),),
                             Tab(
@@ -181,34 +184,34 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  ),
                                   child: Text("Visit Done",style: TextStyle(
                                       color:  currentStatus=="visitdone"?Colors.green: Colors.white,
                                       fontFamily: 'SpaceGrotesk'
-                                  ),),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.white, width: 2),
-                                  )
+                                  ),)
                                                             ),
                               ),),
                             Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
                                 child: Text("Not Intrested",style: TextStyle(
                                     color:  currentStatus=="notintrested"?Colors.green: Colors.white,
                                     fontFamily: 'SpaceGrotesk'
-                                ),),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 2),
-                                )
+                                ),)
                             ),),
                             Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.white, width: 2),
+                                ),
                                 child: Text("Junk", style: TextStyle(
                                     color:  currentStatus=="new"?Colors.green: Colors.white,
                                     fontFamily: 'SpaceGrotesk'
-                                ),),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 2),
-                                )
+                                ),)
                             ),),
 
                           ]
@@ -243,6 +246,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width*0.46,
                   height:  MediaQuery.of(context).size.height*0.07,
+                  decoration: BoxDecoration(
+                    color : Color.fromRGBO(28, 28, 30, 1),
+                  ),
                   child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -296,14 +302,14 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
                     ],
                   ),
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
                 ),
                 SizedBox(width: 8,),
                 Container(
                   width: MediaQuery.of(context).size.width*0.46,
                   height:  MediaQuery.of(context).size.height*0.07,
+                  decoration: BoxDecoration(
+                    color : Color.fromRGBO(28, 28, 30, 1),
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -354,9 +360,6 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
                     ],
                   ),
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
                 ),
               ],
             ),
@@ -365,8 +368,11 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height*0.07,
+                  height: MediaQuery.of(context).size.height*0.08,
                   width: MediaQuery.of(context).size.width * 0.20,
+                   decoration: BoxDecoration(
+                     color: Color(0xff58423B),
+                   ),
                    child: Center(
                      child: Padding(
                        padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
@@ -387,14 +393,14 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                        ),
                      ),
                    ),
-                   decoration: BoxDecoration(
-                     color: Color(0xff58423B),
-                   ),
                 ),
-                SizedBox(width: 12,),
+                SizedBox(width: 12),
                 Container(
-                  height: MediaQuery.of(context).size.height*0.07,
+                  height: MediaQuery.of(context).size.height*0.08,
                   width: MediaQuery.of(context).size.width * 0.23,
+                  decoration: BoxDecoration(
+                    color : Color.fromRGBO(28, 28, 30, 1),
+                  ),
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
@@ -415,14 +421,14 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                       ),
                     ),
                   ),
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
                 ),
                 SizedBox(width: 12,),
                 Container(
-                  height: MediaQuery.of(context).size.height*0.07,
+                  height: MediaQuery.of(context).size.height*0.08,
                   width: MediaQuery.of(context).size.width * 0.23,
+                  decoration: BoxDecoration(
+                    color : Color.fromRGBO(28, 28, 30, 1),
+                  ),
                   child: Center(
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
@@ -442,9 +448,6 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                         ],
                       ),
                     ),
-                  ),
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
                   ),
                 )
               ],

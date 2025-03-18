@@ -15,6 +15,8 @@ import '../../Auth/auth_controller.dart';
 
 class SuperHomePage extends StatefulWidget
 {
+  const SuperHomePage({super.key});
+
   @override
   State<SuperHomePage> createState() => _SuperHomePageState();
 }
@@ -65,11 +67,12 @@ class _SuperHomePageState extends State<SuperHomePage> {
     print("Project Access A: $projAccessA");
   }
 
+  @override
   void initState()
   {
     //getUserDetails();
     printuserdetails();
-
+    superhomepagecontroller.tabIndex=0.obs;
  }
 
 

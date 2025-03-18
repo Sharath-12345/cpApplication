@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,8 +13,7 @@ class HomeController extends GetxController
 
    final AuthController authController = Get.find<AuthController>();
 
-  var totalleads=0.obs;
-  var newleads=0.obs;
+ 
    var newleadslist;
    var followupleadslist;
    var visitfixedleadslist;
@@ -23,7 +21,9 @@ class HomeController extends GetxController
    var negotiationleadslist;
    var notintrestedleadslist;
 
-
+ var totalleads=0.obs;
+  var newleads=0.obs;
+  var showingLeadsCount=0.obs;
   var followupleads=0.obs;
    var visitdoneleads=0.obs;
    var visitfixedleads=0.obs;
@@ -32,6 +32,20 @@ class HomeController extends GetxController
    RxInt tabIndex = 0.obs;
    chnageTabIndex(int index) {
      tabIndex(index);
+
+     if(index == 0){
+      showingLeadsCount.value = newleads.value;
+     }else if (index == 1){
+       showingLeadsCount.value = followupleads.value;
+     }else if (index == 2){
+       showingLeadsCount.value = visitfixedleads.value;
+     }else if (index == 3){
+       showingLeadsCount.value = visitdoneleads.value;
+     }else if (index == 4){
+       showingLeadsCount.value = negotiationleads.value;
+     }else if (index == 5){
+       showingLeadsCount.value = notintrestedleads.value;
+     }
    }
 
    @override

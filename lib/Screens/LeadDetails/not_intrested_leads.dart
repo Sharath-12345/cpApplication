@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 class NotIntrestedLeads extends StatelessWidget
 {
+  const NotIntrestedLeads({super.key});
+
   @override
   Widget build(BuildContext context) {
     var height=MediaQuery.of(context).size.height;
@@ -34,7 +36,7 @@ class NotIntrestedLeads extends StatelessWidget
                        Container(
                          height: height*0.05,
                          width: width*0.1,
-                         color: Color(0xFFFE1BEE7),
+                         color: Color(0xfffe1bee7),
                          child: Center(
                            child: Text("10",style: TextStyle(
                                fontWeight: FontWeight.bold,
@@ -105,7 +107,7 @@ class NotIntrestedLeads extends StatelessWidget
              Padding(
                padding: const EdgeInsets.only(left: 12),
                child: Center(
-                 child: Container(
+                 child: SizedBox(
                    width: width*0.7,
                      child: NotIntrestedReasonsCheckboxWidget()
                  ),
@@ -130,6 +132,10 @@ class NotIntrestedLeads extends StatelessWidget
                      child: Container(
                        width: width*0.40,
                        height: height*0.06,
+                       decoration: BoxDecoration(
+                         color: Color(0xFF651FFF),
+                         borderRadius: BorderRadius.circular(50),
+                       ),
                        child: Center(
                          child: Row(
                            children: [
@@ -154,10 +160,6 @@ class NotIntrestedLeads extends StatelessWidget
                            ],
                          ),
                        ),
-                       decoration: BoxDecoration(
-                         color: Color(0xFF651FFF),
-                         borderRadius: BorderRadius.circular(50),
-                       ),
                      ),
                    )
                  ],
@@ -172,6 +174,8 @@ class NotIntrestedLeads extends StatelessWidget
   }
 }
 class NotIntrestedReasonsCheckboxWidget extends StatefulWidget {
+  const NotIntrestedReasonsCheckboxWidget({super.key});
+
   @override
   _NotIntrestedReasonsCheckboxWidgetState createState() => _NotIntrestedReasonsCheckboxWidgetState();
 }

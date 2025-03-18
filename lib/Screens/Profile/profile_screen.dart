@@ -8,6 +8,8 @@ import 'package:saleapp/Screens/Profile/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget
 {
+  const ProfileScreen({super.key});
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
@@ -175,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                          "${totalleads}"
+                          totalleads
                           ,
                               style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
                             ),
@@ -369,12 +371,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Icon(Icons.power_settings_new,color: Colors.brown,
                   size: 27,),
                 SizedBox(width: 9,),
-                Text("Logout",style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.brown,
-                    fontSize: 18,
-                    fontFamily: 'SpaceGrotesk'
-                ),)
+                InkWell(
+                  onTap: ()=> authController.logout(),
+                  child: Text("Logout",style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown,
+                      fontSize: 18,
+                      fontFamily: 'SpaceGrotesk'
+                  ),),
+                )
               ],
             )
 

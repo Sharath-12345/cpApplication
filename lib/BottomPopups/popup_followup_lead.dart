@@ -4,8 +4,8 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:intl/intl.dart';
 
 void showBottomPopup(BuildContext context,var tasktype) {
-  final TextEditingController _controller = TextEditingController
-    (text: "Make a ${tasktype} task ");
+  final TextEditingController controller = TextEditingController
+    (text: "Make a $tasktype task ");
   TextEditingController nameController = TextEditingController();
   var height=MediaQuery.of(context).size.height;
   var width=MediaQuery.of(context).size.width;
@@ -23,7 +23,7 @@ void showBottomPopup(BuildContext context,var tasktype) {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom, // Adjust for keyboard
         ),
-        child: Container(
+        child: SizedBox(
           height: height*0.32,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -51,7 +51,7 @@ void showBottomPopup(BuildContext context,var tasktype) {
                         ),
                       ),
                       Text(
-                        "${tasktype}",
+                        "$tasktype",
                         style: TextStyle(fontWeight: FontWeight.bold,
                         fontFamily: 'SpaceGrotesk'),
                       ),
@@ -81,7 +81,7 @@ void showBottomPopup(BuildContext context,var tasktype) {
               Padding(
                 padding: const EdgeInsets.only(left: 12),
                 child: TextField(
-                  controller: _controller,
+                  controller: controller,
                   decoration: InputDecoration(
                     border: InputBorder.none, // Removes the default underline
                   ),
@@ -142,12 +142,12 @@ void showBottomPopup(BuildContext context,var tasktype) {
                     Container(
                       height: height*0.05,
                       width: width*0.12,
-                      child: Center(
-                        child: Icon(Icons.send,color: Colors.blueAccent,),
-                      ),
                       decoration: BoxDecoration(
                       shape: BoxShape.circle,
                         color: Color(0XFFE1BEE7)
+                      ),
+                      child: Center(
+                        child: Icon(Icons.send,color: Colors.blueAccent,),
                       ),
                     )
 

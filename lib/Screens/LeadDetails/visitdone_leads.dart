@@ -6,6 +6,8 @@ import 'package:saleapp/Screens/LeadDetails/visitdoneleads_controller.dart';
 
 class VisitDoneLeads extends StatefulWidget
 {
+  const VisitDoneLeads({super.key});
+
   @override
   State<VisitDoneLeads> createState() => _VisitDoneLeadsState();
 }
@@ -19,7 +21,7 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = new TabController(vsync: this, length: 4);
+    _tabController = TabController(vsync: this, length: 4);
     _tabController.addListener(_handleTabSelection);
   }
 
@@ -61,7 +63,7 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                       fontFamily: 'SpaceGrotesk'
                     ),),
                     SizedBox(height: height*0.04,),
-                    Container(
+                    SizedBox(
                         width: width*0.83,
                         child: DefaultTabController(
                             length: 4,
@@ -131,7 +133,7 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                         ],
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       width: width*0.65,
                       child: Center(
                           child: EmotionCheckboxWidget()
@@ -176,6 +178,10 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                             child: Container(
                               width: width*0.40,
                               height: height*0.06,
+                              decoration: BoxDecoration(
+                                color: Color(0xFF651FFF),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
                               child: Center(
                                 child: Row(
                                   children: [
@@ -198,10 +204,6 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                                     )
                                   ],
                                 ),
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(0xFF651FFF),
-                                borderRadius: BorderRadius.circular(50),
                               ),
                             ),
                           )
@@ -231,6 +233,8 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
 
 
 class EmotionCheckboxWidget extends StatefulWidget {
+  const EmotionCheckboxWidget({super.key});
+
   @override
   _EmotionCheckboxWidgetState createState() => _EmotionCheckboxWidgetState();
 }

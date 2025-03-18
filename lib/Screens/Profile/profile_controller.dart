@@ -6,11 +6,6 @@ import 'package:saleapp/Screens/SuperHomePage/superhomepage_controller.dart';
 class ProfileController extends GetxController
 {
 
-  @override
-  void onInit() {
-    super.onInit();
-
-  }
 
 
 }

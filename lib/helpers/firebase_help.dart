@@ -105,7 +105,7 @@ class DbQuery {
       {required String sortByDeptName,
       String sortEmployees = 'ZA',
       required String sortByName}) {
-    print('sel dept ${sortByDeptName}');
+    print('sel dept $sortByDeptName');
 
     // return; 
     if (sortByName.isEmpty) {
@@ -138,7 +138,7 @@ class DbQuery {
           .where('name', isLessThanOrEqualTo: '$sortByName~')
           .snapshots();
       } catch (e) {
-                print('error at bad state  ${e}');
+                print('error at bad state  $e');
 
       
     }
@@ -168,7 +168,7 @@ class DbQuery {
 
   // stream lead logs schedule by leadID
   strLeadSchedule(orgId,leadId)async{
-      await  FirebaseFirestore.instance
+      FirebaseFirestore.instance
           .collection("${orgId}_leads_sch")
           // .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
           // .where("staA", arrayContainsAny: ['pending', 'overdue'])
@@ -185,7 +185,7 @@ addTaskCommentDB(orgId,
         final schTime = oldSch['schTime'];
   final comments = oldSch['comments'];
  
-  print('comments are ${comments}');
+  print('comments are $comments');
  await FirebaseFirestore.instance.collection('${orgId}_leads_sch').doc(leadDocId).update({
     '$kId.comments': comments,
     '$kId.schTime': schTime,

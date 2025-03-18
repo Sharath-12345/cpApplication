@@ -15,7 +15,7 @@ class SuperHomePageController extends GetxController
         .collection('users')
         .where("uid", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .get();
-    var userData;
+   var userData;
 
     if (querySnapshot.docs.isNotEmpty) {
        userData = querySnapshot.docs.first.data();
