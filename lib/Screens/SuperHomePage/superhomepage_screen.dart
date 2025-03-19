@@ -1,7 +1,10 @@
+
+import 'package:call_log_new/call_log_new.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/Screens/Dashboard/dashboard_screen.dart';
@@ -10,8 +13,11 @@ import 'package:saleapp/Screens/Profile/profile_screen.dart';
 import 'package:saleapp/Screens/Search/search_screen.dart';
 import 'package:saleapp/Screens/SuperHomePage/superhomepage_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../Auth/auth_controller.dart';
+
+
+
+
 
 class SuperHomePage extends StatefulWidget
 {
@@ -22,8 +28,10 @@ class SuperHomePage extends StatefulWidget
 }
 
 class _SuperHomePageState extends State<SuperHomePage> {
+
   final AuthController authController = Get.find<AuthController>();
   SuperHomePageController superhomepagecontroller=Get.put(SuperHomePageController());
+
 
   Future<void> printuserdetails()
   async {
@@ -67,12 +75,15 @@ class _SuperHomePageState extends State<SuperHomePage> {
     print("Project Access A: $projAccessA");
   }
 
+
   @override
   void initState()
   {
     //getUserDetails();
     printuserdetails();
+
     superhomepagecontroller.tabIndex=0.obs;
+
  }
 
 

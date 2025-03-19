@@ -122,4 +122,5 @@ class AuthController extends GetxController {
       print("Call permission denied");
     }
   }
+
 }

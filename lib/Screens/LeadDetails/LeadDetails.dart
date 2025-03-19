@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
@@ -84,7 +85,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                   child: InkWell(
                     onTap: ()
                     {
-                      // FlutterPhoneDirectCaller.callNumber(receivedList['Mobile']);
+                      FlutterDirectCallerPlugin.callNumber(receivedList['Mobile']);
                     },
                     child: Container(
                       width: 35,

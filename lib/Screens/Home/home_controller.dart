@@ -35,6 +35,7 @@ class HomeController extends GetxController
 
      if(index == 0){
       showingLeadsCount.value = newleads.value;
+      print(showingLeadsCount);
      }else if (index == 1){
        showingLeadsCount.value = followupleads.value;
      }else if (index == 2){

@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  call_log_new
   cloud_firestore
   firebase_auth
   firebase_core

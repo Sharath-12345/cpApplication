@@ -1,3 +1,4 @@
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:saleapp/Auth/login_screen.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'Auth/auth_controller.dart';
 import 'Screens/SuperHomePage/superhomepage_screen.dart';
 import 'firebase_options.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +24,7 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,  // Only allow portrait mode
   ]).then((_) {
     runApp(MyApp());
+
   });
 }
 

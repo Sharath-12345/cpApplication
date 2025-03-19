@@ -3,6 +3,9 @@
 
     <!-- Declare that calling is optional -->
     <uses-feature android:name="android.hardware.telephony" android:required="false"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
     <application
         android:label="saleapp"
         android:name="${applicationName}"

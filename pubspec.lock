@@ -25,6 +25,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  call_log_new:
+    dependency: "direct main"
+    description:
+      name: call_log_new
+      sha256: cf29f6ec0863edcf02856c80201bb62ea95a341323ddc1ada094a113e5cdf4e7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
   characters:
     dependency: transitive
     description:
@@ -166,6 +174,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_direct_caller_plugin:
+    dependency: "direct main"
+    description:
+      name: flutter_direct_caller_plugin
+      sha256: "0dc32a2cb351f41ea633a9c9e6be5eb5239197f390e519f3a991bda794bba0cd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -589,6 +605,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.5.1"
+  workmanager:
+    dependency: "direct main"
+    description:
+      name: workmanager
+      sha256: ed13530cccd28c5c9959ad42d657cd0666274ca74c56dea0ca183ddd527d3a00
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   xdg_directories:
     dependency: transitive
     description:
