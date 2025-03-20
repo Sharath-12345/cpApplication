@@ -13,7 +13,7 @@ class HomeController extends GetxController
 
    final AuthController authController = Get.find<AuthController>();
 
- 
+ var Totalleadslist;
    var newleadslist;
    var followupleadslist;
    var visitfixedleadslist;
@@ -83,6 +83,7 @@ class HomeController extends GetxController
        totalleadsquerySnapshot = await totalLeadsList.get();
       totalleads.value=totalleadsquerySnapshot.size;
       //print(totalleads.value.toString());
+       Totalleadslist=totalleadsquerySnapshot.docs;
 
 
 

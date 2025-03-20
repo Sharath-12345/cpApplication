@@ -111,10 +111,15 @@ class AuthController extends GetxController {
   }
   Future<void> requestCallPermission() async {
     var status = await Permission.phone.status;
+    var status2=await Permission.contacts.status;
 
     if (!status.isGranted) {
       status = await Permission.phone.request();
     }
+    if(!status2.isGranted)
+      {
+        status2=await Permission.contacts.request();
+      }
 
     if (status.isGranted) {
 

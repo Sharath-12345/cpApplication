@@ -23,6 +23,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     var totalleads=homeController.totalleads.value.toString();
 
+
+   var  name=authController.currentUserObj['name']?? " ";
+   var email=authController.currentUserObj['email']?? " ";
+   var role="";
+    if (authController.currentUserObj != null &&
+        authController.currentUserObj['roles'] != null &&
+        authController.currentUserObj['roles'].isNotEmpty) {
+      role = authController.currentUserObj['roles'][0] ?? " ";
+    }
+
     return Scaffold(
       backgroundColor:  const Color(0xff0D0D0D),
       body: Padding(
@@ -74,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Padding(
                     padding: EdgeInsets.fromLTRB(14, 15,0, 0),
-                    child: Text(authController.currentUserObj['name'], style: TextStyle(
+                    child: Text( name, style: TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 1),
                       //fontFamily: 'SpaceGrotesk',
                       fontSize: 20,
@@ -84,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(14, 5,0, 0),
-                    child: Text(authController.currentUserObj['email'], style: TextStyle(
+                    child: Text(email, style: TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                       //fontFamily: 'SpaceGrotesk',
                       fontSize: 12,
@@ -94,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(14, 0,0, 0),
-                    child: Text(authController.currentUserObj['roles'][0], style: TextStyle(
+                    child: Text(role, style: TextStyle(
                       color: Color.fromRGBO(0, 0, 0, 0.6),
                       // fontFamily: 'SpaceGrotesk',
                       fontSize: 12,
@@ -382,9 +392,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 )
               ],
             )
-
-
-
           ],
         ),
       ),

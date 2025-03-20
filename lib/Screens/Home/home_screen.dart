@@ -5,7 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:get_it/get_it.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
+
 
 
 
@@ -16,8 +20,10 @@ import 'package:saleapp/Auth/auth_controller.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
+import '../../helpers/supaase_help.dart';
 import '../TabBar/tab_bar.dart';
 
 
@@ -33,28 +39,94 @@ class _HomePageState extends State<HomePage> {
 
   final HomeController homeController= Get.find<HomeController>();
   final AuthController authController=Get.find<AuthController>();
-  Iterable<CallLogResponse> callLogs = [];
+
+  Iterable<CallLogResponse> callLogs = <CallLogResponse>[
+    CallLogResponse(name: "Loading...", number: "0000000000")
+  ];
+
+  var leadsphonenumberlist=[];
+
   @override
    initState()  {
-    fetchCallLogs();
+   fetchCallLogs();
 
 
+  matchAndStoreCallLogs();
   }
 
+
+  Future<void> matchAndStoreCallLogs() async {
+
+
+    if(homeController.Totalleadslist!=null) {
+      List<Map<String, dynamic>> matchedLogs = [];
+
+
+      for (var call in callLogs!) {
+        for (var lead in homeController.Totalleadslist) {
+          if (call.number == lead['Mobile']) {
+            matchedLogs.add({
+              'call_log': call,
+              'lead_id': lead.id
+            });
+          }
+        }
+      }
+
+
+
+      DbSupa.instance.getLeadCallLogs(authController.currentUserObj['orgId'])
+          .then((existingCallLogs) {
+        if (!existingCallLogs.isEmpty) {
+          for (var logandid in matchedLogs) {
+            var log = logandid['call_log'];
+            var lead_id = logandid['lead_id'];
+            var existsInSupabase = existingCallLogs!.any((supabaseLog) =>
+            supabaseLog['customerNo'] == log.number &&
+                supabaseLog['startTime'] == log.timestamp
+            );
+
+            // If call log doesn't exist in Supabase, insert it
+            // if (!existsInSupabase) {
+
+            //  print(authController.currentUserObj['orgId']);
+            //print(lead_id);
+            //print(log.number);
+
+
+            DbSupa.instance.addCallLog(
+                authController.currentUserObj['orgId'], lead_id, log);
+            //  }
+
+          }
+        } else {
+          for (var logandid in matchedLogs) {
+            var log = logandid['call_log'];
+            var lead_id = logandid['lead_id'];
+            DbSupa.instance.addCallLog(
+                authController.currentUserObj['orgId'], lead_id, log);
+          }
+        }
+      });
+    }
+
+  }
 
   void fetchCallLogs() async {
-    try {
-      final logs = await CallLog.fetchCallLogs();
-      for (var log in logs)
-        {
-          print(log.number);
-        }
+    if (await Permission.phone.request().isGranted &&
+        await Permission.contacts.request().isGranted) {
+      try {
 
+        callLogs = await CallLog.fetchCallLogs();
+        callLogs=callLogs.take(30).toList();
 
-    } catch (e) {
-      print("Error fetching call logs: $e");
+      } catch (e) {
+        print("Error fetching call logs: $e");
+      }
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +141,10 @@ class _HomePageState extends State<HomePage> {
     homeController.getvisitfixedleads();
     homeController.getvisitdoneleads();
     homeController.getnegotiationleads();
+    fetchCallLogs();
+    matchAndStoreCallLogs();
+
+
     return Obx(()=>
       Scaffold(
         appBar: AppBar(
@@ -225,7 +301,10 @@ class _HomePageState extends State<HomePage> {
                               return InkWell(
                                 onTap: ()
                                 {
-                                  Get.to(LeadDetailsScreen(), arguments: single);
+                                  Get.to(()=>LeadDetailsScreen(), arguments: {
+                                    "leaddetails" : single,
+                                    "calllog" : callLogs
+                                  });
                                 },
                                 child: Container(
                                     width: MediaQuery.of(context).size.width*90,
@@ -285,7 +364,10 @@ class _HomePageState extends State<HomePage> {
                             return InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>LeadDetailsScreen(),arguments:single);
+                                Get.to(()=>LeadDetailsScreen(), arguments: {
+                                  "leaddetails" : single,
+                                  "calllog" : callLogs
+                                });
                               },
                               child: Container(
                                   width: MediaQuery.of(context).size.width*90,
@@ -345,7 +427,10 @@ class _HomePageState extends State<HomePage> {
                             return InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>LeadDetailsScreen(),arguments: single);
+                                Get.to(()=>LeadDetailsScreen(), arguments: {
+                                  "leaddetails" : single,
+                                  "calllog" : callLogs
+                                });
                               },
                               child: Container(
                                   width: MediaQuery.of(context).size.width*90,
@@ -404,7 +489,10 @@ class _HomePageState extends State<HomePage> {
                             return InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>LeadDetailsScreen(),arguments:single);
+                                Get.to(()=>LeadDetailsScreen(), arguments: {
+                                  "leaddetails" : single,
+                                  "calllog" : callLogs
+                                });
                               },
                               child: Container(
                                   width: MediaQuery.of(context).size.width*90,
@@ -463,7 +551,10 @@ class _HomePageState extends State<HomePage> {
                             return InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>LeadDetailsScreen(),arguments: single);
+                                Get.to(()=>LeadDetailsScreen(), arguments: {
+                                  "leaddetails" : single,
+                                  "calllog" : callLogs
+                                });
                               },
                               child: Container(
                                   width: MediaQuery.of(context).size.width*90,
@@ -523,7 +614,10 @@ class _HomePageState extends State<HomePage> {
                             return InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>LeadDetailsScreen(),arguments: single);
+                                Get.to(()=>LeadDetailsScreen(), arguments: {
+                                  "leaddetails" : single,
+                                  "calllog" : callLogs
+                                });
                               },
                               child: Container(
                                   width: MediaQuery.of(context).size.width*90,

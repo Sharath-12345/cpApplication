@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get_it/get_it.dart';
+import 'package:intl/intl.dart';
+import 'package:saleapp/Auth/auth_controller.dart';
 import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/LeadDetails/leaddetails_controller.dart';
+import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LeadDetailsScreen extends StatefulWidget
 {
@@ -16,15 +22,65 @@ class LeadDetailsScreen extends StatefulWidget
 
 class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   final HomeController homeController=Get.find<HomeController>();
-  var receivedList = Get.arguments ?? [];
+  final AuthController authController=Get.find<AuthController>();
+  var controller=Get.put<LeadDetailsController>(LeadDetailsController());
+  var argument = Get.arguments;
+
+  var receivedList ;
+  var calllogs;
   var currentStatus="new";
+  List<Map<String,dynamic>> response=[];
+  int timeinmilli=0;
+
+
+  final SupabaseClient supabase = GetIt.instance<SupabaseClient>();
+
+
+
+  Future<void> printRowsByLuid(String luid) async {
+    print(luid);
+    print('${authController.currentUserObj['orgId']}_lead_call_logs');
+    response = await supabase
+        .from('${authController.currentUserObj['orgId']}_lead_call_logs') // Replace with actual table name
+        .select()
+        .eq('Luid', luid); // Filter rows where 'luid' matches
+
+    if (response.isNotEmpty) {
+      print("Rows with luid = $luid: $response");
+      for(var log in response)
+        {
+          print(log['type']);
+        }
+    } else {
+      print("No rows found for luid: $luid");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    receivedList=argument["leaddetails"];
+    calllogs=argument["calllog"];
+
+    currentStatus="${receivedList['Status']}";
+    printRowsByLuid(receivedList.id);
+
+
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
+
+    var height=MediaQuery.of(context).size.height;
+    var width=MediaQuery.of(context).size.width;
     String fetchedText='${receivedList['Project']}';
-    print("${receivedList['Status']}");
-    currentStatus="${receivedList['Status']}";
+    printRowsByLuid(receivedList.id);
+
+
+
+
 
 
     return Scaffold(
@@ -181,7 +237,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                               child: InkWell(
                                 onTap: ()
                                 {
-
+                                   Get.to(()=>VisitDoneLeads());
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
@@ -194,15 +250,21 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                   ),)
                                                             ),
                               ),),
-                            Tab(child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white, width: 2),
-                                ),
-                                child: Text("Not Intrested",style: TextStyle(
-                                    color:  currentStatus=="notintrested"?Colors.green: Colors.white,
-                                    fontFamily: 'SpaceGrotesk'
-                                ),)
+                            Tab(child: InkWell(
+                              onTap: ()
+                              {
+                                Get.to(()=>VisitDoneLeads());
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  ),
+                                  child: Text("Not Intrested",style: TextStyle(
+                                      color:  currentStatus=="notintrested"?Colors.green: Colors.white,
+                                      fontFamily: 'SpaceGrotesk'
+                                  ),)
+                              ),
                             ),),
                             Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
@@ -220,21 +282,6 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                     ]
                 )
             ),
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -365,117 +412,194 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
               ],
             ),
             SizedBox(height: 15,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height*0.08,
-                  width: MediaQuery.of(context).size.width * 0.20,
-                   decoration: BoxDecoration(
-                     color: Color(0xff58423B),
-                   ),
-                   child: Center(
-                     child: Padding(
-                       padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
-                       child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Text("0",style: TextStyle(
-                               color: Colors.white,
-                               fontWeight: FontWeight.bold
-                             ),),
-                             Text("Tasks",style: TextStyle(
-                                 color: Colors.white,
-                                 fontWeight: FontWeight.bold,
-                               fontFamily: 'SpaceGrotesk',
-                               fontSize: 14
-                             ),)
-                           ],
-                       ),
-                     ),
-                   ),
-                ),
-                SizedBox(width: 12),
-                Container(
-                  height: MediaQuery.of(context).size.height*0.08,
-                  width: MediaQuery.of(context).size.width * 0.23,
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
-                      child: Column(
-                         crossAxisAlignment: CrossAxisAlignment.start,
+            Obx(
+              ()=> DefaultTabController(
+                length: 3,
+                child: Column(
+                  children: [
+                    TabBar(
+                      onTap: controller.chnageTabIndex,
+                      tabAlignment: TabAlignment.start,
+                      isScrollable: true,
+                      labelPadding: EdgeInsets.symmetric(horizontal: 4),
+                      dividerColor: Colors.black,
+                      labelColor: Colors.blue,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorColor: Colors.black,
+                      tabs: [
+                        Tab(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.20,
+                            decoration: BoxDecoration(
+                                color: controller.tabIndex==0?
+                            Color(0xff58423B) :Color.fromRGBO(28, 28, 30, 1)
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(7, 2, 10, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("0",
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
+                                    Text("Tasks",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 14)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.23,
+                            decoration: BoxDecoration(color: controller.tabIndex==1?
+                            Color(0xff58423B) :Color.fromRGBO(28, 28, 30, 1)),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(7, 2, 10, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("0",
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
+                                    Text("Call log",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 14)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Tab(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.23,
+                            decoration: BoxDecoration(
+                                color: controller.tabIndex==2?
+                                Color(0xff58423B) :Color.fromRGBO(28, 28, 30, 1)),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(7, 4, 10, 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("0",
+                                        style: TextStyle(
+                                            color: Colors.white, fontWeight: FontWeight.bold)),
+                                    Text("Activity",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 14)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height:height*0.02 ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('you have ', style: TextStyle(
+                          color: Color.fromRGBO(255, 255, 255, 1),
+                          fontFamily: 'SpaceGrotesk',
+                          fontSize: 20,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.bold,
+                          //height: 0.8461538461538461
+                        ),),
+                        Text( '0 due events', style: TextStyle(
+                          color: Colors.orange,
+                          fontFamily: 'SpaceGrotesk',
+                          fontSize: 20,
+                          letterSpacing: 0,
+                          fontWeight: FontWeight.bold,
+                          //height: 0.8461538461538461
+                        ),)
+                      ],
+                    ),
+                    //SizedBox(height:height*0.01),
+
+                    SizedBox(
+                      height: height*0.4,
+                      child: TabBarView(
                         children: [
-                          Text("0",style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold
-                          ),),
-                          Text("Call log",style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 14
-                          ),)
+                          Center(child: Text("Tasks Content", style: TextStyle(fontSize: 18,color: Colors.white))),
+                          ListView.builder(
+                              itemCount: response.length,
+                              itemBuilder:(context,index)
+                              {
+                                final singlelog=response[index];
+                                DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
+
+                                String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+                                return Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                        borderRadius: BorderRadius.circular(10)
+                                      ),
+
+                                      height: height*0.08,
+                                      width: width*0.9,
+
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
+                                        child: Row(
+                                          children: [
+                                            Text("${singlelog['type']}"),
+                                            SizedBox(width: width*0.02,),
+                                            Text("${singlelog['duration']}s"),
+                                            Spacer(),
+                                            Text("${formattedDate}"),
+
+                                          ],
+                                        ),
+                                      ),
+
+                                    ),
+                                    Divider(color: Colors.black,height: 3,)
+                                  ],
+                                );
+
+                              }
+
+                          ),
+                          Center(child: Text("Activity Content", style: TextStyle(fontSize: 18,color: Colors.white))),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                SizedBox(width: 12,),
-                Container(
-                  height: MediaQuery.of(context).size.height*0.08,
-                  width: MediaQuery.of(context).size.width * 0.23,
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(7, 7, 10, 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("0",style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold
-                          ),),
-                          Text("Activity",style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'SpaceGrotesk',
-                              fontSize: 14
-                          ),)
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
+              ),
             ),
-            SizedBox(height: 15,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text('you have ', style: TextStyle(
-                  color: Color.fromRGBO(255, 255, 255, 1),
-                  fontFamily: 'SpaceGrotesk',
-                  fontSize: 20,
-                  letterSpacing: 0,
-                  fontWeight: FontWeight.bold,
-                  //height: 0.8461538461538461
-                ),),
-                Text( '0 due events', style: TextStyle(
-                  color: Colors.orange,
-                  fontFamily: 'SpaceGrotesk',
-                  fontSize: 20,
-                  letterSpacing: 0,
-                  fontWeight: FontWeight.bold,
-                  //height: 0.8461538461538461
-                ),)
-              ],
-            ),
-            SizedBox(height: 15,),
+
+
+
+
+
+
+           SizedBox(height: 15,),
+
+           /* SizedBox(height: 15,),
             Column(
               children: [
                 Padding(
@@ -613,7 +737,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
               ),
             ),
 
-
+*/
           ],
              ),
       ) ,
