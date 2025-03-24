@@ -1,33 +1,85 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:saleapp/Screens/Search/search_controller.dart';
 
-class SearchScreen extends StatelessWidget
+class SearchScreen extends StatefulWidget
 {
   const SearchScreen({super.key});
 
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
 
+class _SearchScreenState extends State<SearchScreen> {
+  TextEditingController search = TextEditingController();
+  var leadList ;
+
+  var  filteredLeads = [];
+  void filterSearchResults(String query) {
+    var tempLeads = [];
+
+    if (query.isEmpty) {
+      tempLeads = leadList
+          .map((doc) => doc.data() as Map<String, dynamic>?)
+          .where((lead) => lead != null) // Ensure it's not null
+          .cast<Map<String, dynamic>>() // Cast to proper type
+          .toList();
+    } else {
+      if (RegExp(r'^[0-9]+$').hasMatch(query)) {
+
+        tempLeads = leadList
+            .map((doc) => doc.data() as Map<String, dynamic>?)
+            .where((lead) => lead != null && lead['Mobile'] != null)
+            .where((lead) =>
+            lead!['Mobile'].toString().contains(query))
+            .cast<Map<String, dynamic>>()
+            .toList();
+      } else {
+        // Search by name (starts with query)
+        tempLeads =leadList
+            .map((doc) => doc.data() as Map<String, dynamic>?)
+            .where((lead) => lead != null && lead['Name'] != null)
+            .where((lead) =>
+            lead!['Name'].toString().toLowerCase().startsWith(query.toLowerCase()))
+            .cast<Map<String, dynamic>>()
+            .toList();
+      }
+    }
+
+    setState(() {
+      filteredLeads = tempLeads;
+    });
+  }
+
+  int getIndexInTotalLeads(Map<String, dynamic> lead) {
+    return leadList.indexWhere((element) => element['Mobile'] == lead['Mobile']);
+  }
   @override
   Widget build(BuildContext context) {
+    MySearchController controller = Get.put<MySearchController>(MySearchController());
+    HomeController homeController=Get.find<HomeController>();
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    leadList=homeController.Totalleadslist;
 
-    MySearchController controller = Get.put<MySearchController>(MySearchController());
     return Scaffold(
-
       backgroundColor:const Color(0xff0D0D0D),
       body: Obx(
         ()=>Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20,40, 0,0),
+              padding: const EdgeInsets.fromLTRB(10,40, 0,0),
               child: SizedBox(
                 height: height*0.06,
                 width: width*0.8,
                 child: TextField(
+                  controller: search,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -35,11 +87,12 @@ class SearchScreen extends StatelessWidget
                     suffixIcon: Icon(Icons.search),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
                   ),
+                  onChanged: filterSearchResults,
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 5),
+              padding: const EdgeInsets.only(left: 0),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -78,12 +131,108 @@ class SearchScreen extends StatelessWidget
                 ),
               ),
             ),
+            Expanded(
+              child: filteredLeads.isEmpty
+                  ? Center(child: Text("No leads found",style: TextStyle(
+                color: Colors.white
+              ),))
+                  : ListView.builder(
+                itemCount: filteredLeads.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                     // padding: EdgeInsets.all(10),
+                      height: height*0.09,
+                      width: width*0.1 ,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: InkWell(
+                          onTap: ()
+                          {
+                            int indexinTotallist = getIndexInTotalLeads(filteredLeads[index] ?? 0);
+
+                            Get.to(()=>LeadDetailsScreen(), arguments: {
+                              "leaddetails" : leadList[indexinTotallist],
+                            });
+                          },
+                          child: Row(
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    filteredLeads[index]['Name']!,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                  SizedBox(height: height*0.01),
+                                  Text(
+                                    filteredLeads[index]['Mobile']!,
+                                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                                  ),
+
+                                ],
+                              ),
+                              Spacer(),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                child: InkWell(
+                                  onTap: ()
+                                  {
+                                    FlutterDirectCallerPlugin.callNumber("jjj");
+                                  },
+                                  child: Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xff58423B),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.call,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+
+
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
 
     );
   }
+
   Widget _filterChip(int index,
       {required String title,
         required MySearchController controller,
@@ -115,5 +264,4 @@ class SearchScreen extends StatelessWidget
 
     );
   }
-
 }

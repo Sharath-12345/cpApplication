@@ -23,7 +23,7 @@ class DbSupa {
 
     // Get existing call logs from Supabase
     final existingCallLogs = response  as List<dynamic>;
-    print('Task inserted successfully ==> ${existingCallLogs}');
+    //print('Task inserted successfully ==> ${existingCallLogs}');
     return existingCallLogs;
   }
 

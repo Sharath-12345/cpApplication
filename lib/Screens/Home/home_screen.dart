@@ -1,6 +1,7 @@
 
 
 import 'package:call_log_new/call_log_new.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -141,8 +142,12 @@ class _HomePageState extends State<HomePage> {
     homeController.getvisitfixedleads();
     homeController.getvisitdoneleads();
     homeController.getnegotiationleads();
+    homeController.getTotalTasks();
+
+
     fetchCallLogs();
     matchAndStoreCallLogs();
+
 
 
     return Obx(()=>
@@ -165,7 +170,7 @@ class _HomePageState extends State<HomePage> {
           initialIndex: 0,
           length: 8,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(11, 0, 0, 8),
+            padding: EdgeInsets.fromLTRB(3, 0, 0, 8),
             child: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [
@@ -188,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                                       width: MediaQuery
                                           .of(context)
                                           .size
-                                          .width * 0.45,
+                                          .width * 0.47,
                                       decoration: BoxDecoration(
                                         color: Color.fromRGBO(28, 28, 30, 1),
                                       ),
@@ -199,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                                           crossAxisAlignment: CrossAxisAlignment
                                               .start,
                                           children: [
-                                            Text("8", style: TextStyle(
+                                            Text("${homeController.totaltasks}", style: TextStyle(
                                               color: Color.fromRGBO(255, 255, 255, 1),
 
                                               fontSize: 17,
@@ -226,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                                       width: MediaQuery
                                           .of(context)
                                           .size
-                                          .width * 0.45,
+                                          .width * 0.47,
                                       height: MediaQuery
                                           .of(context)
                                           .size
@@ -303,7 +308,7 @@ class _HomePageState extends State<HomePage> {
                                 {
                                   Get.to(()=>LeadDetailsScreen(), arguments: {
                                     "leaddetails" : single,
-                                    "calllog" : callLogs
+
                                   });
                                 },
                                 child: Container(
@@ -366,7 +371,7 @@ class _HomePageState extends State<HomePage> {
                               {
                                 Get.to(()=>LeadDetailsScreen(), arguments: {
                                   "leaddetails" : single,
-                                  "calllog" : callLogs
+
                                 });
                               },
                               child: Container(
@@ -429,7 +434,7 @@ class _HomePageState extends State<HomePage> {
                               {
                                 Get.to(()=>LeadDetailsScreen(), arguments: {
                                   "leaddetails" : single,
-                                  "calllog" : callLogs
+
                                 });
                               },
                               child: Container(
@@ -491,7 +496,7 @@ class _HomePageState extends State<HomePage> {
                               {
                                 Get.to(()=>LeadDetailsScreen(), arguments: {
                                   "leaddetails" : single,
-                                  "calllog" : callLogs
+
                                 });
                               },
                               child: Container(
@@ -553,7 +558,7 @@ class _HomePageState extends State<HomePage> {
                               {
                                 Get.to(()=>LeadDetailsScreen(), arguments: {
                                   "leaddetails" : single,
-                                  "calllog" : callLogs
+
                                 });
                               },
                               child: Container(
@@ -616,7 +621,7 @@ class _HomePageState extends State<HomePage> {
                               {
                                 Get.to(()=>LeadDetailsScreen(), arguments: {
                                   "leaddetails" : single,
-                                  "calllog" : callLogs
+
                                 });
                               },
                               child: Container(

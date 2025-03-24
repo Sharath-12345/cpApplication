@@ -26,12 +26,12 @@ class MyTabBar extends StatelessWidget
             onTap: homeController.chnageTabIndex,
             tabAlignment: TabAlignment.start,
             isScrollable: true,
-            labelPadding: EdgeInsets.symmetric(horizontal: 4),
+            labelPadding: EdgeInsets.symmetric(horizontal: 5),
             tabs: [
               Tab(
                 child:  Container(
                     height: MediaQuery.of(context).size.height* 0.09,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.18,
                     decoration: BoxDecoration(
                       color:  homeController.tabIndex == 0
                           ?  Color.fromRGBO(89, 66, 60, 1)
@@ -174,7 +174,7 @@ class MyTabBar extends StatelessWidget
 
                 child:  Container(
                     height: MediaQuery.of(context).size.height* 0.07,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    width: MediaQuery.of(context).size.width * 0.28,
                     decoration: BoxDecoration(
                       color:  homeController.tabIndex == 4
                           ?  Color.fromRGBO(89, 66, 60, 1)
@@ -211,7 +211,7 @@ class MyTabBar extends StatelessWidget
 
                 child:  Container(
                     height: MediaQuery.of(context).size.height* 0.07,
-                    width: MediaQuery.of(context).size.width * 0.27,
+                    width: MediaQuery.of(context).size.width * 0.30,
                     decoration: BoxDecoration(
                       color:  homeController.tabIndex == 5
                           ?  Color.fromRGBO(89, 66, 60, 1)
@@ -298,14 +298,17 @@ class MyTabBar extends StatelessWidget
             indicatorColor: Colors.black,
           ),
           SizedBox(height: height*0.03 ,),
-          Text('you have ${homeController.showingLeadsCount} due events', style: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 1),
-            fontFamily: 'SpaceGrotesk',
-            fontSize: 22,
-            letterSpacing: 0,
-            fontWeight: FontWeight.bold,
-            //height: 0.8461538461538461
-          ),),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text('you have ${homeController.showingLeadsCount} due events', style: TextStyle(
+              color: Color.fromRGBO(255, 255, 255, 1),
+              fontFamily: 'SpaceGrotesk',
+              fontSize: 22,
+              letterSpacing: 0,
+              fontWeight: FontWeight.bold,
+              //height: 0.8461538461538461
+            ),),
+          ),
           SizedBox(height: height*0.03 ,),
 
         ],

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:saleapp/Auth/auth_controller.dart';
@@ -11,6 +10,7 @@ import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/leaddetails_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 
 class LeadDetailsScreen extends StatefulWidget
 {
@@ -37,6 +37,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
 
 
+
   Future<void> printRowsByLuid(String luid) async {
     print(luid);
     print('${authController.currentUserObj['orgId']}_lead_call_logs');
@@ -60,11 +61,10 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   void initState() {
     super.initState();
     receivedList=argument["leaddetails"];
-    calllogs=argument["calllog"];
+
 
     currentStatus="${receivedList['Status']}";
-    printRowsByLuid(receivedList.id);
-
+   printRowsByLuid(receivedList.id);
 
   }
 
@@ -266,13 +266,17 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                   ),)
                               ),
                             ),),
-                            Tab(child: Container(
+                            Tab(
+                              child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.white, width: 2),
                                 ),
                                 child: Text("Junk", style: TextStyle(
-                                    color:  currentStatus=="new"?Colors.green: Colors.white,
+                                    color:
+                                    //currentStatus=="new"?
+                                    //Colors.green:
+                                    Colors.white,
                                     fontFamily: 'SpaceGrotesk'
                                 ),)
                             ),),
@@ -579,9 +583,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                     Divider(color: Colors.black,height: 3,)
                                   ],
                                 );
-
                               }
-
                           ),
                           Center(child: Text("Activity Content", style: TextStyle(fontSize: 18,color: Colors.white))),
                         ],

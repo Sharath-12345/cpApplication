@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Auth/auth_controller.dart';
@@ -13,6 +15,7 @@ class HomeController extends GetxController
 
    final AuthController authController = Get.find<AuthController>();
 
+
  var Totalleadslist;
    var newleadslist;
    var followupleadslist;
@@ -20,6 +23,7 @@ class HomeController extends GetxController
    var visitdoneleadslist;
    var negotiationleadslist;
    var notintrestedleadslist;
+   var totaltasks=0.obs;
 
  var totalleads=0.obs;
   var newleads=0.obs;
@@ -49,6 +53,7 @@ class HomeController extends GetxController
      }
    }
 
+
    @override
   void onInit() {
     super.onInit();
@@ -59,6 +64,26 @@ class HomeController extends GetxController
    getvisitdoneleads();
    getnegotiationleads();
    getnotintrestedleads();
+  }
+
+  Future<void> getTotalTasks()
+  async {
+
+    Stream<QuerySnapshot<Map<String,dynamic>>> tasks= FirebaseFirestore.instance
+        .collection('${authController.currentUserObj['orgId']}_assignedTasks')
+        .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
+        .where("status", isEqualTo: "InProgress")
+        .where("to_uid", isEqualTo: authController.currentUser?.uid)
+        .snapshots();
+
+    tasks.listen((querySnapshot) {
+       totaltasks.value=querySnapshot.size;
+      for (var doc in querySnapshot.docs) {
+        print("Task ID: ${doc.id}, Data: ${doc.data()}");
+        print("_________________________");
+      }
+    });
+
   }
 
 

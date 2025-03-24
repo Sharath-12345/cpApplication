@@ -2,6 +2,53 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:intl/intl.dart';
+import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+
+void ShowDatePickerCard(BuildContext context) async {
+  print('inside here');
+  DateTime? dateTime = await showOmniDateTimePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(1600).subtract(const Duration(days: 3652)),
+    lastDate: DateTime.now().add(
+      const Duration(days: 3652),
+    ),
+    is24HourMode: false,
+    isShowSeconds: false,
+    minutesInterval: 5,
+    secondsInterval: 1,
+    borderRadius: const BorderRadius.all(Radius.circular(16)),
+    constraints: const BoxConstraints(
+      maxWidth: 350,
+      maxHeight: 650,
+    ),
+    transitionBuilder: (context, anim1, anim2, child) {
+      return FadeTransition(
+        opacity: anim1.drive(
+          Tween(
+            begin: 0,
+            end: 1,
+          ),
+        ),
+        child: child,
+      );
+    },
+    transitionDuration: const Duration(milliseconds: 200),
+    barrierDismissible: true,
+    selectableDayPredicate: (dateTime) {
+      // Disable 25th Feb 2023
+      if (dateTime == DateTime(2023, 2, 25)) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+  );
+// controller.selectedDateTime.value = DateFormat('dd-MM-yy HH:mm').format(dateTime!).toString();
+  //controller.selectedDateTime.value = dateTime!.millisecondsSinceEpoch;
+  // print('selected data is ${controller.selectedDateTime}  ${dateTime}');
+}
+
 
 void showBottomPopup(BuildContext context,var tasktype) {
   final TextEditingController controller = TextEditingController
@@ -100,15 +147,22 @@ void showBottomPopup(BuildContext context,var tasktype) {
                   dashPattern: [6, 3], // Adjust dot spacing
                   color: Colors.black12, // Dotted border color
                   strokeWidth: 2,
-                  child: Container(
-                    width: width*0.13,
-                    height: height*0.04,
-                    decoration: BoxDecoration(
-                       shape: BoxShape.circle,
-                      color: Colors.white,
-                    ),
-                    child: Center(
-                      child: Icon(Icons.calendar_month_outlined,color: Colors.black26,),
+                  child: InkWell(
+                    onTap: ()
+                    {
+                      ShowDatePickerCard(context);
+                    },
+                    child: Container(
+                      width: width*0.13,
+                      height: height*0.04,
+                      decoration: BoxDecoration(
+                         shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child:
+                      Center(
+                        child: Icon(Icons.calendar_month_outlined,color: Colors.black26,),
+                      ),
                     ),
                   ),
                 ),
