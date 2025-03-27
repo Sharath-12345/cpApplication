@@ -142,7 +142,7 @@ class _HomePageState extends State<HomePage> {
     homeController.getvisitdoneleads();
     homeController.getnegotiationleads();
     homeController.getnotintrestedleads();
-    homeController.getTotalTasks();
+   // homeController.getTotalTasks();
 
 
 
@@ -435,7 +435,7 @@ class _LeadsListViewState extends State<LeadsListView> {
   final HomeController homeController=Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
-    homeController.getTotalTasks();
+   // homeController.getTotalTasks();
 
     homeController.getleads();
     homeController.getnewleads();

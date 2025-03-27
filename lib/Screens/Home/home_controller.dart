@@ -63,13 +63,13 @@ class HomeController extends GetxController
    @override
   void onInit() {
     super.onInit();
-   getleads();
+  /* getleads();
    getnewleads();
    getfollowleads();
    getvisitfixedleads();
    getvisitdoneleads();
    getnegotiationleads();
-   getnotintrestedleads();
+   getnotintrestedleads();*/
   }
 
   Future<void> getTotalTasks()

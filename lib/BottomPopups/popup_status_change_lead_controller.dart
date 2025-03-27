@@ -334,6 +334,48 @@ class StatusChangeLead extends GetxController
       "type" : schedule
     };
 
+
+    // Choose a unique key name for the new map (change 'new_map_key' to your desired name)
+    String newMapKey = currentTimeMillis.toString();
+
+    // Update Firestore by adding the new map
+    await docRef.update({
+      newMapKey: newMap
+    });
+    addPendingToStaA(orgId: orgId, leadId: leadId,ct: currentTimeMillis);
+  }
+
+
+
+  Future<void> addNewMapforvisitdone({
+    required String orgId,
+    required String leadId,
+    required String by,
+    required String notes,
+    required String pri,
+    required String sts,
+    required String schedule,
+    required String feedback,
+    required String addnotes
+  }) async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    DocumentReference docRef = firestore.collection('${orgId}_leads_sch').doc(leadId);
+
+    int currentTimeMillis = DateTime.now().millisecondsSinceEpoch;
+
+    Map<String, dynamic> newMap = {
+      "by" : by,
+      "ct" : currentTimeMillis,
+      "notes" : notes,
+      "pri" : pri,
+      "schTime" : currentTimeMillis,
+      "sts" : sts,
+      "type" : schedule,
+      "feedback" : feedback,
+      "additional notes" : addnotes
+    };
+
+
     // Choose a unique key name for the new map (change 'new_map_key' to your desired name)
     String newMapKey = currentTimeMillis.toString();
 

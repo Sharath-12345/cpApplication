@@ -56,16 +56,19 @@ class MyTabBar extends StatelessWidget
 
               Tab(
                 child:     Container(
-                    height: MediaQuery.of(context).size.height* 0.07,
+                    height: MediaQuery.of(context).size.height* 0.055,
                     width: MediaQuery.of(context).size.width * 0.25,
                     decoration: BoxDecoration(
-                      color: homeController.tabIndex == 6
-                          ?  Color.fromRGBO(89, 66, 60, 1)
-                          : Color.fromRGBO(30, 30, 30, 1),
+                      borderRadius: BorderRadius.circular(10),
+                      color:
+                          //: homeController.tabIndex == 6
+                          //?  Color.fromRGBO(89, 66, 60, 1)
+                         // : Color.fromRGBO(30, 30, 30, 1),
+                      Colors.white
                     ),
                     child:  Center(
                       child: Text("Projects",style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        color: Colors.black,
                         fontFamily: 'SpaceGrotesk',
                         fontSize: 12,
                         letterSpacing: 0,
@@ -77,16 +80,19 @@ class MyTabBar extends StatelessWidget
               ),
               Tab(
                 child:  Container(
-                    height: MediaQuery.of(context).size.height* 0.07,
-                    width: MediaQuery.of(context).size.width * 0.25,
+                    height: MediaQuery.of(context).size.height* 0.055,
+                    width: MediaQuery.of(context).size.width * 0.30,
                     decoration: BoxDecoration(
-                      color:  homeController.tabIndex == 7
-                          ?  Color.fromRGBO(89, 66, 60, 1)
-                          : Color.fromRGBO(30, 30, 30, 1),
+                      borderRadius: BorderRadius.circular(10),
+                      color:
+                      //homeController.tabIndex == 7
+                        //  ?  Color.fromRGBO(89, 66, 60, 1)
+                          //: Color.fromRGBO(30, 30, 30, 1),
+                      Colors.white
                     ),
                     child:  Center(
                       child: Text("Participants",style: TextStyle(
-                        color: Color.fromRGBO(255, 255, 255, 1),
+                        color: Colors.black,
                         fontFamily: 'SpaceGrotesk',
                         fontSize: 12,
                         letterSpacing: 0,

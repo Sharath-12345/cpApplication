@@ -9,6 +9,8 @@ import 'package:saleapp/BottomPopups/popup_status_change_lead_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdoneleads_controller.dart';
 import 'package:saleapp/Utilities/snackbar.dart';
 
+var emotionindex=0;
+
 class VisitDoneLeads extends StatefulWidget
 {
   const VisitDoneLeads({super.key});
@@ -26,6 +28,8 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
   final user=FirebaseAuth.instance.currentUser;
 
   late  TabController _tabController;
+  TextEditingController _notesController = TextEditingController();
+
 
   @override
   void initState() {
@@ -169,6 +173,7 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
         
                       ),
                       child: TextField(
+                        controller: _notesController,
                         style: TextStyle(fontSize: height*0.017),
                         decoration: InputDecoration(
                           hintText: "Type and make additional notes",
@@ -192,7 +197,41 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                           Spacer(),
                           InkWell(
                             onTap: ()
-                            {
+                            async {
+
+                              print(emotionindex);
+                              String feedback="";
+                              switch (emotionindex) {
+                                case 0:
+                                feedback="Happy";
+                                  break;
+                                case 1:
+                                  feedback="Sad";
+                                  break;
+                                case 2:
+                                 feedback="Neutral";
+                                case 3:
+                                  feedback="Want More Options";
+                                case 4:
+                                  feedback="Others";
+                                default:
+                                  feedback="";
+                              }
+
+                              await statuschangeleadcontroller.closePreviousTasks(orgId: orgId, leadId: leadDocId);
+                              statuschangeleadcontroller.addNewMapforvisitdone(
+                                  orgId: orgId, leadId: leadDocId, by: by,
+                                  notes: "Make a ${newStatus} call to ${leadname}", pri: "priority 1", sts: "pending",
+                                  schedule: "schedule", feedback: feedback, addnotes: _notesController.text.toString());
+
+                              statuschangeleadcontroller.updateLeadStatus(
+                                  orgId: orgId, projectId: projectId, leadDocId: leadDocId,
+                                  oldStatus: oldStatus, newStatus: newStatus, by: by, context: context);
+
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                              snackBarMsg("Status Updated");
 
 
                               /*
@@ -311,11 +350,14 @@ class _EmotionCheckboxWidgetState extends State<EmotionCheckboxWidget> {
               fontFamily: 'SpaceGrotesk',
               fontSize: MediaQuery.of(context).size.height*0.017
             ),),
-          value: selectedIndex == index, // Check only one at a time
+          value: selectedIndex == index,
           onChanged: (bool? value) {
+            emotionindex=index;
+          //  print(index);
             setState(() {
               selectedIndex = value! ? index : null;
             });
+
           },
           controlAffinity: ListTileControlAffinity.leading,
           //contentPadding: EdgeInsets.zero,

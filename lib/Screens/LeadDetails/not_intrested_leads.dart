@@ -8,6 +8,7 @@ import 'package:get/get_core/src/get_main.dart';
 import '../../Auth/auth_controller.dart';
 import '../../BottomPopups/popup_status_change_lead_controller.dart';
 import '../../Utilities/snackbar.dart';
+var notintrestedreasonindex=0;
 
 class NotIntrestedLeads extends StatefulWidget
 {
@@ -158,8 +159,46 @@ class _NotIntrestedLeadsState extends State<NotIntrestedLeads> {
                    Spacer(),
                    InkWell(
                      onTap: ()
-                     {
-                       var y = "Not Intrested";
+                     async {
+
+
+
+                       String feedback="";
+                       switch (notintrestedreasonindex) {
+                         case 0:
+                           feedback="Budget issue";
+                           break;
+                         case 1:
+                           feedback="Looking for different area & property";
+                           break;
+                         case 2:
+                           feedback=  "Looking for differnt areas";
+                         case 3:
+                           feedback="Looking for differnt property";
+
+                         default:
+                           feedback="";
+                       }
+
+
+
+                     /*  await statuschangeleadcontroller.closePreviousTasks(orgId: orgId, leadId: leadDocId);
+                       statuschangeleadcontroller.addNewMapforvisitdone(
+                           orgId: orgId, leadId: leadDocId, by: by,
+                           notes: "Make a ${newStatus} call to ${leadname}", pri: "priority 1", sts: "pending",
+                           schedule: "schedule", feedback: feedback, addnotes:" ");*/
+                       statuschangeleadcontroller.updateLeadStatus
+                         (orgId: orgId, projectId: projectId, leadDocId:
+                       leadDocId, oldStatus: oldStatus, newStatus: newStatus,
+                           by: by, context: context);
+                       if (Navigator.canPop(context)) {
+                         Navigator.pop(context);
+                       }
+
+
+
+
+                       /*var y = "Not Intrested";
                        final data = {
                          "stsType": "Not Intrested" ?? "none",
                          "assTo": user?.displayName ?? user?.email,
@@ -197,7 +236,7 @@ class _NotIntrestedLeadsState extends State<NotIntrestedLeads> {
 
                        if (Navigator.canPop(context)) {
                          Navigator.pop(context);
-                       }
+                       }*/
                        snackBarMsg("Status Updated");
                      },
                      child: Padding(
@@ -273,6 +312,7 @@ class _NotIntrestedReasonsCheckboxWidgetState extends State<NotIntrestedReasonsC
           ),),
           value: selectedIndex == index, // Check only one at a time
           onChanged: (bool? value) {
+            notintrestedreasonindex=index;
             setState(() {
               selectedIndex = value! ? index : null;
             });

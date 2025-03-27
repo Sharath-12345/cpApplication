@@ -45,10 +45,11 @@ class AuthController extends GetxController {
       try {
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-          snackBarMsg("Sucess");
-          requestCallPermission();
+
+          await requestCallPermission();
          await storeDetailsInLocal();
         Get.offAll(() => SuperHomePage());
+        snackBarMsg("Sucess");
 
 
       } catch (e) {
