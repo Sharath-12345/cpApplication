@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:saleapp/Auth/auth_controller.dart';
-import 'package:saleapp/BottomPopups/popup_followup_lead.dart';
+import 'package:saleapp/BottomPopups/popup_status_change_lead.dart';
+import 'package:saleapp/BottomPopups/popup_status_change_lead_controller.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/leaddetails_controller.dart';
+import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
@@ -24,6 +26,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   final HomeController homeController=Get.find<HomeController>();
   final AuthController authController=Get.find<AuthController>();
   var controller=Get.put<LeadDetailsController>(LeadDetailsController());
+  var leadstatuschangecontroller=Get.put<StatusChangeLead>(StatusChangeLead());
   var argument = Get.arguments;
 
   var receivedList ;
@@ -77,6 +80,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
     var width=MediaQuery.of(context).size.width;
     String fetchedText='${receivedList['Project']}';
     printRowsByLuid(receivedList.id);
+    print(receivedList.id);
 
 
 
@@ -179,24 +183,32 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                           tabAlignment: TabAlignment.start,
                           isScrollable: true,
                           tabs: [
-                            Tab(child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.white,
-                                      width: 2),
-                                ),
-                                child: Text("New",style: TextStyle(
-                                    color:  currentStatus=="new"?Colors.green: Colors.white,
-                                   fontFamily: 'SpaceGrotesk'
-                                ),)
+                            Tab(child: InkWell(
+                              onTap:  () {
+                                if(!(currentStatus=="new"))
+                                {
+                                  showBottomPopup(context,"New",receivedList);
+                                }
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.white,
+                                        width: 2),
+                                  ),
+                                  child: Text("New",style: TextStyle(
+                                      color:  currentStatus=="new"?Colors.green: Colors.white,
+                                     fontFamily: 'SpaceGrotesk'
+                                  ),)
+                              ),
                             ),),
                             Tab(child: InkWell(
                               onTap: ()
                               {
                                 if(!(currentStatus=="followup"))
                                   {
-                                    showBottomPopup(context,"Followup");
+                                    showBottomPopup(context,"Followup",receivedList);
                                   }
                               },
                               child: Container(
@@ -219,7 +231,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 {
                                   if(!(currentStatus=="visitfixed"))
                                   {
-                                    showBottomPopup(context,"Visit Fixed");
+                                    showBottomPopup(context,"Visit Fixed",receivedList);
                                   }
                                 },
                                 child: Container(
@@ -237,7 +249,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                               child: InkWell(
                                 onTap: ()
                                 {
-                                   Get.to(()=>VisitDoneLeads());
+                                   Get.to(()=>VisitDoneLeads(),arguments: receivedList);
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
@@ -253,7 +265,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                             Tab(child: InkWell(
                               onTap: ()
                               {
-                                Get.to(()=>VisitDoneLeads());
+                                Get.to(()=>NotIntrestedLeads(),arguments: receivedList);
                               },
                               child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),

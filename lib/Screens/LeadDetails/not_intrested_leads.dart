@@ -1,12 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
-class NotIntrestedLeads extends StatelessWidget
+import '../../Auth/auth_controller.dart';
+import '../../BottomPopups/popup_status_change_lead_controller.dart';
+import '../../Utilities/snackbar.dart';
+
+class NotIntrestedLeads extends StatefulWidget
 {
   const NotIntrestedLeads({super.key});
 
   @override
+  State<NotIntrestedLeads> createState() => _NotIntrestedLeadsState();
+}
+
+class _NotIntrestedLeadsState extends State<NotIntrestedLeads> {
+  var  leaddetails = Get.arguments;
+  final statuschangeleadcontroller=Get.find<StatusChangeLead>();
+  final authController=Get.find<AuthController>();
+  final user=FirebaseAuth.instance.currentUser;
+
+
+
+  @override
   Widget build(BuildContext context) {
+
+    var orgId=authController.currentUserObj['orgId'];
+    var projectId=leaddetails['ProjectId'];
+    var leadDocId=leaddetails.id;
+    var  oldStatus=leaddetails['Status'];
+    var newStatus="notintrested";
+    print(newStatus);
+    var by=leaddetails['assignedToObj']['name'];
+    var leadname=leaddetails['Name'];
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
      return Scaffold(
@@ -47,7 +76,7 @@ class NotIntrestedLeads extends StatelessWidget
                      ],
                    ),
                  ),
-         
+
                ),
              ),
              SizedBox(height: height*0.02,),
@@ -127,37 +156,82 @@ class NotIntrestedLeads extends StatelessWidget
                      ),),
                    ),
                    Spacer(),
-                   Padding(
-                     padding: const EdgeInsets.only(right: 12),
-                     child: Container(
-                       width: width*0.40,
-                       height: height*0.06,
-                       decoration: BoxDecoration(
-                         color: Color(0xFF651FFF),
-                         borderRadius: BorderRadius.circular(50),
-                       ),
-                       child: Center(
-                         child: Row(
-                           children: [
-                             Padding(
-                               padding: const EdgeInsets.only(left: 12),
-                               child: Text("NOT INTRESTED",style: TextStyle(color: Colors.white,
-                                   fontFamily: 'SpaceGrotesk',
-                               fontSize: height*0.014),),
-                             ),
-                             Spacer(),
-                             Padding(
-                               padding: const EdgeInsets.only(right: 16),
-                               child: Container(
+                   InkWell(
+                     onTap: ()
+                     {
+                       var y = "Not Intrested";
+                       final data = {
+                         "stsType": "Not Intrested" ?? "none",
+                         "assTo": user?.displayName ?? user?.email,
+                         "assToId": user?.uid,
+                         "by": user?.displayName ?? user?.email,
+                         "cby": user?.uid,
+                         "type": "schedule",
+                         "pri": " ",
+                         "notes": (y == "") ? "Negotiate with customer" : y,
+                         "sts": "pending",
+                         "schTime":
+                         //(tempLeadStatus == "booked")
+                         //?
+                         Timestamp.now().millisecondsSinceEpoch + 10800000
+                         // : startDate.millisecondsSinceEpoch
+                         ,
+                         "ct": Timestamp.now().millisecondsSinceEpoch,
+                       };
 
-                                 child: Icon(Icons.chevron_right,color: Colors.black,),
-                                 decoration: BoxDecoration(
-                                     color: Colors.white,
-                                     shape: BoxShape.circle
-                                 ),
+
+
+
+
+
+                       statuschangeleadcontroller.addLeadScheduler
+                         (orgId: orgId, did: leadDocId,
+                           data: data, schStsA: "pending");
+
+
+
+                       statuschangeleadcontroller.updateLeadStatus(
+                           orgId: orgId, projectId: projectId,
+                           leadDocId: leadDocId, oldStatus: oldStatus,
+                           newStatus: newStatus, by: by, context: context);
+
+                       if (Navigator.canPop(context)) {
+                         Navigator.pop(context);
+                       }
+                       snackBarMsg("Status Updated");
+                     },
+                     child: Padding(
+                       padding: const EdgeInsets.only(right: 12),
+                       child: Container(
+                         width: width*0.40,
+                         height: height*0.06,
+                         decoration: BoxDecoration(
+                           color: Color(0xFF651FFF),
+                           borderRadius: BorderRadius.circular(50),
+                         ),
+                         child: Center(
+                           child: Row(
+                             children: [
+                               Padding(
+                                 padding: const EdgeInsets.only(left: 12),
+                                 child: Text("NOT INTRESTED",style: TextStyle(color: Colors.white,
+                                     fontFamily: 'SpaceGrotesk',
+                                 fontSize: height*0.014),),
                                ),
-                             )
-                           ],
+                               Spacer(),
+                               Padding(
+                                 padding: const EdgeInsets.only(right: 16),
+                                 child: Container(
+
+                                   child: Icon(Icons.chevron_right,color: Colors.black,),
+                                   decoration: BoxDecoration(
+                                       color: Colors.white,
+                                       shape: BoxShape.circle
+                                   ),
+                                 ),
+                               )
+                             ],
+                           ),
                          ),
                        ),
                      ),

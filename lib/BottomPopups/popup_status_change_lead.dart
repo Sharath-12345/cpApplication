@@ -1,8 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:saleapp/Auth/auth_controller.dart';
+import 'package:saleapp/BottomPopups/popup_status_change_lead_controller.dart';
 
 void ShowDatePickerCard(BuildContext context) async {
   print('inside here');
@@ -50,14 +56,97 @@ void ShowDatePickerCard(BuildContext context) async {
 }
 
 
-void showBottomPopup(BuildContext context,var tasktype) {
+Future<void> showBottomPopup(BuildContext context,var tasktype,var leaddetails) async {
   final TextEditingController controller = TextEditingController
     (text: "Make a $tasktype task ");
   TextEditingController nameController = TextEditingController();
+  var statuschangeleadcontroller=Get.find<StatusChangeLead>();
+  var authController=Get.find<AuthController>();
   var height=MediaQuery.of(context).size.height;
   var width=MediaQuery.of(context).size.width;
   var currentdatetime=DateTime.now();
   String formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(currentdatetime);
+
+  var orgId=authController.currentUserObj['orgId'];
+  var projectId=leaddetails['ProjectId'];
+  var leadDocId=leaddetails.id;
+  var  oldStatus=leaddetails['Status'];
+  var newStatus=tasktype.toString().toLowerCase().replaceAll(" ", "");;
+  print(newStatus);
+  var by=leaddetails['assignedToObj']['name'];
+  var leadname=leaddetails['Name'];
+
+  var user=FirebaseAuth.instance.currentUser;
+
+
+
+
+
+  var y = "Make a $tasktype call to $leadname";
+  final data = {
+    "stsType": tasktype ?? "none",
+    "assTo": user?.displayName ?? user?.email,
+    "assToId": user?.uid,
+    "by": user?.displayName ?? user?.email,
+    "cby": user?.uid,
+    "type": "schedule",
+    "pri": " ",
+    "notes": (y == "") ? "Negotiate with customer" : y,
+    "sts": "pending",
+    "schTime":
+    //(tempLeadStatus == "booked")
+    //?
+    Timestamp.now().millisecondsSinceEpoch + 10800000
+    // : startDate.millisecondsSinceEpoch
+    ,
+    "ct": Timestamp.now().millisecondsSinceEpoch,
+  };
+  List<Map<String, dynamic>> data1=[];
+
+  DateTime tomorrowDate = DateTime.now().toUtc().add(Duration(days: 1));
+  int timestamp = tomorrowDate.millisecondsSinceEpoch;
+
+  DateTime todayDate = DateTime.now();
+  String ddMy = 'D${todayDate.day}M${todayDate.month}Y${todayDate.year}';
+
+
+
+
+
+    var documentSnapshot = await FirebaseFirestore.instance
+        .collection('${orgId}_leads_sch')
+        .doc(leadDocId)
+        .get();
+
+    Map<String, dynamic>? data2 = documentSnapshot.data();
+  List<Map<String, dynamic>> mapsList=[];// Get the document data as a map
+
+    if (data2 != null) {
+      // Extract only values that are maps
+       mapsList = data2.entries
+          .where((entry) => entry.value is Map<String, dynamic>) // Filter only maps
+          .map((entry) => entry.value as Map<String, dynamic>) // Convert to list of maps
+          .toList();
+
+      //print("List of maps: $mapsList");
+    } else {
+      print("No data found.");
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   showModalBottomSheet(
     context: context,
@@ -193,15 +282,65 @@ void showBottomPopup(BuildContext context,var tasktype) {
                     SizedBox(width: width*0.07,),
                     Icon(Icons.people,color: Colors.black38,),
                     Spacer(),
-                    Container(
-                      height: height*0.05,
-                      width: width*0.12,
-                      decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                        color: Color(0XFFE1BEE7)
-                      ),
-                      child: Center(
-                        child: Icon(Icons.send,color: Colors.blueAccent,),
+                    InkWell(
+                      onTap: ()
+                      async {
+
+
+
+                         await statuschangeleadcontroller.closePreviousTasks(
+                            orgId: orgId, leadId: leadDocId);
+
+                        statuschangeleadcontroller.addNewMap(
+                            orgId: orgId, leadId: leadDocId,
+                            by: by,
+                            notes: "Make a ${newStatus} call to ${leadname}",
+                            pri: "priority 1", sts: "pending",
+                            schedule: "schedule");
+
+                       /*statuschangeleadcontroller.closeAllPreviousTasks
+                          (orgId: orgId, closingComments: "completed",
+                            leadSchFetchedData: mapsList, newStatus:
+                            newStatus, data: data, userId:user!.uid , ddMy: ddMy,
+                            leadStatus: oldStatus,
+                            tomorrowDate: timestamp,
+                            context: context, leadid: leadDocId);
+
+
+
+
+
+
+
+
+
+                      statuschangeleadcontroller.addLeadScheduler
+                          (orgId: orgId, did: leadDocId,
+                            data: data, schStsA: "pending");*/
+
+
+
+                        statuschangeleadcontroller.updateLeadStatus(
+                            orgId: orgId, projectId: projectId,
+                            leadDocId: leadDocId, oldStatus: oldStatus,
+                            newStatus: newStatus, by: by, context: context);
+
+                       if (Navigator.canPop(context)) {
+                         Navigator.pop(context);
+                       }
+                      },
+
+                      child: Container(
+                        height: height*0.05,
+                        width: width*0.12,
+                        decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                          color: Color(0XFFE1BEE7)
+                        ),
+                        child: Center(
+
+                          child: Icon(Icons.send,color: Colors.blueAccent,),
+                        ),
                       ),
                     )
 

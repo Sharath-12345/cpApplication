@@ -51,7 +51,6 @@ class _HomePageState extends State<HomePage> {
    initState()  {
    fetchCallLogs();
 
-
   matchAndStoreCallLogs();
   }
 
@@ -142,547 +141,256 @@ class _HomePageState extends State<HomePage> {
     homeController.getvisitfixedleads();
     homeController.getvisitdoneleads();
     homeController.getnegotiationleads();
+    homeController.getnotintrestedleads();
     homeController.getTotalTasks();
 
 
-    fetchCallLogs();
-    matchAndStoreCallLogs();
 
 
 
     return Obx(()=>
-      Scaffold(
-        appBar: AppBar(
+      RefreshIndicator(
+        onRefresh: () async {
+      await Future.delayed(
+      const Duration(seconds: 1),
+
+      );
+      setState(() {
+
+      });
+
+      },
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: const Color(0xff0D0D0D),
+            title:
+            Text('Leads Manager', style: TextStyle(
+              color: Color.fromRGBO(255, 255, 255, 1),
+              fontFamily: 'SpaceGrotesk',
+              fontSize: 22,
+              letterSpacing: 0,
+              fontWeight: FontWeight.bold,
+              //height: 0.8461538461538461
+            ),),
+
+          ),
           backgroundColor: const Color(0xff0D0D0D),
-          title:
-          Text('Leads Manager', style: TextStyle(
-            color: Color.fromRGBO(255, 255, 255, 1),
-            fontFamily: 'SpaceGrotesk',
-            fontSize: 22,
-            letterSpacing: 0,
-            fontWeight: FontWeight.bold,
-            //height: 0.8461538461538461
-          ),),
+          body: DefaultTabController(
+            initialIndex: 0,
+            length: 8,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(3, 0, 0, 8),
+              child: NestedScrollView(
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
 
-        ),
-        backgroundColor: const Color(0xff0D0D0D),
-        body: DefaultTabController(
-          initialIndex: 0,
-          length: 8,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(3, 0, 0, 8),
-            child: NestedScrollView(
-                  headerSliverBuilder: (context, innerBoxIsScrolled) {
-                    return [
-
-                      SliverAppBar(
-                        backgroundColor: Color(0xff0D0D0D),
-                        expandedHeight: height*0.16,
-                        floating: false,
-                        pinned: false,
-                        flexibleSpace: FlexibleSpaceBar(
-                          background: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                      height: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .height * 0.120,
-                                      width: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .width * 0.47,
-                                      decoration: BoxDecoration(
-                                        color: Color.fromRGBO(28, 28, 30, 1),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text("${homeController.totaltasks}", style: TextStyle(
-                                              color: Color.fromRGBO(255, 255, 255, 1),
-
-                                              fontSize: 17,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              //height: 0.8461538461538461
-                                            ),),
-                                            SizedBox(height: 4,),
-                                            Text("Tasks", style: TextStyle(
-                                              color: Color.fromRGBO(255, 255, 255, 1),
-                                              fontFamily: 'SpaceGrotesk',
-                                              fontSize: 17,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              //height: 0.8461538461538461
-                                            ),)
-                                          ],
+                        SliverAppBar(
+                          backgroundColor: Color(0xff0D0D0D),
+                          expandedHeight: height*0.16,
+                          floating: false,
+                          pinned: false,
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                        height: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height * 0.120,
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width * 0.47,
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(28, 28, 30, 1),
                                         ),
-                                      )
-
-                                  ),
-                                  SizedBox(width: 9,),
-                                  Container(
-                                      width: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .width * 0.47,
-                                      height: MediaQuery
-                                          .of(context)
-                                          .size
-                                          .height * 0.120,
-                                      decoration: BoxDecoration(
-                                        color: Color.fromRGBO(89, 66, 60, 1),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text("${homeController.totalleads
-                                                .toString()}", style: TextStyle(
-                                              color: Color.fromRGBO(255, 255, 255, 1),
-
-                                              fontSize: 17,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              //height: 0.8461538461538461
-                                            ),),
-                                            SizedBox(height: 4,),
-                                            Text("Leads", style: TextStyle(
-                                              color: Color.fromRGBO(255, 255, 255, 1),
-                                              fontFamily: 'SpaceGrotesk',
-                                              fontSize: 17,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.bold,
-                                              //height: 0.8461538461538461
-                                            ),),
-
-                                          ],
-                                        ),
-                                      )
-                                  )
-                                ],
-                              ),
-                              SizedBox(height: height*0.01,)
-                            ],
-                          ),
-                        ), // FlexibleSpaceBar
-                      ),
-
-
-                      SliverPersistentHeader(
-
-                        pinned: true,
-                        delegate: _TabBarDelegate(MyTabBar()),
-                      ),
-                    ];
-                  },
-                body:
-                SizedBox(
-                  height: MediaQuery.of(context).size.height*0.5,
-                  child: TabBarView(
-                    children: [
-                      RefreshIndicator(
-                        onRefresh: () async {
-                          await Future.delayed(Duration(seconds: 1),
-                          );
-                          setState(() {
-          
-                          });
-                        },
-                        child: ListView.builder(
-                            itemCount: homeController.newleads.value,
-                            itemBuilder:(context,index)
-                            {
-                              final single=homeController.newleadslist[index];
-                              return InkWell(
-                                onTap: ()
-                                {
-                                  Get.to(()=>LeadDetailsScreen(), arguments: {
-                                    "leaddetails" : single,
-
-                                  });
-                                },
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width*90,
-                                    height: MediaQuery.of(context).size.height*0.1,
-                                    decoration: BoxDecoration(
-                                      color : Color.fromRGBO(28, 28, 30, 1),
-                                    ),
-                                    child: Padding(
-                                      padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                      child: Row(
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .start,
                                             children: [
-                                              Text("${single['Name']}",style: TextStyle(
-                                                  color: Colors.white,fontWeight: FontWeight.bold,
-                                                  fontFamily: 'SpaceGrotesk'
+                                              Text("${homeController.totaltasks}", style: TextStyle(
+                                                color: Color.fromRGBO(255, 255, 255, 1),
+
+                                                fontSize: 17,
+                                                letterSpacing: 0,
+                                                fontWeight: FontWeight.bold,
+                                                //height: 0.8461538461538461
                                               ),),
-                                              Text("NA",style: TextStyle(
-                                                  color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                              )),
-                                              Text("new",style: TextStyle(
-                                                  color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                              ))
+                                              SizedBox(height: 4,),
+                                              Text("Tasks", style: TextStyle(
+                                                color: Color.fromRGBO(255, 255, 255, 1),
+                                                fontFamily: 'SpaceGrotesk',
+                                                fontSize: 17,
+                                                letterSpacing: 0,
+                                                fontWeight: FontWeight.bold,
+                                                //height: 0.8461538461538461
+                                              ),)
                                             ],
                                           ),
-                                          Spacer(),
-                                          InkWell(
-                                            child: Container(
-                                                width: 55,
-                                                height: 33,
-                                                child:Center(child: Text("Call")),
-                                                decoration: BoxDecoration(
-                                                  color : Color.fromRGBO(255, 255, 255, 1),
-                                                )
-                                            ),
-                                            onTap: ()
-                                            {
-                                              FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                            },
-                                          )
-                                        ],
-                                      ),
+                                        )
+
+                                    ),
+                                    SizedBox(width: 9,),
+                                    Container(
+                                        width: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width * 0.47,
+                                        height: MediaQuery
+                                            .of(context)
+                                            .size
+                                            .height * 0.120,
+                                        decoration: BoxDecoration(
+                                          color: Color.fromRGBO(89, 66, 60, 1),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Text("${homeController.totalleads
+                                                  .toString()}", style: TextStyle(
+                                                color: Color.fromRGBO(255, 255, 255, 1),
+
+                                                fontSize: 17,
+                                                letterSpacing: 0,
+                                                fontWeight: FontWeight.bold,
+                                                //height: 0.8461538461538461
+                                              ),),
+                                              SizedBox(height: 4,),
+                                              Text("Leads", style: TextStyle(
+                                                color: Color.fromRGBO(255, 255, 255, 1),
+                                                fontFamily: 'SpaceGrotesk',
+                                                fontSize: 17,
+                                                letterSpacing: 0,
+                                                fontWeight: FontWeight.bold,
+                                                //height: 0.8461538461538461
+                                              ),),
+
+                                            ],
+                                          ),
+                                        )
                                     )
-          
+                                  ],
                                 ),
-                              );
-                            }
-          
+                                SizedBox(height: height*0.01,)
+                              ],
+                            ),
+                          ), // FlexibleSpaceBar
                         ),
-                      ),
-                      ListView.builder(
-                          itemCount: homeController.followupleads.value,
-                          itemBuilder:(context,index)
-                          {
-                            final single=homeController.followupleadslist[index];
-                            return InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>LeadDetailsScreen(), arguments: {
-                                  "leaddetails" : single,
 
-                                });
-                              },
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*90,
-                                  height: MediaQuery.of(context).size.height*0.1,
-                                  decoration: BoxDecoration(
-                                    color : Color.fromRGBO(28, 28, 30, 1),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                        SliverPersistentHeader(
+
+                          pinned: true,
+                          delegate: _TabBarDelegate(MyTabBar()),
+                        ),
+                      ];
+                    },
+                  body:
+                  RefreshIndicator(
+                    onRefresh:() async {
+                      await Future.delayed(
+                        const Duration(seconds: 1),
+
+                      );
+                      setState(() {
+
+                      });
+
+                    } ,
+                    child: SizedBox(
+
+                      height: MediaQuery.of(context).size.height*0.5,
+                      child: TabBarView(
+                        children: [
+                          LeadsListView(leadsList: homeController.newleadslist, status: "New"),
+                          LeadsListView(leadsList: homeController.followupleadslist, status: "FollowUp"),
+                          LeadsListView(leadsList: homeController.visitfixedleadslist, status: "Visit Fixed"),
+                          LeadsListView(leadsList: homeController.visitdoneleadslist, status: "Visit Done"),
+                          LeadsListView(leadsList: homeController.negotiationleadslist, status: "Negotiations"),
+
+                          ListView.builder(
+                              itemCount: homeController.notintrestedleads.value,
+                              itemBuilder:(context,index)
+                              {
+                                final single=homeController.notintrestedleadslist[index];
+                                return InkWell(
+                                  onTap: ()
+                                  {
+                                    Get.to(()=>LeadDetailsScreen(), arguments: {
+                                      "leaddetails" : single,
+
+                                    });
+                                  },
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width*90,
+                                      height: MediaQuery.of(context).size.height*0.1,
+                                      decoration: BoxDecoration(
+                                        color : Color.fromRGBO(28, 28, 30, 1),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
+                                        child: Row(
                                           children: [
-                                            Text("${single['Name']}",style: TextStyle(
-                                                color: Colors.white,fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk'
-                                            ),),
-                                            Text("NA",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            )),
-                                            Text("followup",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            ))
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("${single['Name']}",style: TextStyle(
+                                                    color: Colors.white,fontWeight: FontWeight.bold,
+                                                    fontFamily: 'SpaceGrotesk'
+                                                ),),
+                                                Text("NA",style: TextStyle(
+                                                    color: Colors.white,fontFamily: 'SpaceGrotesk'
+                                                )),
+                                                Text("visitfixed",style: TextStyle(
+                                                    color: Colors.white,fontFamily: 'SpaceGrotesk'
+                                                ))
+                                              ],
+                                            ),
+                                            Spacer(),
+                                            InkWell(
+                                              onTap: ()
+                                              {
+                                                FlutterDirectCallerPlugin.callNumber(single['Mobile']);
+                                              },
+                                              child: Container(
+                                                  width: 55,
+                                                  height: 33,
+                                                  child:Center(child: Text("Call")),
+                                                  decoration: BoxDecoration(
+                                                    color : Color.fromRGBO(255, 255, 255, 1),
+                                                  )
+                                              ),
+                                            )
                                           ],
                                         ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: ()
-                                          {
-                                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                          },
-                                          child: Container(
-                                              width: 55,
-                                              height: 33,
-                                              child:Center(child: Text("Call")),
-                                              decoration: BoxDecoration(
-                                                color : Color.fromRGBO(255, 255, 255, 1),
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-          
-                              ),
-                            );
-                          }
-          
-                      ),
-          
-                      ListView.builder(
-                          itemCount: homeController.visitfixedleads.value,
-                          itemBuilder:(context,index)
-                          {
-                            final single=homeController.visitfixedleadslist[index];
-                            return InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>LeadDetailsScreen(), arguments: {
-                                  "leaddetails" : single,
+                                      )
 
-                                });
-                              },
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*90,
-                                  height: MediaQuery.of(context).size.height*0.1,
-                                  decoration: BoxDecoration(
-                                    color : Color.fromRGBO(28, 28, 30, 1),
                                   ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("${single['Name']}",style: TextStyle(
-                                                color: Colors.white,fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk'
-                                            ),),
-                                            Text("NA",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            )),
-                                            Text("visitfixed",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            ))
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: ()
-                                          {
-                                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                          },
-                                          child: Container(
-                                              width: 55,
-                                              height: 33,
-                                              child:Center(child: Text("Call")),
-                                              decoration: BoxDecoration(
-                                                color : Color.fromRGBO(255, 255, 255, 1),
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-          
-                              ),
-                            );
-                          }
-          
-                      ),
-                      ListView.builder(
-                          itemCount: homeController.visitdoneleads.value,
-                          itemBuilder:(context,index)
-                          {
-                            final single=homeController.visitdoneleadslist[index];
-                            return InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>LeadDetailsScreen(), arguments: {
-                                  "leaddetails" : single,
+                                );
 
-                                });
-                              },
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*90,
-                                  height: MediaQuery.of(context).size.height*0.1,
-                                  decoration: BoxDecoration(
-                                    color : Color.fromRGBO(28, 28, 30, 1),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("${single['Name']}",style: TextStyle(
-                                                color: Colors.white,fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk'
-                                            ),),
-                                            Text("NA",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            )),
-                                            Text("visitdone",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            ))
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: ()
-                                          {
-                                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                          },
-                                          child: Container(
-                                              width: 55,
-                                              height: 33,
-                                              child:Center(child: Text("Call")),
-                                              decoration: BoxDecoration(
-                                                color : Color.fromRGBO(255, 255, 255, 1),
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-          
-                              ),
-                            );
-                          }
-          
-                      ),
-                      ListView.builder(
-                          itemCount: homeController.negotiationleads.value,
-                          itemBuilder:(context,index)
-                          {
-                            final single=homeController.negotiationleadslist[index];
-                            return InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>LeadDetailsScreen(), arguments: {
-                                  "leaddetails" : single,
+                              }
 
-                                });
-                              },
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*90,
-                                  height: MediaQuery.of(context).size.height*0.1,
-                                  decoration: BoxDecoration(
-                                    color : Color.fromRGBO(28, 28, 30, 1),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("${single['Name']}",style: TextStyle(
-                                                color: Colors.white,fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk'
-                                            ),),
-                                            Text("NA",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            )),
-                                            Text("visitfixed",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            ))
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: ()
-                                          {
-                                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                          },
-                                          child: Container(
-                                              width: 55,
-                                              height: 33,
-                                              child:Center(child: Text("Call")),
-                                              decoration: BoxDecoration(
-                                                color : Color.fromRGBO(255, 255, 255, 1),
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-          
-                              ),
-                            );
-          
-                          }
-          
+                          ),
+                          Text("   "),
+                          Text("   "),
+                        ],
                       ),
-                      ListView.builder(
-                          itemCount: homeController.notintrestedleads.value,
-                          itemBuilder:(context,index)
-                          {
-                            final single=homeController.notintrestedleadslist[index];
-                            return InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>LeadDetailsScreen(), arguments: {
-                                  "leaddetails" : single,
-
-                                });
-                              },
-                              child: Container(
-                                  width: MediaQuery.of(context).size.width*90,
-                                  height: MediaQuery.of(context).size.height*0.1,
-                                  decoration: BoxDecoration(
-                                    color : Color.fromRGBO(28, 28, 30, 1),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                    child: Row(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text("${single['Name']}",style: TextStyle(
-                                                color: Colors.white,fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk'
-                                            ),),
-                                            Text("NA",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            )),
-                                            Text("visitfixed",style: TextStyle(
-                                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                            ))
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        InkWell(
-                                          onTap: ()
-                                          {
-                                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                          },
-                                          child: Container(
-                                              width: 55,
-                                              height: 33,
-                                              child:Center(child: Text("Call")),
-                                              decoration: BoxDecoration(
-                                                color : Color.fromRGBO(255, 255, 255, 1),
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  )
-          
-                              ),
-                            );
-          
-                          }
-          
-                      ),
-                      Text("   "),
-                      Text("   "),
-                    ],
+                    ),
                   ),
-                ),
-          
-          ),
-                ),
-        )
+
+            ),
+                  ),
+          )
+        ),
       ),
     );
   }
@@ -711,4 +419,110 @@ class _HomePageState extends State<HomePage> {
   @override
   bool shouldRebuild(covariant _TabBarDelegate oldDelegate) => false;
   }
+
+
+class LeadsListView extends StatefulWidget {
+  final List<QueryDocumentSnapshot> leadsList;
+  final String status;
+
+  const LeadsListView({super.key, required this.leadsList, required this.status});
+
+  @override
+  State<LeadsListView> createState() => _LeadsListViewState();
+}
+
+class _LeadsListViewState extends State<LeadsListView> {
+  final HomeController homeController=Get.find<HomeController>();
+  @override
+  Widget build(BuildContext context) {
+    homeController.getTotalTasks();
+
+    homeController.getleads();
+    homeController.getnewleads();
+    homeController.getfollowleads();
+    homeController.getvisitfixedleads();
+    homeController.getvisitdoneleads();
+    homeController.getnegotiationleads();
+    homeController.getnotintrestedleads();
+
+
+    return RefreshIndicator(
+      onRefresh: () async {
+        await Future.delayed(
+          const Duration(seconds: 1),
+
+        );
+        setState(() {
+
+        });
+
+      },
+      child: ListView.builder(
+          itemCount: widget.leadsList.length,
+          itemBuilder:(context,index)
+          {
+            final single=widget.leadsList[index];
+            return InkWell(
+              onTap: ()
+              {
+                Get.to(()=>LeadDetailsScreen(), arguments: {
+                  "leaddetails" : single,
+
+                });
+                setState(() {
+
+                });
+              },
+              child: Container(
+                  width: MediaQuery.of(context).size.width*90,
+                  height: MediaQuery.of(context).size.height*0.1,
+                  decoration: BoxDecoration(
+                    color : Color.fromRGBO(28, 28, 30, 1),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
+                    child: Row(
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("${single['Name']}",style: TextStyle(
+                                color: Colors.white,fontWeight: FontWeight.bold,
+                                fontFamily: 'SpaceGrotesk'
+                            ),),
+                            Text("NA",style: TextStyle(
+                                color: Colors.white,fontFamily: 'SpaceGrotesk'
+                            )),
+                            Text(widget.status,style: TextStyle(
+                                color: Colors.white,fontFamily: 'SpaceGrotesk'
+                            ))
+                          ],
+                        ),
+                        Spacer(),
+                        InkWell(
+                          onTap: ()
+                          {
+                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
+                          },
+                          child: Container(
+                              width: 55,
+                              height: 33,
+                              child:Center(child: Text("Call")),
+                              decoration: BoxDecoration(
+                                color : Color.fromRGBO(255, 255, 255, 1),
+                              )
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+
+              ),
+            );
+          }
+
+      ),
+    );
+  }
+}
 

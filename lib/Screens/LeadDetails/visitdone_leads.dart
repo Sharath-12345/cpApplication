@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saleapp/Auth/auth_controller.dart';
+import 'package:saleapp/BottomPopups/popup_status_change_lead_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdoneleads_controller.dart';
+import 'package:saleapp/Utilities/snackbar.dart';
 
 class VisitDoneLeads extends StatefulWidget
 {
@@ -15,6 +20,10 @@ class VisitDoneLeads extends StatefulWidget
 class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProviderStateMixin {
   final VisitDoneLeadsController visitDoneLeadsController=Get.put<
       VisitDoneLeadsController>(VisitDoneLeadsController());
+  var  leaddetails = Get.arguments;
+  final statuschangeleadcontroller=Get.find<StatusChangeLead>();
+  final authController=Get.find<AuthController>();
+  final user=FirebaseAuth.instance.currentUser;
 
   late  TabController _tabController;
 
@@ -32,6 +41,14 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
 
   @override
   Widget build(BuildContext context) {
+  var orgId=authController.currentUserObj['orgId'];
+  var projectId=leaddetails['ProjectId'];
+  var leadDocId=leaddetails.id;
+  var  oldStatus=leaddetails['Status'];
+  var newStatus="visitdone";
+  print(newStatus);
+  var by=leaddetails['assignedToObj']['name'];
+  var leadname=leaddetails['Name'];
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
     return Scaffold(
@@ -173,36 +190,85 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                             ),),
                           ),
                           Spacer(),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 12),
-                            child: Container(
-                              width: width*0.40,
-                              height: height*0.06,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF651FFF),
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              child: Center(
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 19),
-                                      child: Text("VISIT DONE",style: TextStyle(color: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'),),
-                                    ),
-                                    Spacer(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 12),
-                                      child: Container(
+                          InkWell(
+                            onTap: ()
+                            {
 
-                                        child: Icon(Icons.chevron_right,color: Colors.black,),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          shape: BoxShape.circle
-                                        ),
+
+                              /*
+                              var y = "Make a Visit Done call to $leadname";
+                              final data = {
+                                "stsType": "Visit Done" ?? "none",
+                                "assTo": user?.displayName ?? user?.email,
+                                "assToId": user?.uid,
+                                "by": user?.displayName ?? user?.email,
+                                "cby": user?.uid,
+                                "type": "schedule",
+                                "pri": " ",
+                                "notes": (y == "") ? "Negotiate with customer" : y,
+                                "sts": "pending",
+                                "schTime":
+                                //(tempLeadStatus == "booked")
+                                //?
+                                Timestamp.now().millisecondsSinceEpoch + 10800000
+                                // : startDate.millisecondsSinceEpoch
+                                ,
+                                "ct": Timestamp.now().millisecondsSinceEpoch,
+                              };
+
+
+
+
+
+
+                              statuschangeleadcontroller.addLeadScheduler
+                                (orgId: orgId, did: leadDocId,
+                                  data: data, schStsA: "pending");
+
+
+
+                              statuschangeleadcontroller.updateLeadStatus(
+                                  orgId: orgId, projectId: projectId,
+                                  leadDocId: leadDocId, oldStatus: oldStatus,
+                                  newStatus: newStatus, by: by, context: context);
+
+                              if (Navigator.canPop(context)) {
+                                Navigator.pop(context);
+                              }
+                              snackBarMsg("Status Updated");*/
+
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 12),
+                              child: Container(
+                                width: width*0.40,
+                                height: height*0.06,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFF651FFF),
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 19),
+                                        child: Text("VISIT DONE",style: TextStyle(color: Colors.white,
+                                        fontFamily: 'SpaceGrotesk'),),
                                       ),
-                                    )
-                                  ],
+                                      Spacer(),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 12),
+                                        child: Container(
+
+                                          child: Icon(Icons.chevron_right,color: Colors.black,),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -211,16 +277,7 @@ class _VisitDoneLeadsState extends State<VisitDoneLeads> with SingleTickerProvid
                       ),
                     )
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
                   ],
               ),
             ),

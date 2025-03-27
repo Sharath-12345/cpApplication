@@ -17,12 +17,18 @@ class HomeController extends GetxController
 
 
  var Totalleadslist;
-   var newleadslist;
-   var followupleadslist;
-   var visitfixedleadslist;
-   var visitdoneleadslist;
-   var negotiationleadslist;
-   var notintrestedleadslist;
+   var newleadslist=
+       <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+   var followupleadslist=
+   <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+   var visitfixedleadslist=
+   <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+   var visitdoneleadslist=
+   <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+   var negotiationleadslist=
+   <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+   var notintrestedleadslist=
+   <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
    var totaltasks=0.obs;
 
  var totalleads=0.obs;
@@ -90,7 +96,9 @@ class HomeController extends GetxController
 
   Future<void> getleads()
   async {
-    var ref=FirebaseFirestore.instance.
+
+      
+     var ref=FirebaseFirestore.instance.
     collection("${authController.currentUserObj['orgId']}_leads");
 
 
@@ -102,7 +110,8 @@ class HomeController extends GetxController
       'new',
       'followup',
       'visitfixed',
-      'visitdone','negotiation'
+      'visitdone','negotiation',
+      'Followup'
     ]);
     QuerySnapshot totalleadsquerySnapshot;
        totalleadsquerySnapshot = await totalLeadsList.get();
@@ -131,7 +140,7 @@ class HomeController extends GetxController
     var followupleadslist= ref
         .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .where("Status", whereIn: [
-      'followup',
+      'followup','Followup',
     ]);
     QuerySnapshot followupquerySnapshot;
     followupquerySnapshot = await followupleadslist.get();
@@ -192,7 +201,8 @@ class HomeController extends GetxController
          .where("Status", whereIn: [
        'new',
      ]).get();
-     newleadslist=newleadsquery.docs;
+     newleadslist.assignAll(newleadsquery.docs);
+  //   newleadslist=newleadsquery.docs;
     // print(newleadslist[0]);
 
     // print(newleadsquerySnapshot.docs.first.data());
@@ -208,12 +218,10 @@ class HomeController extends GetxController
      var followupleadsquery= await ref
          .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
          .where("Status", whereIn: [
-       'followup',
+       'followup','Followup'
      ]).get();
-      followupleadslist=followupleadsquery.docs;
-    // print(newleadslist[0]);
-
-     // print(newleadsquerySnapshot.docs.first.data());
+     // followupleadslist=followupleadsquery.docs;
+      followupleadslist.assignAll(followupleadsquery.docs);
 
    }
    Future<void> getvisitfixedleads()
@@ -227,8 +235,8 @@ class HomeController extends GetxController
          .where("Status", whereIn: [
        'visitfixed',
      ]).get();
-     visitfixedleadslist=visitfixedleadsquery.docs;
-
+    // visitfixedleadslist=visitfixedleadsquery.docs;
+     visitfixedleadslist.assignAll(visitfixedleadsquery.docs);
 
    }
    Future<void> getvisitdoneleads()
@@ -242,8 +250,8 @@ class HomeController extends GetxController
          .where("Status", whereIn: [
        'visitdone',
      ]).get();
-     visitdoneleadslist=visitdoneleadsquery.docs;
-
+    // visitdoneleadslist=visitdoneleadsquery.docs;
+      visitdoneleadslist.assignAll(visitdoneleadsquery.docs);
 
    }
    Future<void> getnegotiationleads()
@@ -257,7 +265,8 @@ class HomeController extends GetxController
          .where("Status", whereIn: [
        'negotiation',
      ]).get();
-     negotiationleadslist=negotiationleadsquery.docs;
+    // negotiationleadslist=negotiationleadsquery.docs;
+     negotiationleadslist.assignAll(negotiationleadsquery.docs);
 
 
    }
@@ -272,8 +281,8 @@ class HomeController extends GetxController
          .where("Status", whereIn: [
        'notintrested',
      ]).get();
-     notintrestedleadslist=notintrestedleadsquery.docs;
-
+     //notintrestedleadslist=notintrestedleadsquery.docs;
+     notintrestedleadslist.assignAll(notintrestedleadsquery.docs);
 
    }
 

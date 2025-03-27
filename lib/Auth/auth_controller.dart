@@ -3,10 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:saleapp/Auth/login_screen.dart';
+
 import 'package:saleapp/Screens/SuperHomePage/superhomepage_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Screens/Login/login_screen.dart';
 import '../Utilities/snackbar.dart';
 import '../helpers/firebase_help.dart';
 
