@@ -29,6 +29,8 @@ class HomeController extends GetxController
    <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
    var notintrestedleadslist=
    <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
+
+
    var totaltasks=0.obs;
 
  var totalleads=0.obs;
@@ -74,7 +76,7 @@ class HomeController extends GetxController
 
   Future<void> getTotalTasks()
   async {
-
+/*
     Stream<QuerySnapshot<Map<String,dynamic>>> tasks= FirebaseFirestore.instance
         .collection('${authController.currentUserObj['orgId']}_assignedTasks')
      //  .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
@@ -95,7 +97,31 @@ class HomeController extends GetxController
       //  print("Task ID: ${doc.id}, Data: ${doc.data()}");
        // print("_________________________");
       }
-    });
+    });*/
+
+
+    var ref=FirebaseFirestore.instance.
+    collection("${authController.currentUserObj['orgId']}_assignedTasks");
+
+
+
+
+    var totalTaskList= ref
+        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where("Status",
+        whereIn: [
+          'InProgress',
+          'Completed'
+        ]
+    );
+    QuerySnapshot totalleadsquerySnapshot;
+    totalleadsquerySnapshot = await totalTaskList.get();
+    totalleads.value=totalleadsquerySnapshot.size;
+
+
+
+
+
 
   }
 

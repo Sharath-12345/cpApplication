@@ -538,7 +538,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                       height: height*0.4,
                       child: TabBarView(
                         children: [
-                          Center(child: Text("Tasks Content", style: TextStyle(fontSize: 18,color: Colors.white))),
+                          Center(child: Text("", style: TextStyle(fontSize: 18,color: Colors.white))),
                           Obx(()=>
                           //  child:
                               ListView.builder(
@@ -581,7 +581,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 }
                             ),
                           ),
-                          Center(child: Text("Activity Content", style: TextStyle(fontSize: 18,color: Colors.white))),
+                          Center(child: Text("", style: TextStyle(fontSize: 18,color: Colors.white))),
                         ],
                       ),
                     ),

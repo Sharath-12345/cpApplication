@@ -181,25 +181,30 @@ class _HomePageState extends State<HomePage> {
 
       },
         child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: const Color(0xff0D0D0D),
-            title:
-            Text('Leads Manager', style: TextStyle(
-              color: Color.fromRGBO(255, 255, 255, 1),
-              fontFamily: 'SpaceGrotesk',
-              fontSize: 22,
-              letterSpacing: 0,
-              fontWeight: FontWeight.bold,
-              //height: 0.8461538461538461
-            ),),
+            appBar: AppBar(
+              backgroundColor: const Color(0xff0D0D0D),
+              centerTitle: false,
+              title: Padding(
+                padding: const EdgeInsets.only(left: 0),
+                child: Text(
+                  'Leads Manager',
+                  style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1),
+                    fontFamily: 'SpaceGrotesk',
+                    fontSize: 22,
+                    letterSpacing: 0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
 
-          ),
-          backgroundColor: const Color(0xff0D0D0D),
+            backgroundColor: const Color(0xff0D0D0D),
           body: DefaultTabController(
             initialIndex: 0,
             length: 8,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(3, 0, 0, 8),
+              padding: EdgeInsets.fromLTRB(8, 0, 0, 8),
               child: NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
@@ -212,24 +217,71 @@ class _HomePageState extends State<HomePage> {
                           flexibleSpace: FlexibleSpaceBar(
                             background: Column(
                               children: [
-                                Row(
-                                  children: [
-                                    InkWell(
-                                      onTap : ()
-                                     {
-                                       Get.to(()=>TaskReminderScreen());
-                                     },
-                                      child: Container(
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4),
+                                  child: Row(
+                                    children: [
+                                      InkWell(
+                                        onTap : ()
+                                       {
+                                         Get.to(()=>TaskReminderScreen());
+                                       },
+                                        child: Container(
+                                            height: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .height * 0.120,
+                                            width: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width * 0.45,
+                                            decoration: BoxDecoration(
+                                              color: Color.fromRGBO(28, 28, 30, 1),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Obx(
+                                                  ()=> Text("${homeController.totaltasks}", style: TextStyle(
+                                                      color: Color.fromRGBO(255, 255, 255, 1),
+
+                                                      fontSize: 17,
+                                                      letterSpacing: 0,
+                                                      fontWeight: FontWeight.bold,
+                                                      //height: 0.8461538461538461
+                                                    ),),
+                                                  ),
+                                                  SizedBox(height: 4,),
+                                                  Text("Tasks", style: TextStyle(
+                                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                                    fontFamily: 'SpaceGrotesk',
+                                                    fontSize: 17,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.bold,
+                                                    //height: 0.8461538461538461
+                                                  ),)
+                                                ],
+                                              ),
+                                            )
+
+                                        ),
+                                      ),
+                                      SizedBox(width: width*0.028,),
+                                      Container(
+                                          width: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .width * 0.45,
                                           height: MediaQuery
                                               .of(context)
                                               .size
                                               .height * 0.120,
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.47,
                                           decoration: BoxDecoration(
-                                            color: Color.fromRGBO(28, 28, 30, 1),
+                                            color: Color.fromRGBO(89, 66, 60, 1),
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
@@ -238,75 +290,31 @@ class _HomePageState extends State<HomePage> {
                                               crossAxisAlignment: CrossAxisAlignment
                                                   .start,
                                               children: [
-                                                Obx(
-                                                ()=> Text("${homeController.totaltasks}", style: TextStyle(
-                                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                                Text("${homeController.totalleads
+                                                    .toString()}", style: TextStyle(
+                                                  color: Color.fromRGBO(255, 255, 255, 1),
 
-                                                    fontSize: 17,
-                                                    letterSpacing: 0,
-                                                    fontWeight: FontWeight.bold,
-                                                    //height: 0.8461538461538461
-                                                  ),),
-                                                ),
+                                                  fontSize: 17,
+                                                  letterSpacing: 0,
+                                                  fontWeight: FontWeight.bold,
+                                                  //height: 0.8461538461538461
+                                                ),),
                                                 SizedBox(height: 4,),
-                                                Text("Tasks", style: TextStyle(
+                                                Text("Leads", style: TextStyle(
                                                   color: Color.fromRGBO(255, 255, 255, 1),
                                                   fontFamily: 'SpaceGrotesk',
                                                   fontSize: 17,
                                                   letterSpacing: 0,
                                                   fontWeight: FontWeight.bold,
                                                   //height: 0.8461538461538461
-                                                ),)
+                                                ),),
+
                                               ],
                                             ),
                                           )
-
-                                      ),
-                                    ),
-                                    SizedBox(width: 9,),
-                                    Container(
-                                        width: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width * 0.47,
-                                        height: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .height * 0.120,
-                                        decoration: BoxDecoration(
-                                          color: Color.fromRGBO(89, 66, 60, 1),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              Text("${homeController.totalleads
-                                                  .toString()}", style: TextStyle(
-                                                color: Color.fromRGBO(255, 255, 255, 1),
-
-                                                fontSize: 17,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.bold,
-                                                //height: 0.8461538461538461
-                                              ),),
-                                              SizedBox(height: 4,),
-                                              Text("Leads", style: TextStyle(
-                                                color: Color.fromRGBO(255, 255, 255, 1),
-                                                fontFamily: 'SpaceGrotesk',
-                                                fontSize: 17,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.bold,
-                                                //height: 0.8461538461538461
-                                              ),),
-
-                                            ],
-                                          ),
-                                        )
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: height*0.01,)
                               ],
