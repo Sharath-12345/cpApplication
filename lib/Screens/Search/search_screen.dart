@@ -104,25 +104,25 @@ class _SearchScreenState extends State<SearchScreen> {
                           controller.selectedIndex.value = 0,
                         }),
                     _filterChip(1,
-                        title: 'Done',
+                        title: 'New',
                         controller: controller,
                         onTap: () => {
                           controller.selectedIndex.value = 1,
                         }),
                     _filterChip(2,
-                        title: 'Pending',
+                        title: 'FollowUp',
                         controller: controller,
                         onTap: () => {
                           controller.selectedIndex.value = 2,
                         }),
                     _filterChip(3,
-                        title: 'Created',
+                        title: 'Visit Fixed',
                         controller: controller,
                         onTap: () => {
                           controller.selectedIndex.value = 3,
                         }),
                     _filterChip(4,
-                        title: 'Today',
+                        title: 'Visit Done',
                         controller: controller,
                         onTap: () => {
                           controller.selectedIndex.value = 4,
@@ -133,7 +133,7 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             Expanded(
               child: filteredLeads.isEmpty
-                  ? Center(child: Text("No leads found",style: TextStyle(
+                  ? Center(child: Text("",style: TextStyle(
                 color: Colors.white
               ),))
                   : ListView.builder(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
@@ -44,6 +45,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
     receivedList=argument["leaddetails"];
 
 
+
     currentStatus="${receivedList['Status']}";
    controller.printRowsByLuid(receivedList.id);
 
@@ -58,7 +60,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
     var width=MediaQuery.of(context).size.width;
     String fetchedText='${receivedList['Project']}';
     controller.printRowsByLuid(receivedList.id);
-    print(receivedList.id);
+    print("This ${receivedList.id}");
 
 
 
@@ -92,11 +94,32 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                  mainAxisAlignment: MainAxisAlignment.start,
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: [
-                   Text("${receivedList['Name']}",style: TextStyle(
-                       color: Colors.white,fontWeight: FontWeight.bold,
-                       fontFamily: 'SpaceGrotesk',
-                     fontSize: 18
-                   ),),
+                   StreamBuilder<DocumentSnapshot>(
+                     stream: FirebaseFirestore.instance
+                         .collection("${authController.currentUserObj['orgId']}_leads")
+                         .doc(receivedList.id)
+                         .snapshots(),
+                     builder: (context, snapshot) {
+                       if (snapshot.hasData && snapshot.data!.exists) {
+                         final data = snapshot.data!.data() as Map<String, dynamic>;
+                         final name = data['Name'] ?? '';
+                         return Text(
+                           "$name",
+                           style: TextStyle(
+                             color: Colors.white,
+                             fontWeight: FontWeight.bold,
+                             fontFamily: 'SpaceGrotesk',
+                             fontSize: height*0.02,
+                           ),
+                         );
+                       } else if (snapshot.connectionState == ConnectionState.waiting) {
+                         return Text("Loading...", style: TextStyle(color: Colors.white));
+                       } else {
+                         return Text("No Name", style: TextStyle(color: Colors.white));
+                       }
+                     },
+                   ),
+
                    SizedBox(height: 3,),
                    Row(
                      children: [
@@ -109,9 +132,31 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                          ),
                        ),
                        SizedBox(width: 3,),
-                       Text("${receivedList['Mobile']}",style: TextStyle(color: Colors.white
-                       ,fontWeight: FontWeight.w100,),
-                       )
+                       StreamBuilder<DocumentSnapshot>(
+                         stream: FirebaseFirestore.instance
+                             .collection("${authController.currentUserObj['orgId']}_leads")
+                             .doc(receivedList.id)
+                             .snapshots(),
+                         builder: (context, snapshot) {
+                           if (snapshot.hasData && snapshot.data!.exists) {
+                             final data = snapshot.data!.data() as Map<String, dynamic>;
+                             final name = data['Mobile'] ?? '';
+                             return Text(
+                               "$name",
+                               style: TextStyle(
+                                 color: Colors.white,
+                               //  fontWeight: FontWeight.bold,
+                                 fontFamily: 'SpaceGrotesk',
+                                 fontSize: height*0.016,
+                               ),
+                             );
+                           } else if (snapshot.connectionState == ConnectionState.waiting) {
+                             return Text("Loading...", style: TextStyle(color: Colors.white));
+                           } else {
+                             return Text("No Name", style: TextStyle(color: Colors.white));
+                           }
+                         },
+                       ),
                      ],
                    ),
 
@@ -154,62 +199,38 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TabBar(
-                        labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                        indicatorColor: Colors.black,
-                          dividerColor: Colors.black,
-                          tabAlignment: TabAlignment.start,
-                          isScrollable: true,
-                          tabs: [
-                            Tab(child: InkWell(
-                              onTap:  () {
-                                if(!(currentStatus=="new"))
-                                {
-                                  showBottomPopup(context,"New",receivedList);
-                                }
-                              },
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.white,
-                                        width: 2),
-                                  ),
-                                  child: Text("New",style: TextStyle(
-                                      color:  currentStatus=="new"?Colors.green: Colors.white,
-                                     fontFamily: 'SpaceGrotesk'
-                                  ),)
-                              ),
-                            ),),
-                            Tab(child: InkWell(
-                              onTap: ()
-                              {
-                                if(!(currentStatus=="followup"))
-                                  {
-                                    showBottomPopup(context,"Followup",receivedList);
-                                  }
-                              },
-                              child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
+                      StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("${authController.currentUserObj['orgId']}_leads")
+                            .doc(receivedList.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Center(child: CircularProgressIndicator()); // Show loading while waiting
+                          }
 
-                                        color: Colors.white,
-                                        width: 2),
-                                  ),
-                                  child: Text("Followup",style: TextStyle(
-                                      color:  currentStatus=="followup"?Colors.green: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'
-                                  ),)
-                              ),
-                            ),),
-                            Tab(
-                              child: InkWell(
-                                onTap: ()
-                                {
-                                  if(!(currentStatus=="visitfixed"))
-                                  {
-                                    showBottomPopup(context,"Visit Fixed",receivedList);
+                          if (snapshot.hasError) {
+                            return Center(child: Text("Error: ${snapshot.error}"));
+                          }
+
+                          if (!snapshot.hasData || !snapshot.data!.exists) {
+                            return Center(child: Text("No lead data found."));
+                          }
+
+                          final data = snapshot.data!.data() as Map<String, dynamic>;
+                          final currentStatus = (data['Status'] ?? 'new').toString().toLowerCase();
+
+                          return TabBar(
+                            labelPadding: EdgeInsets.symmetric(horizontal: 5),
+                            indicatorColor: Colors.black,
+                            dividerColor: Colors.black,
+                            tabAlignment: TabAlignment.start,
+                            isScrollable: true,
+                            tabs: [
+                              Tab(child: InkWell(
+                                onTap: () {
+                                  if (currentStatus != "new") {
+                                    showBottomPopup(context, "New", receivedList);
                                   }
                                 },
                                 child: Container(
@@ -217,62 +238,91 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.white, width: 2),
                                   ),
-                                  child: Text("Visit Fixed",style: TextStyle(
-                                      color:  currentStatus=="visitfixed"?Colors.green: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'
-                                  ),)
-                                                            ),
-                              ),),
-                            Tab(
-                              child: InkWell(
-                                onTap: ()
-                                {
-                                   Get.to(()=>VisitDoneLeads(),arguments: receivedList);
+                                  child: Text("New", style: TextStyle(
+                                    color: currentStatus == "new" ? Colors.green : Colors.white,
+                                    fontFamily: 'SpaceGrotesk',
+                                  )),
+                                ),
+                              )),
+                              Tab(child: InkWell(
+                                onTap: () {
+                                  if (currentStatus != "followup") {
+                                    showBottomPopup(context, "Followup", receivedList);
+                                  }
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.white, width: 2),
                                   ),
-                                  child: Text("Visit Done",style: TextStyle(
-                                      color:  currentStatus=="visitdone"?Colors.green: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'
-                                  ),)
-                                                            ),
-                              ),),
-                            Tab(child: InkWell(
-                              onTap: ()
-                              {
-                                Get.to(()=>NotIntrestedLeads(),arguments: receivedList);
-                              },
-                              child: Container(
+                                  child: Text("Followup", style: TextStyle(
+                                    color: currentStatus == "followup" ? Colors.green : Colors.white,
+                                    fontFamily: 'SpaceGrotesk',
+                                  )),
+                                ),
+                              )),
+                              Tab(child: InkWell(
+                                onTap: () {
+                                  if (currentStatus != "visitfixed") {
+                                    showBottomPopup(context, "Visit Fixed", receivedList);
+                                  }
+                                },
+                                child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                   decoration: BoxDecoration(
                                     border: Border.all(color: Colors.white, width: 2),
                                   ),
-                                  child: Text("Not Intrested",style: TextStyle(
-                                      color:  currentStatus=="notintrested"?Colors.green: Colors.white,
-                                      fontFamily: 'SpaceGrotesk'
-                                  ),)
-                              ),
-                            ),),
-                            Tab(
-                              child: Container(
+                                  child: Text("Visit Fixed", style: TextStyle(
+                                    color: currentStatus == "visitfixed" ? Colors.green : Colors.white,
+                                    fontFamily: 'SpaceGrotesk',
+                                  )),
+                                ),
+                              )),
+                              Tab(child: InkWell(
+                                onTap: () {
+                                  Get.to(() => VisitDoneLeads(), arguments: receivedList);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  ),
+                                  child: Text("Visit Done", style: TextStyle(
+                                    color: currentStatus == "visitdone" ? Colors.green : Colors.white,
+                                    fontFamily: 'SpaceGrotesk',
+                                  )),
+                                ),
+                              )),
+                              Tab(child: InkWell(
+                                onTap: () {
+                                  Get.to(() => NotIntrestedLeads(), arguments: receivedList);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.white, width: 2),
+                                  ),
+                                  child: Text("Not Intrested", style: TextStyle(
+                                    color: currentStatus == "notintrested" ? Colors.green : Colors.white,
+                                    fontFamily: 'SpaceGrotesk',
+                                  )),
+                                ),
+                              )),
+                              Tab(child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 6),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.white, width: 2),
                                 ),
                                 child: Text("Junk", style: TextStyle(
-                                    color:
-                                    //currentStatus=="new"?
-                                    //Colors.green:
-                                    Colors.white,
-                                    fontFamily: 'SpaceGrotesk'
-                                ),)
-                            ),),
-
-                          ]
+                                  color: Colors.white,
+                                  fontFamily: 'SpaceGrotesk',
+                                )),
+                              )),
+                            ],
+                          );
+                        },
                       )
+
                     ]
                 )
             ),

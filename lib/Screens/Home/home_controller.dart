@@ -74,6 +74,18 @@ class HomeController extends GetxController
    getnotintrestedleads();*/
   }
 
+
+   Stream<int> get totaltasksStream =>FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_assignedTasks")
+       .where('Status', whereIn: [
+     'InProgress',
+     'Completed'
+   ]
+   )
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
    Stream<int> get totalLeadsStream =>FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', whereIn: [

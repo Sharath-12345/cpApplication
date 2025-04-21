@@ -248,16 +248,22 @@ class _HomePageState extends State<HomePage> {
                                                 crossAxisAlignment: CrossAxisAlignment
                                                     .start,
                                                 children: [
-                                                  Obx(
-                                                  ()=> Text("${homeController.totaltasks}", style: TextStyle(
-                                                      color: Color.fromRGBO(255, 255, 255, 1),
-
-                                                      fontSize: 17,
-                                                      letterSpacing: 0,
-                                                      fontWeight: FontWeight.bold,
-                                                      //height: 0.8461538461538461
-                                                    ),),
+                                                  StreamBuilder<int>(
+                                                    stream: homeController.totaltasksStream,
+                                                    builder: (context, snapshot) {
+                                                      final total = snapshot.data ?? 0;
+                                                      return Text(
+                                                        "$total",
+                                                        style: TextStyle(
+                                                          color: Color.fromRGBO(255, 255, 255, 1),
+                                                          fontSize: 17,
+                                                          letterSpacing: 0,
+                                                          fontWeight: FontWeight.bold,
+                                                        ),
+                                                      );
+                                                    },
                                                   ),
+
                                                   SizedBox(height: 4,),
                                                   Text("Tasks", style: TextStyle(
                                                     color: Color.fromRGBO(255, 255, 255, 1),
