@@ -1,0 +1,676 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import 'package:get/get.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+
+import '../../Auth/auth_controller.dart';
+import '../../themes/constant.dart';
+import '../../themes/container.dart';
+import '../../themes/spacing.dart';
+import '../../themes/textFile.dart';
+import '../../themes/themes.dart';
+import 'chart_sample_data.dart';
+import 'dashboard_controller.dart';
+
+//import 'package:timeago/timeago.dart' as timeago;
+
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({Key? key}) : super(key: key);
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  DashboardController dashboardController = Get.put(DashboardController());
+  final  AuthController  UserController = Get.find<AuthController>();
+  late List<String> filterTime = [
+    "All time",
+    "Yesterday",
+    "This week",
+    "7 days ago"
+  ];
+
+  num today = 0;
+  num day2 = 0;
+  num day3 = 0;
+  num day4 = 0;
+  num day5 = 0;
+  num day6 = 0;
+  num day7 = 0;
+  late String time = "All time";
+    Color? color1, color2, color3;
+
+  var currentUserId = FirebaseAuth.instance.currentUser!.uid;
+
+  late TooltipBehavior tooltipBehavior;
+  late List<ChartSampleData> chartData;
+
+  void initTime() {
+    time = time = filterTime.first; // initializing the time field
+    // initializing the time field
+    initChartData();
+  }
+
+  void initState() {
+    // time = filterTime.first;
+    initChartData();
+        color1 = Colors.lightBlueAccent;
+    color2 = Colors.purpleAccent;
+    color3 = Colors.deepPurpleAccent;
+  }
+
+  initChartData() {
+    tooltipBehavior =
+        TooltipBehavior(enable: true, header: '', canShowMarker: false);
+
+    chartData = <ChartSampleData>[
+      ChartSampleData(
+          x: '${DateTime.now().day - 6}',
+          y: day7,
+          pointColor: Constant.softColors.blue.color),
+      ChartSampleData(
+        x: '${DateTime.now().day - 5}',
+        y: day6,
+        pointColor: Constant.softColors.violet.color,
+      ),
+      ChartSampleData(
+        x: '${DateTime.now().day - 4}',
+        y: day5,
+        pointColor: Constant.softColors.orange.color,
+      ),
+      ChartSampleData(
+        x: '${DateTime.now().day - 3}',
+        y: day4,
+        pointColor: Constant.softColors.blue.color,
+      ),
+      ChartSampleData(
+        x: '${DateTime.now().day - 2}',
+        y: day3,
+        pointColor: Constant.softColors.orange.color,
+      ),
+      ChartSampleData(
+        x: '${DateTime.now().day - 1}',
+        y: day2,
+        pointColor: Constant.softColors.blue.color,
+      ),
+      ChartSampleData(
+        x: '${DateTime.now().day}',
+        y: today,
+        pointColor: Constant.softColors.violet.color,
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+          backgroundColor: const Color(0xff0D0D0D),  
+
+      body: SingleChildScrollView(
+        child: Container(
+          padding: FxSpacing.fromLTRB(
+              10, FxSpacing.safeAreaTop(context) + 16, 10, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+                 FxContainer(
+                child: Column(
+                  children: [
+                        Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    FxContainer(
+                      width: 10,
+                      height: 20,
+                      color: Get.theme.primaryContainer,
+                      borderRadiusAll: 2,
+                    ),
+                    FxSpacing.width(8),
+                    FxText.titleSmall(
+                      "My Activity",
+                      fontWeight: 600,
+                    ),
+                  ],
+                ),
+                timeFilter()
+              ],
+            ),
+                    activityGraph(),
+                     merticsCard(),
+                  ],
+                ),
+              ),
+              FxSpacing.height(16),
+              alert(),
+              FxSpacing.height(16),
+              overview(),
+              FxSpacing.height(20),
+              statistics(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget titleRow() {
+    return Row(
+      children: [
+        FxContainer(
+          width: 10,
+          height: 24,
+          color: Get.theme.primaryContainer,
+          borderRadiusAll: 2,
+        ),
+        FxSpacing.width(8),
+        FxText.titleMedium(
+          "Dashboard",
+          fontWeight: 600,
+        ),
+      ],
+    );
+  }
+
+  Widget alert() {
+    return FxContainer(
+      color: Constant.softColors.green.color,
+      child: Row(
+        children: [
+          FxText.bodySmall(
+            'Alert: ',
+            color: Constant.softColors.green.onColor,
+            fontWeight: 700,
+          ),
+          FxText.bodySmall(
+            'This has demo data',
+            color: Constant.softColors.green.onColor,
+            fontWeight: 600,
+            fontSize: 11,
+          )
+        ],
+      ),
+    );
+  }
+   Widget activityGraph() {
+    return Container(
+          margin: FxSpacing.top(36),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 140,
+                height: 140,
+                child: CircularProgressIndicator(
+                    backgroundColor: color1!.withAlpha(20),
+                    value: 0.3,
+                    valueColor: AlwaysStoppedAnimation<Color?>(color1),
+                    strokeWidth: 9),
+              ),
+              SizedBox(
+                width: 165,
+                height: 165,
+                child: CircularProgressIndicator(
+                    backgroundColor: color2!.withAlpha(20),
+                    value: 0.5,
+                    valueColor: AlwaysStoppedAnimation<Color?>(color2),
+                    strokeWidth: 9),
+              ),
+              Container(
+                width: 190,
+                height: 190,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(40))),
+                child: CircularProgressIndicator(
+                    backgroundColor: color3!.withAlpha(20),
+                    value: 0.7,
+                    valueColor: AlwaysStoppedAnimation<Color?>(color3),
+                    strokeWidth: 9),
+              ),
+              SizedBox(
+                width: 120,
+                height: 60,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FxText.headlineSmall("50%",
+                        fontWeight: 700),
+                    FxText.bodySmall("of daily goals",
+                        letterSpacing: -0.2,
+                   
+                        xMuted: true,
+                        fontWeight: 600)
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+       
+    }
+
+    Widget merticsCard() {
+      return     Container(
+          margin: FxSpacing.fromLTRB(0, 48, 0, 0),
+          child: Column(
+            children: [
+              singleElement(
+                  color: color1,
+                  type: "Calls",
+                  inGram: "150",
+                  inPercentage: "40"),
+              Container(
+                margin: FxSpacing.top(16),
+                child: singleElement(
+                    color: color2,
+                    type: "Tasks",
+                    inGram: "120",
+                    inPercentage: "34"),
+              ),
+              Container(
+                margin: FxSpacing.top(16),
+                child: singleElement(
+                    color: color3,
+                    type: "Booked",
+                    inGram: "1",
+                    inPercentage: "36"),
+              ),
+            ],
+          ),
+        );
+    }
+    Widget singleElement(
+      {Color? color,
+      required String type,
+      required String inGram,
+      required String inPercentage}) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+              color: color, borderRadius: BorderRadius.all(Radius.circular(4))),
+        ),
+        Expanded(
+          child: Container(
+            margin: FxSpacing.left(8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: FxText.bodyLarge(type,
+                 ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FxText.bodyLarge("$inGram",
+                        ),
+                  ),
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FxText.titleSmall("$inPercentage%",
+                        fontWeight: 600,),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+
+  Widget timeFilter() {
+    final controller = Get.put<DashboardController>(DashboardController());
+
+    return PopupMenuButton(
+      color: Get.theme.onBackground,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Constant.containerRadius.small)),
+      elevation: 1,
+      child: FxContainer.bordered(
+          paddingAll: 12,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FxText.bodySmall(
+                controller.time,
+              ),
+              FxSpacing.width(8),
+              const Icon(
+                Icons.chevron_right,
+                //FeatherIcons.chevronDown,
+                size: 14,
+              )
+            ],
+          )),
+      itemBuilder: (BuildContext context) => [
+        ...controller.filterTime.map((time) => PopupMenuItem(
+            onTap: () {
+              controller.changeFilter(time);
+            },
+            padding: FxSpacing.x(16),
+            height: 36,
+            child: FxText.bodyMedium(time)))
+      ],
+    );
+  }
+
+  Widget overview() {
+    return Column(
+      children: [
+        FxContainer(
+            child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    FxContainer(
+                      width: 10,
+                      height: 20,
+                      color: Get.theme.primaryContainer,
+                      borderRadiusAll: 2,
+                    ),
+                    FxSpacing.width(8),
+                    FxText.titleSmall(
+                      "Overview",
+                      fontWeight: 600,
+                    ),
+                  ],
+                ),
+                timeFilter()
+              ],
+            ),
+            FxSpacing.height(20),
+            status()
+          ],
+        )),
+      ],
+    );
+  }
+
+  Widget status() {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('${UserController.currentUserObj['orgId']}_assignedTasks')
+                .where("status", isEqualTo: "completed")
+                .where("to_uid",
+                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(child: Text("Something went wrong"));
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasData) {
+                for (var i = 0; i < snapshot.data!.docs.length; i++) {
+                  if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day) {
+                    today = today + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 6) {
+                    day7 = day7 + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 5) {
+                    day6 = day6 + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 4) {
+                    day5 = day5 + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 3) {
+                    day4 = day4 + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 2) {
+                    day3 = day3 + 1;
+                  } else if (snapshot.data!.docs[i]['completedOn'] ==
+                      DateTime.now().day - 1) {
+                    day2 = day2 + 1;
+                  }
+                }
+
+                print(today);
+                initChartData();
+                // print("Completed tasks ${snapshot.data!.docs[1].data()}");
+              }
+
+              return Expanded(
+                child: FxContainer.bordered(
+                  color: Get.theme.Background,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FxText.bodySmall(
+                        'Completed',
+                        fontWeight: 600,
+                        muted: true,
+                      ),
+                      FxSpacing.height(8),
+                      FxText.titleLarge(
+                        '${snapshot.data!.docs.length}',
+                        fontWeight: 700,
+                      ),
+                      FxSpacing.height(8),
+                      FxContainer(
+                          borderRadiusAll: Constant.containerRadius.small,
+                          paddingAll: 6,
+                          color: Get.theme.primaryContainer,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.arrow_upward,
+                                size: 12,
+                                color: Get.theme.onPrimaryContainer,
+                              ),
+                              FxSpacing.width(2),
+                              FxText.bodySmall(
+                                "28%",
+                                color: Get.theme.onPrimaryContainer,
+                              )
+                            ],
+                          ))
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          FxSpacing.width(20),
+          StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance
+                .collection('_assignedTasks')
+                .where("status", isEqualTo: "InProgress")
+                .where("to_uid", isEqualTo: currentUserId)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Center(child: Text("Something went wrong"));
+              } else if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasData) {
+                //print("Inprogressss ${snapshot.data!.docs[0].data()}");
+              }
+
+              return Expanded(
+                  child: FxContainer(
+                color: Get.theme.primaryContainer,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FxText.bodySmall(
+                      'Tasks',
+                      fontWeight: 600,
+                      muted: true,
+                      color: Get.theme.onPrimaryContainer,
+                    ),
+                    FxSpacing.height(8),
+                    FxText.titleLarge(
+                      '${snapshot.data!.docs.length}',
+                      fontWeight: 700,
+                      color: Get.theme.onPrimaryContainer,
+                    ),
+                    FxSpacing.height(8),
+                    FxContainer(
+                        borderRadiusAll: Constant.containerRadius.small,
+                        paddingAll: 6,
+                        color: Get.theme.ErrorContainer,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.arrow_downward,
+                              size: 12,
+                              color: Get.theme.onErrorContainer,
+                            ),
+                            FxSpacing.width(2),
+                            FxText.bodySmall(
+                              "45%",
+                              fontWeight: 600,
+                              color: Get.theme.onErrorContainer,
+                            )
+                          ],
+                        ))
+                  ],
+                ),
+              ));
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget statistics() {
+    return FxContainer(
+        child: Column(
+      children: [
+        StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('${UserController.currentUserObj['orgId']}_assignedTasks')
+              .where("status", isEqualTo: "completed")
+              .where("to_uid",
+                  isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(child: Text("Something went wrong"));
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              initChartData();
+            }
+
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        FxContainer(
+                          width: 10,
+                          height: 20,
+                          color: Get.theme.primaryContainer,
+                          borderRadiusAll: 2,
+                        ),
+                        FxSpacing.width(8),
+                        FxText.titleSmall(
+                          "Completion Ranking",
+                          fontWeight: 600,
+                        ),
+                      ],
+                    ),
+                    timeFilter()
+                  ],
+                ),
+                FxSpacing.height(20),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('${UserController.currentUserObj['orgId']}_assignedTasks')
+                      .where("status", isEqualTo: "completed")
+                      .where("to_uid",
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return const Center(child: Text("Something went wrong"));
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (snapshot.hasData) {
+                      initChartData();
+                    }
+
+                    return salesStatusChart();
+                  },
+                )
+              ],
+            );
+          },
+        )
+      ],
+    ));
+  }
+
+  SfCartesianChart salesStatusChart() {
+    final controller = Get.put<DashboardController>(DashboardController());
+
+    return SfCartesianChart(
+      margin: EdgeInsets.zero,
+      plotAreaBorderWidth: 0,
+      primaryXAxis: CategoryAxis(
+        majorGridLines: const MajorGridLines(
+          width: 0,
+          color: Colors.transparent,
+        ),
+      ),
+      primaryYAxis: NumericAxis(
+          majorGridLines: const MajorGridLines(width: 0),
+          axisLine: const AxisLine(width: 0, color: Colors.transparent),
+          labelFormat: '{value}',
+          majorTickLines:
+              const MajorTickLines(size: 4, color: Colors.transparent)),
+      series: _getDefaultColumnSeries(),
+      tooltipBehavior: tooltipBehavior,
+    );
+  }
+
+  List<ColumnSeries<ChartSampleData, String>> _getDefaultColumnSeries() {
+    final controller = Get.put<DashboardController>(DashboardController());
+
+    return <ColumnSeries<ChartSampleData, String>>[
+      ColumnSeries<ChartSampleData, String>(
+        dataSource: chartData,
+        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
+        yValueMapper: (ChartSampleData sales, _) => sales.y,
+        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
+        width: 0.5,
+        borderRadius: BorderRadius.vertical(
+            top: Radius.circular(Constant.containerRadius.xs)),
+        dataLabelSettings: const DataLabelSettings(
+            isVisible: false, textStyle: TextStyle(fontSize: 10)),
+      )
+    ];
+  }
+}

@@ -160,9 +160,11 @@ class CustomTab extends StatelessWidget {
       MediaQuery.of(context).size.width * 0.29,
 
       decoration: BoxDecoration(
-        color: homeController.tabIndex == tabIndex
+        color:
+        homeController.tabIndex == tabIndex
             ? Color.fromRGBO(89, 66, 60, 1)
-            : Color.fromRGBO(30, 30, 30, 1),
+            :
+          Color.fromRGBO(30, 30, 30, 1),
       ),
       child: Padding(
         padding: EdgeInsets.fromLTRB(15, 5, 0, 5),

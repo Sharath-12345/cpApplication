@@ -77,16 +77,23 @@ class HomeController extends GetxController
 
     Stream<QuerySnapshot<Map<String,dynamic>>> tasks= FirebaseFirestore.instance
         .collection('${authController.currentUserObj['orgId']}_assignedTasks')
-        .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
-        .where("status", isEqualTo: "InProgress")
+     //  .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
+        .where("status",
+        whereIn: [
+          'InProgress',
+          'Completed'
+        ]
+    )
         .where("to_uid", isEqualTo: authController.currentUser?.uid)
         .snapshots();
+   // print(authController.currentUser?.uid);
 
     tasks.listen((querySnapshot) {
        totaltasks.value=querySnapshot.size;
+    //   print("Tasks : $totaltasks");
       for (var doc in querySnapshot.docs) {
-        print("Task ID: ${doc.id}, Data: ${doc.data()}");
-        print("_________________________");
+      //  print("Task ID: ${doc.id}, Data: ${doc.data()}");
+       // print("_________________________");
       }
     });
 
@@ -128,10 +135,10 @@ class HomeController extends GetxController
       'new',
     ]);
 
+
     QuerySnapshot newleadsquerySnapshot;
     newleadsquerySnapshot = await newleadslist.get();
     newleads.value=newleadsquerySnapshot.size;
-   // print(newleadslist.toString());
 
 
 
@@ -202,6 +209,7 @@ class HomeController extends GetxController
        'new',
      ]).get();
      newleadslist.assignAll(newleadsquery.docs);
+
   //   newleadslist=newleadsquery.docs;
     // print(newleadslist[0]);
 

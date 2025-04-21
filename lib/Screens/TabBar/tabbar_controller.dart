@@ -7,7 +7,6 @@ class TabBarController extends GetxController
   chnageTabIndex(int index) {
     tabIndex(index);
     print(tabIndex);
-
   }
 
 

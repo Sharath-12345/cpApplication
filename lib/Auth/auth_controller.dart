@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,8 +24,36 @@ class AuthController extends GetxController {
     print('my value sis c  $newOrgId');
     currentUserObj.assignAll(newOrgId[0].data());
   }
-  void getLoggedInUserDetails() async {
-    var x = await DbQuery.instanace.getLoggedInUserDetails(currentUser?.uid);
+
+
+  Future<void> updateFCMToken() async {
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+    String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+    if (uid != null && fcmToken != null) {
+      await FirebaseFirestore.instance.collection("users").doc(uid).update({
+        "fcmToken": fcmToken,
+      });
+      print("FCM Token updated successfully!");
+    } else {
+      print("Failed to update FCM Token");
+    }
+  }
+  void listenToTokenRefresh() {
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
+      String? uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid != null) {
+        await FirebaseFirestore.instance.collection('users').doc(uid).update({
+          'fcmToken': newToken,
+        });
+        print("FCM Token auto-refreshed and updated!");
+      }
+    });
+  }
+
+  Future<void> getLoggedInUserDetails() async {
+    var x = await DbQuery.instanace.getLoggedInUserDetails(
+        FirebaseAuth.instance.currentUser?.uid);
     setOrgId(x);
   }
 
@@ -39,7 +68,7 @@ class AuthController extends GetxController {
     firebaseUser.bindStream(_auth.authStateChanges());
   }
 
-  // Login with email and password
+
   Future<void> login(String email, String password) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
@@ -48,8 +77,13 @@ class AuthController extends GetxController {
 
           await requestCallPermission();
          await storeDetailsInLocal();
-        Get.offAll(() => SuperHomePage());
+        await getLoggedInUserDetails();
         snackBarMsg("Sucess");
+       Get.offAll(() => SuperHomePage());
+       updateFCMToken();
+       listenToTokenRefresh();
+
+
 
 
       } catch (e) {

@@ -29,36 +29,14 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   var leadstatuschangecontroller=Get.put<StatusChangeLead>(StatusChangeLead());
   var argument = Get.arguments;
 
+
   var receivedList ;
   var calllogs;
   var currentStatus="new";
-  List<Map<String,dynamic>> response=[];
-  int timeinmilli=0;
-
-
-  final SupabaseClient supabase = GetIt.instance<SupabaseClient>();
 
 
 
 
-  Future<void> printRowsByLuid(String luid) async {
-    print(luid);
-    print('${authController.currentUserObj['orgId']}_lead_call_logs');
-    response = await supabase
-        .from('${authController.currentUserObj['orgId']}_lead_call_logs') // Replace with actual table name
-        .select()
-        .eq('Luid', luid); // Filter rows where 'luid' matches
-
-    if (response.isNotEmpty) {
-      print("Rows with luid = $luid: $response");
-      for(var log in response)
-        {
-          print(log['type']);
-        }
-    } else {
-      print("No rows found for luid: $luid");
-    }
-  }
 
   @override
   void initState() {
@@ -67,7 +45,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
 
     currentStatus="${receivedList['Status']}";
-   printRowsByLuid(receivedList.id);
+   controller.printRowsByLuid(receivedList.id);
 
   }
 
@@ -79,7 +57,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
     String fetchedText='${receivedList['Project']}';
-    printRowsByLuid(receivedList.id);
+    controller.printRowsByLuid(receivedList.id);
     print(receivedList.id);
 
 
@@ -484,9 +462,12 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("0",
-                                        style: TextStyle(
-                                            color: Colors.white, fontWeight: FontWeight.bold)),
+                                    Obx(()=>
+                                      //child:
+                                      Text("${controller.response.length}",
+                                          style: TextStyle(
+                                              color: Colors.white, fontWeight: FontWeight.bold)),
+                                    ),
                                     Text("Call log",
                                         style: TextStyle(
                                             color: Colors.white,
@@ -558,44 +539,47 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                       child: TabBarView(
                         children: [
                           Center(child: Text("Tasks Content", style: TextStyle(fontSize: 18,color: Colors.white))),
-                          ListView.builder(
-                              itemCount: response.length,
-                              itemBuilder:(context,index)
-                              {
-                                final singlelog=response[index];
-                                DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
+                          Obx(()=>
+                          //  child:
+                              ListView.builder(
+                                itemCount: controller.response.length,
+                                itemBuilder:(context,index)
+                                {
+                                  final singlelog=controller.response[index];
+                                  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
 
-                                String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-                                return Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10)
-                                      ),
-
-                                      height: height*0.08,
-                                      width: width*0.9,
-
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
-                                        child: Row(
-                                          children: [
-                                            Text("${singlelog['type']}"),
-                                            SizedBox(width: width*0.02,),
-                                            Text("${singlelog['duration']}s"),
-                                            Spacer(),
-                                            Text("${formattedDate}"),
-
-                                          ],
+                                  String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+                                  return Column(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                          borderRadius: BorderRadius.circular(10)
                                         ),
-                                      ),
 
-                                    ),
-                                    Divider(color: Colors.black,height: 3,)
-                                  ],
-                                );
-                              }
+                                        height: height*0.08,
+                                        width: width*0.9,
+
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
+                                          child: Row(
+                                            children: [
+                                              Text("${singlelog['type']}"),
+                                              SizedBox(width: width*0.02,),
+                                              Text("${singlelog['duration']}s"),
+                                              Spacer(),
+                                              Text("${formattedDate}"),
+
+                                            ],
+                                          ),
+                                        ),
+
+                                      ),
+                                      Divider(color: Colors.black,height: 3,)
+                                    ],
+                                  );
+                                }
+                            ),
                           ),
                           Center(child: Text("Activity Content", style: TextStyle(fontSize: 18,color: Colors.white))),
                         ],

@@ -2,6 +2,8 @@
 
 import 'package:call_log_new/call_log_new.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -21,11 +23,14 @@ import 'package:saleapp/Auth/auth_controller.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
+import 'package:saleapp/Screens/TaskRemainder/task_reminder_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:workmanager/workmanager.dart';
 
 import '../../helpers/supaase_help.dart';
 import '../TabBar/tab_bar.dart';
+
+
 
 
 class HomePage extends StatefulWidget
@@ -50,8 +55,11 @@ class _HomePageState extends State<HomePage> {
   @override
    initState()  {
    fetchCallLogs();
-
-  matchAndStoreCallLogs();
+   matchAndStoreCallLogs();
+  }
+  void getToken() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("FCM Token: $token");
   }
 
 
@@ -65,6 +73,7 @@ class _HomePageState extends State<HomePage> {
       for (var call in callLogs!) {
         for (var lead in homeController.Totalleadslist) {
           if (call.number == lead['Mobile']) {
+            print(call.number);
             matchedLogs.add({
               'call_log': call,
               'lead_id': lead.id
@@ -119,6 +128,11 @@ class _HomePageState extends State<HomePage> {
 
         callLogs = await CallLog.fetchCallLogs();
         callLogs=callLogs.take(30).toList();
+        for(var sing in callLogs)
+          {
+           // print(sing.number);
+          }
+
 
       } catch (e) {
         print("Error fetching call logs: $e");
@@ -132,6 +146,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    final auth=Get.find<AuthController>();
+
+    fetchCallLogs();
+    matchAndStoreCallLogs();
+
+    getToken();
 
 
 
@@ -142,7 +162,7 @@ class _HomePageState extends State<HomePage> {
     homeController.getvisitdoneleads();
     homeController.getnegotiationleads();
     homeController.getnotintrestedleads();
-   // homeController.getTotalTasks();
+    homeController.getTotalTasks();
 
 
 
@@ -194,46 +214,54 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Row(
                                   children: [
-                                    Container(
-                                        height: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .height * 0.120,
-                                        width: MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width * 0.47,
-                                        decoration: BoxDecoration(
-                                          color: Color.fromRGBO(28, 28, 30, 1),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            crossAxisAlignment: CrossAxisAlignment
-                                                .start,
-                                            children: [
-                                              Text("${homeController.totaltasks}", style: TextStyle(
-                                                color: Color.fromRGBO(255, 255, 255, 1),
-
-                                                fontSize: 17,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.bold,
-                                                //height: 0.8461538461538461
-                                              ),),
-                                              SizedBox(height: 4,),
-                                              Text("Tasks", style: TextStyle(
-                                                color: Color.fromRGBO(255, 255, 255, 1),
-                                                fontFamily: 'SpaceGrotesk',
-                                                fontSize: 17,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.bold,
-                                                //height: 0.8461538461538461
-                                              ),)
-                                            ],
+                                    InkWell(
+                                      onTap : ()
+                                     {
+                                       Get.to(()=>TaskReminderScreen());
+                                     },
+                                      child: Container(
+                                          height: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .height * 0.120,
+                                          width: MediaQuery
+                                              .of(context)
+                                              .size
+                                              .width * 0.47,
+                                          decoration: BoxDecoration(
+                                            color: Color.fromRGBO(28, 28, 30, 1),
                                           ),
-                                        )
+                                          child: Padding(
+                                            padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment
+                                                  .start,
+                                              children: [
+                                                Obx(
+                                                ()=> Text("${homeController.totaltasks}", style: TextStyle(
+                                                    color: Color.fromRGBO(255, 255, 255, 1),
 
+                                                    fontSize: 17,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.bold,
+                                                    //height: 0.8461538461538461
+                                                  ),),
+                                                ),
+                                                SizedBox(height: 4,),
+                                                Text("Tasks", style: TextStyle(
+                                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                                  fontFamily: 'SpaceGrotesk',
+                                                  fontSize: 17,
+                                                  letterSpacing: 0,
+                                                  fontWeight: FontWeight.bold,
+                                                  //height: 0.8461538461538461
+                                                ),)
+                                              ],
+                                            ),
+                                          )
+
+                                      ),
                                     ),
                                     SizedBox(width: 9,),
                                     Container(
@@ -435,7 +463,7 @@ class _LeadsListViewState extends State<LeadsListView> {
   final HomeController homeController=Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
-   // homeController.getTotalTasks();
+   homeController.getTotalTasks();
 
     homeController.getleads();
     homeController.getnewleads();

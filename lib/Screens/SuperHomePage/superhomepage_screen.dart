@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saleapp/Screens/Dashboard/dashboard_pages.dart';
 import 'package:saleapp/Screens/Dashboard/dashboard_screen.dart';
 import 'package:saleapp/Screens/Home/home_screen.dart';
 import 'package:saleapp/Screens/Profile/profile_screen.dart';
@@ -31,6 +32,8 @@ class _SuperHomePageState extends State<SuperHomePage> {
 
   final AuthController authController = Get.find<AuthController>();
   SuperHomePageController superhomepagecontroller=Get.put(SuperHomePageController());
+
+
 
 
   Future<void> printuserdetails()
@@ -82,6 +85,7 @@ class _SuperHomePageState extends State<SuperHomePage> {
     //getUserDetails();
     printuserdetails();
 
+
     superhomepagecontroller.tabIndex=0.obs;
 
  }
@@ -96,7 +100,7 @@ class _SuperHomePageState extends State<SuperHomePage> {
       
         body: IndexedStack(
           index: superhomepagecontroller.tabIndex.value,
-          children: [HomePage(),DashboardScreen(),SearchScreen(),ProfileScreen()],
+          children: [HomePage(),DashboardPage(),SearchScreen(),ProfileScreen()],
         ),
         bottomNavigationBar: BottomNavigationBar(
             elevation: 0,

@@ -1,11 +1,14 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
 
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/TaskRemainder/task_reminder_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
 
@@ -24,6 +27,28 @@ void getLeadCallLogs(orgId) async {
 
 
 }
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print("Handling a background message: ${message.messageId}");
+  print("message ${message.notification?.body}");
+}
+
+Future<void> clickOnNotification()
+async {
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // print("User clicked on the notification");
+    print("Lead Name ${message.notification?.title}");
+   // print("Mesaage ${message.notification?.body}");
+    String? phone_number=message.notification?.body;
+    print(phone_number);
+   // String? number = RegExp(r'\d+').firstMatch(phone_number!)?.group(0);
+    //print(number);
+
+    FlutterDirectCallerPlugin.callNumber(phone_number!);
+
+  });
+
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,13 +61,34 @@ Future<void> main() async {
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    print('User granted permission');
+  } else {
+    print('User declined permission');
+  }
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  clickOnNotification();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Only allow portrait mode
   ]).then((_) {
     runApp(MyApp());
 
   });
-  getLeadCallLogs("spark");
+  //getLeadCallLogs("${authController.currentUserObj['orgId']}");
 }
 
 class MyApp extends StatelessWidget {
@@ -63,7 +109,9 @@ class MyApp extends StatelessWidget {
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-        home: currentUser == null ? LoginScreen() : SuperHomePage()
+        home:
+        currentUser == null ? LoginScreen() : SuperHomePage()
+        //TaskReminderScreen()
 
     );
   }
