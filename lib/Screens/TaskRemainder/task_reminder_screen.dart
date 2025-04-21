@@ -381,7 +381,7 @@ Widget build(BuildContext context) {
                 ),
               ),
               child: Text(
-                'Completed',
+                task['status'],
                 style: TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.bold,

@@ -248,21 +248,46 @@ class _HomePageState extends State<HomePage> {
                                                 crossAxisAlignment: CrossAxisAlignment
                                                     .start,
                                                 children: [
+
                                                   StreamBuilder<int>(
-                                                    stream: homeController.totaltasksStream,
+                                                    stream:homeController.totaltasksStream,
                                                     builder: (context, snapshot) {
-                                                      final total = snapshot.data ?? 0;
+                                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                                        return Text(
+                                                          "",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 17,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        );
+                                                      }
+
+                                                      if (snapshot.hasError) {
+                                                        return Text(
+                                                          "Error",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 17,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        );
+                                                      }
+
                                                       return Text(
-                                                        "$total",
+                                                        "${snapshot.data ?? 0}",
                                                         style: TextStyle(
-                                                          color: Color.fromRGBO(255, 255, 255, 1),
+                                                          color: Colors.white,
                                                           fontSize: 17,
-                                                          letterSpacing: 0,
                                                           fontWeight: FontWeight.bold,
                                                         ),
                                                       );
                                                     },
                                                   ),
+
+
+
+
 
                                                   SizedBox(height: 4,),
                                                   Text("Tasks", style: TextStyle(

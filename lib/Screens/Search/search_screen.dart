@@ -127,6 +127,18 @@ class _SearchScreenState extends State<SearchScreen> {
                         onTap: () => {
                           controller.selectedIndex.value = 4,
                         }),
+                    _filterChip(5,
+                        title: 'Negotiations',
+                        controller: controller,
+                        onTap: () => {
+                          controller.selectedIndex.value = 5,
+                        }),
+                    _filterChip(6,
+                        title: 'Not Intrested',
+                        controller: controller,
+                        onTap: () => {
+                          controller.selectedIndex.value = 6,
+                        }),
                   ],
                 ),
               ),
@@ -196,7 +208,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: InkWell(
                                   onTap: ()
                                   {
-                                    FlutterDirectCallerPlugin.callNumber("jjj");
+                                    FlutterDirectCallerPlugin.callNumber(filteredLeads[index]['Mobile']);
                                   },
                                   child: Container(
                                     width: 35,

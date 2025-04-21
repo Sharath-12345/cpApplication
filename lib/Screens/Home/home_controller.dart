@@ -77,13 +77,12 @@ class HomeController extends GetxController
 
    Stream<int> get totaltasksStream =>FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_assignedTasks")
-       .where('Status', whereIn: [
+       .where("to_uid", isEqualTo: authController.currentUser?.uid)
+       .where('status', whereIn: [
      'InProgress',
      'Completed'
    ]
-   )
-       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-       .snapshots()
+   ).snapshots()
        .map((snapshot) => snapshot.docs.length);
 
    Stream<int> get totalLeadsStream =>FirebaseFirestore.instance
@@ -174,7 +173,7 @@ class HomeController extends GetxController
 
    Future<void> getTotalTasks()
   async {
-/*
+
     Stream<QuerySnapshot<Map<String,dynamic>>> tasks= FirebaseFirestore.instance
         .collection('${authController.currentUserObj['orgId']}_assignedTasks')
      //  .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
@@ -195,7 +194,7 @@ class HomeController extends GetxController
       //  print("Task ID: ${doc.id}, Data: ${doc.data()}");
        // print("_________________________");
       }
-    });*/
+    });
 
 
     var ref=FirebaseFirestore.instance.
@@ -206,7 +205,7 @@ class HomeController extends GetxController
 
     var totalTaskList= ref
         .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-        .where("Status",
+        .where("status",
         whereIn: [
           'InProgress',
           'Completed'
