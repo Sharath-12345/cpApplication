@@ -74,6 +74,20 @@ class HomeController extends GetxController
    getnotintrestedleads();*/
   }
 
+   Stream<int> get totalLeadsStream =>FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', whereIn: [
+     'new',
+     'followup',
+     'visitfixed',
+     'visitdone','negotiation',
+     'Followup'
+   ]
+   )
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
    Stream<int> get newLeadsStream => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', isEqualTo: 'new')
