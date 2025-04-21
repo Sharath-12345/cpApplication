@@ -151,30 +151,41 @@ class CustomTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.07,
+    return Obx(
+        ()=> Container(
+        height: MediaQuery.of(context).size.height * 0.07,
 
 
-      width: (title=="Negotiations " || title=="NotIntrested") ?
-      MediaQuery.of(context).size.width * 0.25:
-      MediaQuery.of(context).size.width * 0.29,
+        width: (title=="Negotiations " || title=="NotIntrested") ?
+        MediaQuery.of(context).size.width * 0.25:
+        MediaQuery.of(context).size.width * 0.29,
 
-      decoration: BoxDecoration(
-        color:
-        homeController.tabIndex == tabIndex
-            ? Color.fromRGBO(89, 66, 60, 1)
-            :
-          Color.fromRGBO(30, 30, 30, 1),
-      ),
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (count != null) // Show count only if it's provided
+        decoration: BoxDecoration(
+          color:
+          homeController.tabIndex == tabIndex
+              ? Color.fromRGBO(89, 66, 60, 1)
+              :
+            Color.fromRGBO(30, 30, 30, 1),
+        ),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (count != null) // Show count only if it's provided
+                Text(
+                  "$count",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'SpaceGrotesk',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              SizedBox(height: 2),
               Text(
-                "$count",
+                title,
                 style: TextStyle(
                   color: Colors.white,
                   fontFamily: 'SpaceGrotesk',
@@ -182,17 +193,8 @@ class CustomTab extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            SizedBox(height: 2),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
