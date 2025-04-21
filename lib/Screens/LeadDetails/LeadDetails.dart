@@ -511,26 +511,29 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                       ],
                     ),
                     SizedBox(height:height*0.02 ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text('you have ', style: TextStyle(
-                          color: Color.fromRGBO(255, 255, 255, 1),
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: 20,
-                          letterSpacing: 0,
-                          fontWeight: FontWeight.bold,
-                          //height: 0.8461538461538461
-                        ),),
-                        Text( '0 due events', style: TextStyle(
-                          color: Colors.orange,
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: 20,
-                          letterSpacing: 0,
-                          fontWeight: FontWeight.bold,
-                          //height: 0.8461538461538461
-                        ),)
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text('you have ', style: TextStyle(
+                            color: Color.fromRGBO(255, 255, 255, 1),
+                            fontFamily: 'SpaceGrotesk',
+                            fontSize: 20,
+                            letterSpacing: 0,
+                            fontWeight: FontWeight.bold,
+                            //height: 0.8461538461538461
+                          ),),
+                          Text( '0 due events', style: TextStyle(
+                            color: Colors.orange,
+                            fontFamily: 'SpaceGrotesk',
+                            fontSize: 20,
+                            letterSpacing: 0,
+                            fontWeight: FontWeight.bold,
+                            //height: 0.8461538461538461
+                          ),)
+                        ],
+                      ),
                     ),
                     //SizedBox(height:height*0.01),
 
