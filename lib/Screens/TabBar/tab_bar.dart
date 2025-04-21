@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/TabBar/tab_bar.dart';
 import 'package:saleapp/Screens/TabBar/tabbar_controller.dart';
 
 
@@ -31,26 +33,93 @@ class MyTabBar extends StatelessWidget
               labelPadding: EdgeInsets.symmetric(horizontal: 5),
               tabs: [
 
-                Tab(child: CustomTab(title: "New",
-                    count: homeController.newleads.value, tabIndex: 0,
-                    homeController: homeController)),
-                Tab(child: CustomTab(title: "Followup",
-                    count: homeController.followupleads.value, tabIndex: 1,
-                    homeController: homeController)),
-                Tab(child: CustomTab(title: "Visit Fixed",
-                    count: homeController.visitfixedleads.value, tabIndex: 2,
-                    homeController: homeController)),
-                Tab(child: CustomTab(title: "Visit Done",
-                    count: homeController.visitdoneleads.value, tabIndex: 3,
-                    homeController: homeController)),
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.newLeadsStream,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "New",
+                        count: count,
+                        tabIndex: 0,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.followupLeads,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "Followup",
+                        count: count,
+                        tabIndex: 1,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.visitfixedLeads,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "Visit Fixed",
+                        count: count,
+                        tabIndex: 2,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
 
-                Tab(child: CustomTab(title: "Negotiations",
-                    count: homeController.negotiationleads.value, tabIndex: 4,
-                    homeController: homeController)),
-                Tab(child: CustomTab(title: "Not Intrested",
-                    count: homeController.notintrestedleads.value, tabIndex: 5,
-                    homeController: homeController)),
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.visitdoneLeads,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "Visit Done",
+                        count: count,
+                        tabIndex: 3,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
 
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.negotiationsLeads,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "Negotiations",
+                        count: count,
+                        tabIndex: 4,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
+
+                Tab(
+                  child: StreamBuilder<int>(
+                    stream: homeController.notIntrestedLeads,
+                    builder: (context, snapshot) {
+                      final count = snapshot.data ?? 0;
+                      return CustomTab(
+                        title: "Not Intrested",
+                        count: count,
+                        tabIndex: 5,
+                        homeController: homeController,
+                      );
+                    },
+                  ),
+                ),
 
 
 
@@ -116,14 +185,22 @@ class MyTabBar extends StatelessWidget
             SizedBox(height: height*0.03 ,),
             Padding(
               padding: const EdgeInsets.only(left: 4),
-              child: Text('you have ${homeController.showingLeadsCount} due events', style: TextStyle(
-                color: Color.fromRGBO(255, 255, 255, 1),
-                fontFamily: 'SpaceGrotesk',
-                fontSize: 22,
-                letterSpacing: 0,
-                fontWeight: FontWeight.bold,
-                //height: 0.8461538461538461
-              ),),
+              child: StreamBuilder<int>(
+                stream: homeController.getCurrentTabStream(homeController.tabIndex.value, homeController),
+                builder: (context, snapshot) {
+                  final count = snapshot.data ?? 0;
+                  return Text(
+                    'you have $count due events',
+                    style: TextStyle(
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                      fontFamily: 'SpaceGrotesk',
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              )
+
             ),
             SizedBox(height: height*0.03 ,),
 

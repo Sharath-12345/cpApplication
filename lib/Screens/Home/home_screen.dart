@@ -57,6 +57,8 @@ class _HomePageState extends State<HomePage> {
    fetchCallLogs();
    matchAndStoreCallLogs();
   }
+
+
   void getToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
     print("FCM Token: $token");
@@ -150,6 +152,7 @@ class _HomePageState extends State<HomePage> {
 
     fetchCallLogs();
     matchAndStoreCallLogs();
+    print("Home came");
 
     getToken();
 
@@ -347,74 +350,195 @@ class _HomePageState extends State<HomePage> {
                       height: MediaQuery.of(context).size.height*0.5,
                       child: TabBarView(
                         children: [
-                          LeadsListView(leadsList: homeController.newleadslist, status: "New"),
-                          LeadsListView(leadsList: homeController.followupleadslist, status: "FollowUp"),
-                          LeadsListView(leadsList: homeController.visitfixedleadslist, status: "Visit Fixed"),
-                          LeadsListView(leadsList: homeController.visitdoneleadslist, status: "Visit Done"),
-                          LeadsListView(leadsList: homeController.negotiationleadslist, status: "Negotiations"),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status', isEqualTo: 'new')
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
 
-                          ListView.builder(
-                              itemCount: homeController.notintrestedleads.value,
-                              itemBuilder:(context,index)
-                              {
-                                final single=homeController.notintrestedleadslist[index];
-                                return InkWell(
-                                  onTap: ()
-                                  {
-                                    Get.to(()=>LeadDetailsScreen(), arguments: {
-                                      "leaddetails" : single,
+                                final docs = snapshot.data!.docs;
+                                return LeadsListView(
+                                    leadsList: docs, status: "New");
+                              }
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status',whereIn: [
+                                'followup','Followup',
+                              ])
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
 
-                                    });
-                                  },
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width*90,
-                                      height: MediaQuery.of(context).size.height*0.1,
-                                      decoration: BoxDecoration(
-                                        color : Color.fromRGBO(28, 28, 30, 1),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text("${single['Name']}",style: TextStyle(
-                                                    color: Colors.white,fontWeight: FontWeight.bold,
-                                                    fontFamily: 'SpaceGrotesk'
-                                                ),),
-                                                Text("NA",style: TextStyle(
-                                                    color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                                )),
-                                                Text("visitfixed",style: TextStyle(
-                                                    color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                                ))
-                                              ],
+                                final docs = snapshot.data!.docs;
+                                return LeadsListView(
+                                    leadsList: docs, status: "FollowUp");
+                              }
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status', isEqualTo: 'visitfixed')
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
+
+                                final docs = snapshot.data!.docs;
+                                return LeadsListView(
+                                    leadsList: docs, status: "Visit Fixed");
+                              }
+                          ),
+
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status', isEqualTo: 'visitdone')
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
+
+                                final docs = snapshot.data!.docs;
+                                return LeadsListView(
+                                    leadsList: docs, status: "Visit Done");
+                              }
+                          ),
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status', isEqualTo: 'negotiations')
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
+
+                                final docs = snapshot.data!.docs;
+                                return LeadsListView(
+                                    leadsList: docs, status: "Negotiations");
+                              }
+                          ),
+
+                          StreamBuilder<QuerySnapshot>(
+                              stream: FirebaseFirestore.instance
+                                  .collection("${authController.currentUserObj['orgId']}_leads")
+                                  .where('Status', isEqualTo: 'notintrested') // filter like your tab
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                }
+                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                  return Center(
+                                    //child: Text("No new leads")
+                                  );
+                                }
+
+                                final docs = snapshot.data!.docs;
+                                return  ListView.builder(
+                                    itemCount: homeController.notintrestedleads.value,
+                                    itemBuilder:(context,index)
+                                    {
+                                      final single=docs[index];
+                                      return InkWell(
+                                        onTap: ()
+                                        {
+                                          Get.to(()=>LeadDetailsScreen(), arguments: {
+                                            "leaddetails" : single,
+
+                                          });
+                                        },
+                                        child: Container(
+                                            width: MediaQuery.of(context).size.width*90,
+                                            height: MediaQuery.of(context).size.height*0.1,
+                                            decoration: BoxDecoration(
+                                              color : Color.fromRGBO(28, 28, 30, 1),
                                             ),
-                                            Spacer(),
-                                            InkWell(
-                                              onTap: ()
-                                              {
-                                                FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                              },
-                                              child: Container(
-                                                  width: 55,
-                                                  height: 33,
-                                                  child:Center(child: Text("Call")),
-                                                  decoration: BoxDecoration(
-                                                    color : Color.fromRGBO(255, 255, 255, 1),
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
+                                              child: Row(
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text("${single['Name']}",style: TextStyle(
+                                                          color: Colors.white,fontWeight: FontWeight.bold,
+                                                          fontFamily: 'SpaceGrotesk'
+                                                      ),),
+                                                      Text("NA",style: TextStyle(
+                                                          color: Colors.white,fontFamily: 'SpaceGrotesk'
+                                                      )),
+                                                      Text("visitfixed",style: TextStyle(
+                                                          color: Colors.white,fontFamily: 'SpaceGrotesk'
+                                                      ))
+                                                    ],
+                                                  ),
+                                                  Spacer(),
+                                                  InkWell(
+                                                    onTap: ()
+                                                    {
+                                                      FlutterDirectCallerPlugin.callNumber(single['Mobile']);
+                                                    },
+                                                    child: Container(
+                                                        width: 55,
+                                                        height: 33,
+                                                        child:Center(child: Text("Call")),
+                                                        decoration: BoxDecoration(
+                                                          color : Color.fromRGBO(255, 255, 255, 1),
+                                                        )
+                                                    ),
                                                   )
+                                                ],
                                               ),
                                             )
-                                          ],
+
                                         ),
-                                      )
+                                      );
 
-                                  ),
+                                    }
+
                                 );
-
                               }
-
                           ),
                           Text("   "),
                           Text("   "),

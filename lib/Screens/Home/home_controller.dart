@@ -74,7 +74,79 @@ class HomeController extends GetxController
    getnotintrestedleads();*/
   }
 
-  Future<void> getTotalTasks()
+   Stream<int> get newLeadsStream => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'new')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get followupLeads => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status',whereIn: [
+     'followup','Followup',
+   ])
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get visitfixedLeads => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'visitfixed')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get visitdoneLeads => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'visitdone')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get negotiationsLeads => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'negotiations')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get notIntrestedLeads => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'notintrested')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+
+   Stream<int> getCurrentTabStream(int tabIndex, HomeController controller) {
+     switch (tabIndex) {
+       case 0:
+         return controller.newLeadsStream;
+       case 1:
+         return controller.followupLeads;
+       case 2:
+         return controller.visitfixedLeads;
+       case 3:
+         return controller.visitdoneLeads;
+       case 4:
+         return controller.negotiationsLeads;
+       case 5:
+         return controller.notIntrestedLeads;
+       default:
+         return Stream.value(0);
+     }
+   }
+
+
+
+
+
+
+
+
+
+   Future<void> getTotalTasks()
   async {
 /*
     Stream<QuerySnapshot<Map<String,dynamic>>> tasks= FirebaseFirestore.instance
