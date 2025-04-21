@@ -56,7 +56,7 @@ dependencies:
 
   call_log_new: ^1.0.5
   flutter_contacts: ^1.1.9+2
-  workmanager: ^0.5.2
+
 
 
 dev_dependencies:

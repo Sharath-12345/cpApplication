@@ -25,7 +25,7 @@ import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:saleapp/Screens/TaskRemainder/task_reminder_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:workmanager/workmanager.dart';
+
 
 import '../../helpers/supaase_help.dart';
 import '../TabBar/tab_bar.dart';
