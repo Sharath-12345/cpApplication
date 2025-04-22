@@ -495,11 +495,11 @@ class _HomePageState extends State<HomePage> {
                                     leadsList: docs, status: "Negotiations");
                               }
                           ),
-
                           StreamBuilder<QuerySnapshot>(
                               stream: FirebaseFirestore.instance
                                   .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'notintrested') // filter like your tab
+                                  .where('Status', isEqualTo: 'notintrested')
+                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                                   .snapshots(),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -512,71 +512,12 @@ class _HomePageState extends State<HomePage> {
                                 }
 
                                 final docs = snapshot.data!.docs;
-                                return  ListView.builder(
-                                    itemCount: homeController.notintrestedleads.value,
-                                    itemBuilder:(context,index)
-                                    {
-                                      final single=docs[index];
-                                      return InkWell(
-                                        onTap: ()
-                                        {
-                                          Get.to(()=>LeadDetailsScreen(), arguments: {
-                                            "leaddetails" : single,
-
-                                          });
-                                        },
-                                        child: Container(
-                                            width: MediaQuery.of(context).size.width*90,
-                                            height: MediaQuery.of(context).size.height*0.1,
-                                            decoration: BoxDecoration(
-                                              color : Color.fromRGBO(28, 28, 30, 1),
-                                            ),
-                                            child: Padding(
-                                              padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                                              child: Row(
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text("${single['Name']}",style: TextStyle(
-                                                          color: Colors.white,fontWeight: FontWeight.bold,
-                                                          fontFamily: 'SpaceGrotesk'
-                                                      ),),
-                                                      Text("NA",style: TextStyle(
-                                                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                                      )),
-                                                      Text("visitfixed",style: TextStyle(
-                                                          color: Colors.white,fontFamily: 'SpaceGrotesk'
-                                                      ))
-                                                    ],
-                                                  ),
-                                                  Spacer(),
-                                                  InkWell(
-                                                    onTap: ()
-                                                    {
-                                                      FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                                                    },
-                                                    child: Container(
-                                                        width: 55,
-                                                        height: 33,
-                                                        child:Center(child: Text("Call")),
-                                                        decoration: BoxDecoration(
-                                                          color : Color.fromRGBO(255, 255, 255, 1),
-                                                        )
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            )
-
-                                        ),
-                                      );
-
-                                    }
-
-                                );
+                                return LeadsListView(
+                                    leadsList: docs, status: "Not Intrested");
                               }
                           ),
+
+
                           Text("   "),
                           Text("   "),
                         ],
@@ -632,15 +573,7 @@ class _LeadsListViewState extends State<LeadsListView> {
   final HomeController homeController=Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
-   homeController.getTotalTasks();
 
-    homeController.getleads();
-    homeController.getnewleads();
-    homeController.getfollowleads();
-    homeController.getvisitfixedleads();
-    homeController.getvisitdoneleads();
-    homeController.getnegotiationleads();
-    homeController.getnotintrestedleads();
 
 
     return RefreshIndicator(

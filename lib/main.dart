@@ -8,6 +8,8 @@ import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
 
 import 'package:saleapp/Screens/Home/home_controller.dart';
+import 'package:saleapp/Screens/SignUp/onBoradingScreen.dart';
+
 import 'package:saleapp/Screens/TaskRemainder/task_reminder_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:get_it/get_it.dart';
@@ -110,7 +112,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
         home:
-        currentUser == null ? LoginScreen() : SuperHomePage()
+        currentUser == null ? OnboardScreen() : SuperHomePage()
         //TaskReminderScreen()
 
     );

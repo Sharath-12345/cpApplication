@@ -9,7 +9,7 @@ class TaskReminderController extends GetxController {
 
   final authController=Get.find<AuthController>();
 
-  // Reactive variables
+
   var selectedMonth = 'April'.obs;
   var selectedYear = DateTime.now().year.obs;
   var selectedDate = DateTime.now().day.obs;
@@ -81,7 +81,7 @@ class TaskReminderController extends GetxController {
   Future<void> getTotalTasks()
   async {
 
-     var tasks= await FirebaseFirestore.instance
+     var tasks2= await FirebaseFirestore.instance
         .collection('${authController.currentUserObj['orgId']}_assignedTasks')
        // .where("due_date", isLessThanOrEqualTo: DateTime.now().microsecondsSinceEpoch)
         .where("status",
@@ -96,9 +96,11 @@ class TaskReminderController extends GetxController {
         .get();
         //.snapshots();
     // totaltasklist.assignAll();
-     totaltasklist.assignAll(tasks.docs);
-      totaltasks.value=tasks.docs.length;
+     totaltasklist.assignAll(tasks2.docs);
+      totaltasks.value=tasks2.docs.length;
      // print(totaltasklist[0]);
+
+
 
   }
 
@@ -191,8 +193,10 @@ class TaskReminderController extends GetxController {
   }
 
   void changeFilter(int index) {
-    print(tasks.length);
+
+
     if (index == 0) {
+      getTotalTasks();
       tasks.assignAll(totaltasklist);
     } else if (index == 1) {
       tasks.assignAll(inprogresstasklist);
@@ -201,8 +205,9 @@ class TaskReminderController extends GetxController {
     } else if (index == 3) {
       tasks.assignAll(pendingtasklist);
     }
-   selectedFilterIndex.value = index;
     print(tasks.length);
+   selectedFilterIndex.value = index;
+
     update();
 
   }

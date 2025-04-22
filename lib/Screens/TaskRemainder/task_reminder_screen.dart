@@ -240,7 +240,7 @@ Widget build(BuildContext context) {
 
   Widget _buildFilterButton(int index, BuildContext context) {
     final isSelected = index == _controller.selectedFilterIndex.value;
-    _controller.updatefilters();
+     _controller.updatefilters();
     return
         GestureDetector(
 

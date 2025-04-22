@@ -17,14 +17,18 @@ class SearchScreen extends StatefulWidget
 
 class _SearchScreenState extends State<SearchScreen> {
   TextEditingController search = TextEditingController();
-  var leadList ;
+  MySearchController controller = Get.put<MySearchController>(MySearchController());
+  HomeController homeController=Get.find<HomeController>();
+
+ // var leadList;
+
 
   var  filteredLeads = [];
   void filterSearchResults(String query) {
     var tempLeads = [];
 
     if (query.isEmpty) {
-      tempLeads = leadList
+      tempLeads = controller.leadList
           .map((doc) => doc.data() as Map<String, dynamic>?)
           .where((lead) => lead != null) // Ensure it's not null
           .cast<Map<String, dynamic>>() // Cast to proper type
@@ -32,7 +36,7 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       if (RegExp(r'^[0-9]+$').hasMatch(query)) {
 
-        tempLeads = leadList
+        tempLeads = controller.leadList
             .map((doc) => doc.data() as Map<String, dynamic>?)
             .where((lead) => lead != null && lead['Mobile'] != null)
             .where((lead) =>
@@ -41,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
             .toList();
       } else {
         // Search by name (starts with query)
-        tempLeads =leadList
+        tempLeads =controller.leadList
             .map((doc) => doc.data() as Map<String, dynamic>?)
             .where((lead) => lead != null && lead['Name'] != null)
             .where((lead) =>
@@ -57,15 +61,16 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   int getIndexInTotalLeads(Map<String, dynamic> lead) {
-    return leadList.indexWhere((element) => element['Mobile'] == lead['Mobile']);
+    return controller.leadList.indexWhere((element) => element['Mobile'] == lead['Mobile']);
   }
   @override
   Widget build(BuildContext context) {
-    MySearchController controller = Get.put<MySearchController>(MySearchController());
-    HomeController homeController=Get.find<HomeController>();
+
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
-    leadList=homeController.Totalleadslist;
+
+    //controller.leadList.value=homeController.Totalleadslist;
+    controller.leadList=homeController.Totalleadslist;
 
     return Scaffold(
       backgroundColor:const Color(0xff0D0D0D),
@@ -74,10 +79,10 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(10,40, 0,0),
+              padding: const EdgeInsets.fromLTRB(20,40, 20,0),
               child: SizedBox(
                 height: height*0.06,
-                width: width*0.8,
+                width: width*0.92,
                 child: TextField(
                   controller: search,
                   decoration: InputDecoration(
@@ -91,7 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
             ),
-            Padding(
+           Padding(
               padding: const EdgeInsets.only(left: 0),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -106,8 +111,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     _filterChip(1,
                         title: 'New',
                         controller: controller,
-                        onTap: () => {
-                          controller.selectedIndex.value = 1,
+                        onTap: ()  {
+
+                          controller.selectedIndex.value = 1;
+
                         }),
                     _filterChip(2,
                         title: 'FollowUp',
@@ -178,7 +185,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             int indexinTotallist = getIndexInTotalLeads(filteredLeads[index] ?? 0);
 
                             Get.to(()=>LeadDetailsScreen(), arguments: {
-                              "leaddetails" : leadList[indexinTotallist],
+                              "leaddetails" : controller.leadList[indexinTotallist],
                             });
                           },
                           child: Row(

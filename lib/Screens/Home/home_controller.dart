@@ -144,6 +144,7 @@ class HomeController extends GetxController
        .map((snapshot) => snapshot.docs.length);
 
 
+
    Stream<int> getCurrentTabStream(int tabIndex, HomeController controller) {
      switch (tabIndex) {
        case 0:
