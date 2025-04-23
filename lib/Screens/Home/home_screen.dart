@@ -254,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                                                     builder: (context, snapshot) {
                                                       if (snapshot.connectionState == ConnectionState.waiting) {
                                                         return Text(
-                                                          "",
+                                                          "0",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 17,

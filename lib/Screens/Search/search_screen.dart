@@ -20,15 +20,21 @@ class _SearchScreenState extends State<SearchScreen> {
   MySearchController controller = Get.put<MySearchController>(MySearchController());
   HomeController homeController=Get.find<HomeController>();
 
+
  // var leadList;
 
 
-  var  filteredLeads = [];
   void filterSearchResults(String query) {
-    var tempLeads = [];
+    if(controller.selectedIndex.value==0)
+      {
+        controller.leadList.value=homeController.Totalleadslist;
+      }
+
+
 
     if (query.isEmpty) {
-      tempLeads = controller.leadList
+
+     controller.tempLeads.value = controller.leadList.value
           .map((doc) => doc.data() as Map<String, dynamic>?)
           .where((lead) => lead != null) // Ensure it's not null
           .cast<Map<String, dynamic>>() // Cast to proper type
@@ -36,7 +42,7 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       if (RegExp(r'^[0-9]+$').hasMatch(query)) {
 
-        tempLeads = controller.leadList
+        controller.tempLeads.value = controller.leadList.value
             .map((doc) => doc.data() as Map<String, dynamic>?)
             .where((lead) => lead != null && lead['Mobile'] != null)
             .where((lead) =>
@@ -45,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
             .toList();
       } else {
         // Search by name (starts with query)
-        tempLeads =controller.leadList
+        controller.tempLeads.value =controller.leadList.value
             .map((doc) => doc.data() as Map<String, dynamic>?)
             .where((lead) => lead != null && lead['Name'] != null)
             .where((lead) =>
@@ -56,21 +62,22 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     setState(() {
-      filteredLeads = tempLeads;
+      controller.filteredLeads.value = controller.tempLeads.value;
     });
   }
 
   int getIndexInTotalLeads(Map<String, dynamic> lead) {
-    return controller.leadList.indexWhere((element) => element['Mobile'] == lead['Mobile']);
+    return controller.leadList.value.indexWhere((element) => element['Mobile'] == lead['Mobile']);
   }
   @override
   Widget build(BuildContext context) {
 
     var height=MediaQuery.of(context).size.height;
     var width=MediaQuery.of(context).size.width;
+    print(controller.leadList.length);
 
     //controller.leadList.value=homeController.Totalleadslist;
-    controller.leadList=homeController.Totalleadslist;
+  // controller.leadList.value=homeController.Totalleadslist;
 
     return Scaffold(
       backgroundColor:const Color(0xff0D0D0D),
@@ -79,7 +86,7 @@ class _SearchScreenState extends State<SearchScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20,40, 20,0),
+              padding: const EdgeInsets.fromLTRB(10,40, 0,0),
               child: SizedBox(
                 height: height*0.06,
                 width: width*0.92,
@@ -151,12 +158,12 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             Expanded(
-              child: filteredLeads.isEmpty
+              child: controller.filteredLeads.isEmpty
                   ? Center(child: Text("",style: TextStyle(
                 color: Colors.white
               ),))
                   : ListView.builder(
-                itemCount: filteredLeads.length,
+                itemCount: controller.filteredLeads.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
@@ -182,10 +189,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: InkWell(
                           onTap: ()
                           {
-                            int indexinTotallist = getIndexInTotalLeads(filteredLeads[index] ?? 0);
+                            int indexinTotallist = getIndexInTotalLeads(controller.filteredLeads[index] ?? 0);
 
                             Get.to(()=>LeadDetailsScreen(), arguments: {
-                              "leaddetails" : controller.leadList[indexinTotallist],
+                              "leaddetails" : controller.leadList.value[indexinTotallist],
                             });
                           },
                           child: Row(
@@ -195,7 +202,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    filteredLeads[index]['Name']!,
+                                    controller.filteredLeads.value[index]['Name']!,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -203,7 +210,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                   SizedBox(height: height*0.01),
                                   Text(
-                                    filteredLeads[index]['Mobile']!,
+                                    controller.filteredLeads.value[index]['Mobile']!,
                                     style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                                   ),
 
@@ -215,7 +222,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: InkWell(
                                   onTap: ()
                                   {
-                                    FlutterDirectCallerPlugin.callNumber(filteredLeads[index]['Mobile']);
+                                    FlutterDirectCallerPlugin.callNumber(controller.filteredLeads[index]['Mobile']);
                                   },
                                   child: Container(
                                     width: 35,
@@ -260,7 +267,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final MySearchController controller=Get.find<MySearchController>();
     return Padding(
       padding: index == 0
-          ? const EdgeInsets.only(left: 20, right: 5, top: 8, bottom: 8)
+          ? const EdgeInsets.only(left: 10, right: 5, top: 8, bottom: 8)
           : const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
       child: ActionChip(
             elevation: 0,

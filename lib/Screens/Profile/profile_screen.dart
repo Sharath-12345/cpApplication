@@ -186,10 +186,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                          totalleads
-                          ,
-                              style: TextStyle(fontSize: 15, color: Colors.white, fontWeight: FontWeight.bold),
+                            StreamBuilder<int>(
+                              stream: homeController.totalLeadsStream,
+                              builder: (context, snapshot) {
+                                final total = snapshot.data ?? 0;
+                                return Text(
+                                  "$total",
+                                  style: TextStyle(
+                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                    fontSize: 17,
+                                    letterSpacing: 0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              },
                             ),
                             Text(
                               "Leads",
@@ -206,10 +216,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     height: MediaQuery.of(context).size.height*0.06,  // Divider height
                     color: Colors.white, // Divider color
                   ),
-
-
-
-
                   Expanded(
                     child: Container(
 
