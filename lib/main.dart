@@ -73,6 +73,7 @@ Future<void> main() async {
     criticalAlert: false,
     provisional: false,
     sound: true,
+
   );
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
