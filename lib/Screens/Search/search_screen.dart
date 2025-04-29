@@ -7,6 +7,8 @@ import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:saleapp/Screens/Search/search_controller.dart';
 
+import '../Profile/profile_controller.dart';
+
 class SearchScreen extends StatefulWidget
 {
   const SearchScreen({super.key});
@@ -19,6 +21,7 @@ class _SearchScreenState extends State<SearchScreen> {
   TextEditingController search = TextEditingController();
   MySearchController controller = Get.put<MySearchController>(MySearchController());
   HomeController homeController=Get.find<HomeController>();
+  final  profileController = Get.find<ProfileController>();
 
 
  // var leadList;
@@ -80,7 +83,8 @@ class _SearchScreenState extends State<SearchScreen> {
   // controller.leadList.value=homeController.Totalleadslist;
 
     return Scaffold(
-      backgroundColor:const Color(0xff0D0D0D),
+      backgroundColor: (profileController.isLightMode==true)? Colors.white :
+      Color(0xff0D0D0D),
       body: Obx(
         ()=>Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,12 +99,29 @@ class _SearchScreenState extends State<SearchScreen> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
-                    hintText: "Search" ,
+                    hintText: "Search",
                     suffixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(
+                        color: Colors.black, // black color when not focused
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                      borderSide: BorderSide(
+                        color: Colors.black, // black color when focused
+                        width: 2.0,
+                      ),
+                    ),
                   ),
                   onChanged: filterSearchResults,
                 ),
+
               ),
             ),
            Padding(

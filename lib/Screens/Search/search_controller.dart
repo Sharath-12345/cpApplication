@@ -26,7 +26,6 @@ class MySearchController extends GetxController
 
  void filterLeadlist() {
     final allLeads = homeController.Totalleadslist;
-    print(selectedIndex.value);
     switch (selectedIndex.value) {
       case 0:
 

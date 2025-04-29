@@ -11,6 +11,7 @@ import '../../themes/container.dart';
 import '../../themes/spacing.dart';
 import '../../themes/textFile.dart';
 import '../../themes/themes.dart';
+import '../Profile/profile_controller.dart';
 import 'chart_sample_data.dart';
 import 'dashboard_controller.dart';
 
@@ -25,6 +26,7 @@ class DashboardPage extends StatefulWidget {
 
 class _DashboardPageState extends State<DashboardPage> {
   DashboardController dashboardController = Get.put(DashboardController());
+  final  profileController = Get.find<ProfileController>();
   final  AuthController  UserController = Get.find<AuthController>();
   late List<String> filterTime = [
     "All time",
@@ -106,52 +108,55 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-          backgroundColor: const Color(0xff0D0D0D),  
+    return Obx(
+        ()=> Scaffold(
+          backgroundColor: (profileController.isLightMode==true)? Colors.white :
+          Color(0xff0D0D0D),
 
-      body: SingleChildScrollView(
-        child: Container(
-          padding: FxSpacing.fromLTRB(
-              10, FxSpacing.safeAreaTop(context) + 16, 10, 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-                 FxContainer(
-                child: Column(
-                  children: [
-                        Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        body: SingleChildScrollView(
+          child: Container(
+            padding: FxSpacing.fromLTRB(
+                10, FxSpacing.safeAreaTop(context) + 16, 10, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Row(
-                  children: [
-                    FxContainer(
-                      width: 10,
-                      height: 20,
-                      color: Get.theme.primaryContainer,
-                      borderRadiusAll: 2,
-                    ),
-                    FxSpacing.width(8),
-                    FxText.titleSmall(
-                      "My Activity",
-                      fontWeight: 600,
-                    ),
-                  ],
+                   FxContainer(
+                  child: Column(
+                    children: [
+                          Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      FxContainer(
+                        width: 10,
+                        height: 20,
+                        color: Get.theme.primaryContainer,
+                        borderRadiusAll: 2,
+                      ),
+                      FxSpacing.width(8),
+                      FxText.titleSmall(
+                        "My Activity",
+                        fontWeight: 600,
+                      ),
+                    ],
+                  ),
+                  timeFilter()
+                ],
+              ),
+                      activityGraph(),
+                       merticsCard(),
+                    ],
+                  ),
                 ),
-                timeFilter()
+                FxSpacing.height(16),
+                alert(),
+                FxSpacing.height(16),
+                overview(),
+                FxSpacing.height(20),
+                statistics(),
               ],
             ),
-                    activityGraph(),
-                     merticsCard(),
-                  ],
-                ),
-              ),
-              FxSpacing.height(16),
-              alert(),
-              FxSpacing.height(16),
-              overview(),
-              FxSpacing.height(20),
-              statistics(),
-            ],
           ),
         ),
       ),

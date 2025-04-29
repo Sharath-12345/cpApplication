@@ -28,6 +28,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 
 import '../../helpers/supaase_help.dart';
+import '../Profile/profile_controller.dart';
 import '../TabBar/tab_bar.dart';
 
 
@@ -45,6 +46,7 @@ class _HomePageState extends State<HomePage> {
 
   final HomeController homeController= Get.find<HomeController>();
   final AuthController authController=Get.find<AuthController>();
+  final  profileController = Get.find<ProfileController>();
 
   Iterable<CallLogResponse> callLogs = <CallLogResponse>[
     CallLogResponse(name: "Loading...", number: "0000000000")
@@ -150,6 +152,7 @@ class _HomePageState extends State<HomePage> {
     var width=MediaQuery.of(context).size.width;
     final auth=Get.find<AuthController>();
 
+
     fetchCallLogs();
     matchAndStoreCallLogs();
     print("Home came");
@@ -185,14 +188,16 @@ class _HomePageState extends State<HomePage> {
       },
         child: Scaffold(
             appBar: AppBar(
-              backgroundColor: const Color(0xff0D0D0D),
+              backgroundColor:  (profileController.isLightMode==true)?
+              Colors.white:Color(0xff0D0D0D),
               centerTitle: false,
               title: Padding(
                 padding: const EdgeInsets.only(left: 0),
                 child: Text(
                   'Leads Manager',
                   style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 1),
+                    color: (profileController.isLightMode==true)?
+                   Colors.black:Colors.white,
                     fontFamily: 'SpaceGrotesk',
                     fontSize: 22,
                     letterSpacing: 0,
@@ -202,18 +207,20 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
 
-            backgroundColor: const Color(0xff0D0D0D),
+            backgroundColor: (profileController.isLightMode==true)? Colors.white :
+            Color(0xff0D0D0D),
           body: DefaultTabController(
             initialIndex: 0,
             length: 8,
             child: Padding(
-              padding: EdgeInsets.fromLTRB(8, 0, 0, 8),
+              padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
               child: NestedScrollView(
                     headerSliverBuilder: (context, innerBoxIsScrolled) {
                       return [
 
                         SliverAppBar(
-                          backgroundColor: Color(0xff0D0D0D),
+                          backgroundColor:  (profileController.isLightMode==true)?
+                          Colors.white:Color(0xff0D0D0D),
                           expandedHeight: height*0.16,
                           floating: false,
                           pinned: false,
@@ -239,7 +246,10 @@ class _HomePageState extends State<HomePage> {
                                                 .size
                                                 .width * 0.45,
                                             decoration: BoxDecoration(
-                                              color: Color.fromRGBO(28, 28, 30, 1),
+                                              color: (profileController.isLightMode==true)?
+
+                                                Color.fromRGBO(242, 242, 247, 1):
+                                              Color.fromRGBO(28, 28, 30, 1)
                                             ),
                                             child: Padding(
                                               padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
@@ -256,7 +266,9 @@ class _HomePageState extends State<HomePage> {
                                                         return Text(
                                                           "0",
                                                           style: TextStyle(
-                                                            color: Colors.white,
+                                                            color:(profileController.isLightMode==true) ?
+                                                                Colors.black:
+                                                            Colors.white,
                                                             fontSize: 17,
                                                             fontWeight: FontWeight.bold,
                                                           ),
@@ -277,9 +289,11 @@ class _HomePageState extends State<HomePage> {
                                                       return Text(
                                                         "${snapshot.data ?? 0}",
                                                         style: TextStyle(
-                                                          color: Colors.white,
+                                                          color:(profileController.isLightMode==true) ?
+                                                          Colors.black:
+                                                          Colors.white,
                                                           fontSize: 17,
-                                                          fontWeight: FontWeight.bold,
+                                                          fontWeight: FontWeight.w600,
                                                         ),
                                                       );
                                                     },
@@ -291,11 +305,13 @@ class _HomePageState extends State<HomePage> {
 
                                                   SizedBox(height: 4,),
                                                   Text("Tasks", style: TextStyle(
-                                                    color: Color.fromRGBO(255, 255, 255, 1),
+                                                    color:(profileController.isLightMode==true) ?
+                                                    Colors.black:
+                                                    Colors.white,
                                                     fontFamily: 'SpaceGrotesk',
                                                     fontSize: 17,
                                                     letterSpacing: 0,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.w600,
                                                     //height: 0.8461538461538461
                                                   ),)
                                                 ],
@@ -304,7 +320,8 @@ class _HomePageState extends State<HomePage> {
 
                                         ),
                                       ),
-                                      SizedBox(width: width*0.028,),
+                                     Spacer(),
+                                     // SizedBox(width: width*0.028,),
                                       Container(
                                           width: MediaQuery
                                               .of(context)
@@ -315,7 +332,10 @@ class _HomePageState extends State<HomePage> {
                                               .size
                                               .height * 0.120,
                                           decoration: BoxDecoration(
-                                            color: Color.fromRGBO(89, 66, 60, 1),
+                                            color:(profileController.isLightMode==true)?
+                                            Color(0xFFE6E0FA):
+                                            Color.fromRGBO(89, 66, 60, 1),
+
                                           ),
                                           child: Padding(
                                             padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
@@ -331,21 +351,25 @@ class _HomePageState extends State<HomePage> {
                                                     return Text(
                                                       "$total",
                                                       style: TextStyle(
-                                                        color: Color.fromRGBO(255, 255, 255, 1),
+                                                        color:(profileController.isLightMode==true) ?
+                                                        Colors.black:
+                                                        Colors.white,
                                                         fontSize: 17,
                                                         letterSpacing: 0,
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight: FontWeight.w600,
                                                       ),
                                                     );
                                                   },
                                                 ),
                                                 SizedBox(height: 4,),
                                                 Text("Leads", style: TextStyle(
-                                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                                  color:(profileController.isLightMode==true) ?
+                                                  Colors.black:
+                                                  Colors.white,
                                                   fontFamily: 'SpaceGrotesk',
                                                   fontSize: 17,
                                                   letterSpacing: 0,
-                                                  fontWeight: FontWeight.bold,
+                                                  fontWeight: FontWeight.w600,
                                                   //height: 0.8461538461538461
                                                 ),),
 
@@ -367,11 +391,14 @@ class _HomePageState extends State<HomePage> {
 
                           pinned: true,
                           delegate: _TabBarDelegate(MyTabBar()),
+
                         ),
                       ];
                     },
                   body:
+
                   RefreshIndicator(
+
                     onRefresh:() async {
                       await Future.delayed(
                         const Duration(seconds: 1),
@@ -384,7 +411,7 @@ class _HomePageState extends State<HomePage> {
                     } ,
                     child: SizedBox(
 
-                      height: MediaQuery.of(context).size.height*0.5,
+
                       child: TabBarView(
                         children: [
                           StreamBuilder<QuerySnapshot>(
@@ -537,6 +564,7 @@ class _HomePageState extends State<HomePage> {
   final Widget tabBar;
   _TabBarDelegate(this.tabBar);
    var height;
+   final profileController=Get.find<ProfileController>();
 
 
   @override
@@ -544,9 +572,11 @@ class _HomePageState extends State<HomePage> {
     var height=MediaQuery.of(context).size.width;
     height=height;
     var width=MediaQuery.of(context).size.width;
-  return Container(
-  color: Colors.black, // Background color
-  child: tabBar, // Use MyTabBar here
+  return Obx(
+      ()=> Container(
+    color:(profileController.isLightMode==true)? Colors.white: Colors.black, // Background color
+    child: tabBar, // Use MyTabBar here
+    ),
   );
   }
 
@@ -571,87 +601,115 @@ class LeadsListView extends StatefulWidget {
 
 class _LeadsListViewState extends State<LeadsListView> {
   final HomeController homeController=Get.find<HomeController>();
+  final profileController=Get.find<ProfileController>();
   @override
   Widget build(BuildContext context) {
 
 
 
     return RefreshIndicator(
-      onRefresh: () async {
-        await Future.delayed(
-          const Duration(seconds: 1),
+        onRefresh: () async {
+          await Future.delayed(
+            const Duration(seconds: 1),
 
-        );
-        setState(() {
+          );
+          setState(() {
 
-        });
+          });
 
-      },
-      child: ListView.builder(
-          itemCount: widget.leadsList.length,
-          itemBuilder:(context,index)
-          {
-            final single=widget.leadsList[index];
-            return InkWell(
-              onTap: ()
-              {
-                Get.to(()=>LeadDetailsScreen(), arguments: {
-                  "leaddetails" : single,
+        },
+        child: ListView.builder(
+            itemCount: widget.leadsList.length,
+            itemBuilder:(context,index)
+            {
+              final single=widget.leadsList[index];
+              return InkWell(
+                onTap: ()
+                {
+                  Get.to(()=>LeadDetailsScreen(), arguments: {
+                    "leaddetails" : single,
 
-                });
-                setState(() {
+                  });
+                  setState(() {
 
-                });
-              },
-              child: Container(
-                  width: MediaQuery.of(context).size.width*90,
-                  height: MediaQuery.of(context).size.height*0.1,
-                  decoration: BoxDecoration(
-                    color : Color.fromRGBO(28, 28, 30, 1),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
-                    child: Row(
+                  });
+                },
+                child: Obx(
+                    ()=> Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${single['Name']}",style: TextStyle(
-                                color: Colors.white,fontWeight: FontWeight.bold,
-                                fontFamily: 'SpaceGrotesk'
-                            ),),
-                            Text("NA",style: TextStyle(
-                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                            )),
-                            Text(widget.status,style: TextStyle(
-                                color: Colors.white,fontFamily: 'SpaceGrotesk'
-                            ))
-                          ],
-                        ),
-                        Spacer(),
-                        InkWell(
-                          onTap: ()
-                          {
-                            FlutterDirectCallerPlugin.callNumber(single['Mobile']);
-                          },
-                          child: Container(
-                              width: 55,
-                              height: 33,
-                              child:Center(child: Text("Call")),
-                              decoration: BoxDecoration(
-                                color : Color.fromRGBO(255, 255, 255, 1),
-                              )
+                        Container(
+                          width: MediaQuery.of(context).size.width*90,
+                          height: MediaQuery.of(context).size.height*0.1,
+                          decoration: BoxDecoration(
+                            //  borderRadius: BorderRadius.circular(12),
+                            color : (profileController.isLightMode==true)?
+                            Color.fromRGBO(242, 242, 247, 1):
+                            Color.fromRGBO(28, 28, 30, 1),
                           ),
-                        )
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("${single['Name']}",style: TextStyle(
+                                        color: (profileController.isLightMode==true)?
+                                            Colors.black:
+                                        Colors.white,fontWeight: FontWeight.bold,
+                                        fontFamily: 'SpaceGrotesk'
+                                    ),),
+                                    Text("NA",style: TextStyle(
+                                        color: (profileController.isLightMode==true)?
+                                        Colors.black:
+                                        Colors.white,fontFamily: 'SpaceGrotesk'
+                                    )),
+                                    Text(widget.status,style: TextStyle(
+                                        color: (profileController.isLightMode==true)?
+                                        Colors.black:
+                                        Colors.white,fontFamily: 'SpaceGrotesk'
+                                    ))
+                                  ],
+                                ),
+                                Spacer(),
+                                InkWell(
+                                  onTap: ()
+                                  {
+                                    FlutterDirectCallerPlugin.callNumber(single['Mobile']);
+                                  },
+                                  child:Container(
+                                    width: 35,
+                                    height: 35,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xff58423B),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.call,
+                                        color: Colors.white,
+                                        size: 15,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+
+                                          ),
+                        Divider(color:
+                        (profileController.isLightMode==false)?
+                            Colors.black:
+                        Colors.white,height: 5,)
                       ],
                     ),
-                  )
+                ),
+              );
+            }
 
-              ),
-            );
-          }
+        ),
 
-      ),
     );
   }
 }

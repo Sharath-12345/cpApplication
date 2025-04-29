@@ -7,10 +7,13 @@ import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/TabBar/tab_bar.dart';
 import 'package:saleapp/Screens/TabBar/tabbar_controller.dart';
 
+import '../Profile/profile_controller.dart';
+
 
 class MyTabBar extends StatelessWidget
 {
   final HomeController homeController= Get.find<HomeController>();
+  final  profileController = Get.find<ProfileController>();
   final TabBarController tabbarController= Get.put<TabBarController>(TabBarController());
 
   @override
@@ -43,6 +46,7 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 0,
                         homeController: homeController,
+                        profileController:profileController
                       );
                     },
                   ),
@@ -57,6 +61,7 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 1,
                         homeController: homeController,
+                          profileController:profileController
                       );
                     },
                   ),
@@ -71,6 +76,7 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 2,
                         homeController: homeController,
+                          profileController:profileController
                       );
                     },
                   ),
@@ -86,6 +92,7 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 3,
                         homeController: homeController,
+                          profileController:profileController
                       );
                     },
                   ),
@@ -101,6 +108,7 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 4,
                         homeController: homeController,
+                          profileController:profileController
                       );
                     },
                   ),
@@ -116,13 +124,11 @@ class MyTabBar extends StatelessWidget
                         count: count,
                         tabIndex: 5,
                         homeController: homeController,
+                          profileController:profileController
                       );
                     },
                   ),
                 ),
-
-
-
 
 
                 Tab(
@@ -177,10 +183,14 @@ class MyTabBar extends StatelessWidget
 
 
               ],
-              dividerColor: Colors.black,
-              labelColor: Colors.blue,
+             dividerColor:(profileController.isLightMode==true)?
+                 Colors.white:
+             Colors.black,
+             labelColor: Colors.black,
               unselectedLabelColor: Colors.grey,
-              indicatorColor: Colors.black,
+              indicatorColor:(profileController.isLightMode==true)?
+              Colors.white:
+              Colors.black,
             ),
             SizedBox(height: height*0.03 ,),
             Padding(
@@ -192,7 +202,9 @@ class MyTabBar extends StatelessWidget
                   return Text(
                     'you have $count due events',
                     style: TextStyle(
-                      color: Color.fromRGBO(255, 255, 255, 1),
+                     color: (profileController.isLightMode==true)?
+                      Colors.black:
+                      Colors.white,
                       fontFamily: 'SpaceGrotesk',
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -202,7 +214,7 @@ class MyTabBar extends StatelessWidget
               )
 
             ),
-            SizedBox(height: height*0.03 ,),
+           // SizedBox(height: height*0.02 ,),
 
           ],
                ),
@@ -220,13 +232,15 @@ class CustomTab extends StatelessWidget {
   final int? count;
   final int tabIndex;
   final HomeController homeController;
+  final ProfileController profileController;
+
 
   const CustomTab({
     Key? key,
     required this.title,
     this.count,
     required this.tabIndex,
-    required this.homeController,
+    required this.homeController, required this.profileController,
   }) : super(key: key);
 
   @override
@@ -243,9 +257,16 @@ class CustomTab extends StatelessWidget {
         decoration: BoxDecoration(
           color:
           homeController.tabIndex == tabIndex
-              ? Color.fromRGBO(89, 66, 60, 1)
-              :
-            Color.fromRGBO(30, 30, 30, 1),
+              ?( (profileController.isLightMode==true) ?
+          Color(0xFFE6E0FA):
+          Color.fromRGBO(89, 66, 60, 1)):
+          ( (profileController.isLightMode==true) ?
+          Color.fromRGBO(242, 242, 247, 1):
+          Color.fromRGBO(28, 28, 30, 1)
+          )
+
+
+          //  Color.fromRGBO(30, 30, 30, 1),
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(15, 5, 0, 5),
@@ -257,7 +278,9 @@ class CustomTab extends StatelessWidget {
                 Text(
                   "$count",
                   style: TextStyle(
-                    color: Colors.white,
+                    color:(profileController.isLightMode==true)?
+                        Colors.black:
+                    Colors.white,
                     fontFamily: 'SpaceGrotesk',
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
@@ -267,7 +290,10 @@ class CustomTab extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  color: Colors.white,
+                  color:(profileController.isLightMode==true)?
+                  Colors.black:
+                  Colors.white,
+
                   fontFamily: 'SpaceGrotesk',
                   fontSize: 12,
                   fontWeight: FontWeight.bold,

@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class SuperHomePageController extends GetxController
 {
   RxInt tabIndex = 0.obs;
-  chnageTabIndex(int index) {
+  chnageTabIndex(int index,BuildContext context) {
     tabIndex(index);
+    FocusScope.of(context).unfocus();
   }
 
 

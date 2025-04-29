@@ -10,6 +10,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:saleapp/Screens/Dashboard/dashboard_pages.dart';
 import 'package:saleapp/Screens/Dashboard/dashboard_screen.dart';
 import 'package:saleapp/Screens/Home/home_screen.dart';
+import 'package:saleapp/Screens/Profile/profile_controller.dart';
 import 'package:saleapp/Screens/Profile/profile_screen.dart';
 import 'package:saleapp/Screens/Search/search_screen.dart';
 import 'package:saleapp/Screens/SuperHomePage/superhomepage_controller.dart';
@@ -32,7 +33,7 @@ class _SuperHomePageState extends State<SuperHomePage> {
 
   final AuthController authController = Get.find<AuthController>();
   SuperHomePageController superhomepagecontroller=Get.put(SuperHomePageController());
-
+  final ProfileController profileController=Get.put<ProfileController>(ProfileController());
 
 
 
@@ -105,21 +106,30 @@ class _SuperHomePageState extends State<SuperHomePage> {
         bottomNavigationBar: BottomNavigationBar(
             elevation: 0,
             type: BottomNavigationBarType.fixed,
-            backgroundColor:const Color(0xff0D0D0D),
+            backgroundColor:(profileController.isLightMode==true)?
+            Color(0xFFFFFFFF):
+            Color(0xff0D0D0D),
             currentIndex: superhomepagecontroller.tabIndex.value,
-            onTap: superhomepagecontroller.chnageTabIndex,
+            onTap: (index) {
+              superhomepagecontroller.chnageTabIndex(index, context);
+            },
             //unselectedItemColor: Colors.grey,
           // selectedItemColor: Colors.green,
             items: [
 
               BottomNavigationBarItem(label: '', icon: Icon(Icons.home
-              ,color: Color(0xffD9886A),)),
+              ,color: (profileController.isLightMode==true)?
+                Colors.black:
+                Color(0xffD9886A),)),
               BottomNavigationBarItem(label: '', icon: Icon(Icons.dashboard,
-                 color:  Color(0xffD9886A))),
+                 color: (profileController.isLightMode==true)?
+              Colors.black: Color(0xffD9886A))),
               BottomNavigationBarItem(label: '', icon: Icon(Icons.search,
-                  color:  Color(0xffD9886A))),
+                  color: (profileController.isLightMode==true)?
+                  Colors.black:  Color(0xffD9886A))),
               BottomNavigationBarItem(label: '', icon: Icon(Icons.person,
-                  color:  Color(0xffD9886A))),
+                  color: (profileController.isLightMode==true)?
+                  Colors.black: Color(0xffD9886A))),
 
             ]),
       
