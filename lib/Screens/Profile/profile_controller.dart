@@ -4,13 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileController extends GetxController
 {
- var isLightMode=false.obs;
+ var isLightMode=true.obs;
 
  @override
  Future<void> onInit() async {
    super.onInit();
    final prefs = await SharedPreferences.getInstance();
-   isLightMode.value=prefs.getBool('isLightMode') ?? false;
+   isLightMode.value=prefs.getBool('isLightMode') ?? true;
  }
 
  Future<void>  changemode()

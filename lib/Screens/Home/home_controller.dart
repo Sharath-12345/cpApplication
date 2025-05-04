@@ -16,7 +16,7 @@ class HomeController extends GetxController
    final AuthController authController = Get.find<AuthController>();
 
 
- var Totalleadslist;
+  var Totalleadslist;
    var newleadslist=
        <QueryDocumentSnapshot<Map<String, dynamic>>>[].obs;
    var followupleadslist=
@@ -41,6 +41,12 @@ class HomeController extends GetxController
    var visitfixedleads=0.obs;
    var  negotiationleads=0.obs;
     var notintrestedleads=0.obs;
+
+
+    var currentSelectedProject="".obs;
+    var filterApplied=false.obs;
+
+
    RxInt tabIndex = 0.obs;
    chnageTabIndex(int index) {
      tabIndex(index);
@@ -99,12 +105,42 @@ class HomeController extends GetxController
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
 
+   Stream<int> get totalLeadsFilteredStream =>FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Project', isEqualTo: currentSelectedProject.value)
+       .where('Status', whereIn: [
+     'new',
+     'followup',
+     'visitfixed',
+     'visitdone','negotiation',
+     'Followup'
+   ]
+   )
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+
+
+
+
    Stream<int> get newLeadsStream => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', isEqualTo: 'new')
        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get newLeadsFilteredStream => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'new')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .where('Project', isEqualTo: currentSelectedProject.value)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+
+
 
    Stream<int> get followupLeads => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
@@ -115,9 +151,31 @@ class HomeController extends GetxController
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
 
+   Stream<int> get followupLeadsFiltered => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status',whereIn: [
+     'followup','Followup',
+   ])
+       .where('Project', isEqualTo: currentSelectedProject.value)
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+
+
+
+
    Stream<int> get visitfixedLeads => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', isEqualTo: 'visitfixed')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get visitfixedLeadsFiltered => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'visitfixed')
+       .where('Project', isEqualTo: currentSelectedProject.value)
        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
@@ -129,6 +187,14 @@ class HomeController extends GetxController
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
 
+   Stream<int> get visitdoneLeadsFiltered => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'visitdone')
+       .where('Project', isEqualTo: currentSelectedProject.value)
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
    Stream<int> get negotiationsLeads => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', isEqualTo: 'negotiations')
@@ -136,9 +202,25 @@ class HomeController extends GetxController
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
 
+   Stream<int> get negotiationsLeadsFiltered => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'negotiations')
+       .where('Project', isEqualTo: currentSelectedProject.value)
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
    Stream<int> get notIntrestedLeads => FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_leads")
        .where('Status', isEqualTo: 'notintrested')
+       .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+       .snapshots()
+       .map((snapshot) => snapshot.docs.length);
+
+   Stream<int> get notIntrestedLeadsFiltered => FirebaseFirestore.instance
+       .collection("${authController.currentUserObj['orgId']}_leads")
+       .where('Status', isEqualTo: 'notintrested')
+       .where('Project', isEqualTo: currentSelectedProject.value)
        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
        .snapshots()
        .map((snapshot) => snapshot.docs.length);
@@ -163,7 +245,24 @@ class HomeController extends GetxController
          return Stream.value(0);
      }
    }
-
+   Stream<int> getCurrentTabStreamFiltered(int tabIndex, HomeController controller) {
+     switch (tabIndex) {
+       case 0:
+         return controller.newLeadsFilteredStream;
+       case 1:
+         return controller.followupLeadsFiltered;
+       case 2:
+         return controller.visitfixedLeadsFiltered;
+       case 3:
+         return controller.visitdoneLeadsFiltered;
+       case 4:
+         return controller.negotiationsLeadsFiltered;
+       case 5:
+         return controller.notIntrestedLeadsFiltered;
+       default:
+         return Stream.value(0);
+     }
+   }
 
 
 

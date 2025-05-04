@@ -34,6 +34,11 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   var argument = Get.arguments;
 
 
+  final supabase = GetIt.instance<SupabaseClient>();
+
+
+
+
   var receivedList ;
   var calllogs;
   var currentStatus="new";
@@ -64,6 +69,11 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
     String fetchedText='${receivedList['Project']}';
     controller.printRowsByLuid(receivedList.id);
     print("This ${receivedList.id}");
+    final stream = supabase
+        .from('spark_lead_logs')
+        .stream(primaryKey: ['id'])
+        .eq('Luid', receivedList.id);
+
 
 
 
@@ -569,12 +579,47 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("0",
-                                            style: TextStyle(
-                                                color:
-                                                (profileController.isLightMode==true)?
-                                                    Colors.black:
-                                                Colors.white, fontWeight: FontWeight.bold)),
+                                        StreamBuilder<DocumentSnapshot>(
+                                          stream: FirebaseFirestore.instance
+                                              .collection("${authController.currentUserObj['orgId']}_leads_sch")
+                                              .doc(receivedList.id)
+                                              .snapshots(),
+                                          builder: (context, snapshot) {
+                                            if (!snapshot.hasData || !snapshot.data!.exists) {
+                                              return Text(
+                                                '0',
+                                                style: TextStyle(
+                                                  color: profileController.isLightMode == true ? Colors.black : Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              );
+                                            }
+
+                                            final data = snapshot.data!.data() as Map<String, dynamic>;
+                                            int pendingCount = 0;
+
+                                            data.forEach((key, value) {
+                                              if (value is Map<String, dynamic> && value['sts'] == 'pending') {
+                                                pendingCount++;
+                                              }
+                                            });
+
+                                            // ✅ Safe update after build completes
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              controller.totaltasksvalue.value = pendingCount;
+                                            });
+
+                                            return Text(
+                                              '$pendingCount',
+                                              style: TextStyle(
+                                                color: profileController.isLightMode == true ? Colors.black : Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+
                                         Text("Tasks",
                                             style: TextStyle(
                                                 color:
@@ -636,7 +681,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                             ),
                             Tab(
                               child: Container(
-                                height: MediaQuery.of(context).size.height * 0.1,
+                                //height: MediaQuery.of(context).size.height * 0.07,
                                 width: MediaQuery.of(context).size.width * 0.23,
                                 decoration: BoxDecoration(
                                   color:
@@ -654,12 +699,42 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text("0",
-                                            style: TextStyle(
-                                                color:
-                                                (profileController.isLightMode==true)?
-                                                Colors.black:
-                                                Colors.white, fontWeight: FontWeight.bold)),
+                                        StreamBuilder<List<Map<String, dynamic>>>(
+                                    stream: stream,
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return Text(
+                                          '0',
+                                          style: TextStyle(
+                                            color: profileController.isLightMode ==true? Colors.black : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }
+
+                                      if (!snapshot.hasData) {
+                                        return Text(
+                                          '0',
+                                          style: TextStyle(
+                                            color: profileController.isLightMode ==true? Colors.black : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        );
+                                      }
+
+                                      final count = snapshot.data!.length;
+                                      controller.totalactivityvalue.value=count;
+
+                                      return Text(
+                                        '$count',
+                                        style: TextStyle(
+                                          color: profileController.isLightMode==true ? Colors.black : Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      );
+                                    },
+                                    ),
+
                                         Text("Activity",
                                             style: TextStyle(
                                                 color:
@@ -677,84 +752,232 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height:height*0.02 ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text('you have ', style: TextStyle(
-                                color:
-                                (profileController.isLightMode==true)?
-                                    Colors.black:
-                                Color.fromRGBO(255, 255, 255, 1),
-                                fontFamily: 'SpaceGrotesk',
-                                fontSize: 20,
-                                letterSpacing: 0,
-                                fontWeight: FontWeight.bold,
-                                //height: 0.8461538461538461
-                              ),),
-                              Text( '0 due events', style: TextStyle(
-                                color: Colors.orange,
-                                fontFamily: 'SpaceGrotesk',
-                                fontSize: 20,
-                                letterSpacing: 0,
-                                fontWeight: FontWeight.bold,
-                                //height: 0.8461538461538461
-                              ),)
-                            ],
-                          ),
-                        ),
-                        //SizedBox(height:height*0.01),
+                       // SizedBox(height:height*0.02 ),
+
 
                         SizedBox(
-                          height: height*0.5,
-                          child: TabBarView(
+                          height: height,
+                          child: Column(
                             children: [
-                              Center(child: Text("", style: TextStyle(fontSize: 18,color: Colors.white))),
-                              Obx(()=>
-                              //  child:
-                                  ListView.builder(
-                                    itemCount: controller.response.length,
-                                    itemBuilder:(context,index)
-                                    {
-                                      final singlelog=controller.response[index];
-                                      DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
-
-                                      String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-                                      return Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                              borderRadius: BorderRadius.circular(10)
-                                            ),
-
-                                            height: height*0.08,
-                                            width: width*0.9,
-
-                                            child: Padding(
-                                              padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
-                                              child: Row(
-                                                children: [
-                                                  Text("${singlelog['type']}"),
-                                                  SizedBox(width: width*0.02,),
-                                                  Text("${singlelog['duration']}s"),
-                                                  Spacer(),
-                                                  Text("${formattedDate}"),
-
-                                                ],
-                                              ),
-                                            ),
-
-                                          ),
-                                          Divider(color: Colors.black,height: 3,)
-                                        ],
-                                      );
-                                    }
+                              SizedBox(height:height*0.03 ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text('you have ', style: TextStyle(
+                                      color:
+                                      (profileController.isLightMode==true)?
+                                      Colors.black:
+                                      Color.fromRGBO(255, 255, 255, 1),
+                                      fontFamily: 'SpaceGrotesk',
+                                      fontSize: 20,
+                                      letterSpacing: 0,
+                                      fontWeight: FontWeight.bold,
+                                      //height: 0.8461538461538461
+                                    ),),
+                                    Obx(
+                                          ()=> Text(
+                                        " ${controller.currenttabvalue.value}"
+                                        , style: TextStyle(
+                                        color: Colors.orange,
+                                        fontFamily: 'SpaceGrotesk',
+                                        fontSize: 20,
+                                        letterSpacing: 0,
+                                        fontWeight: FontWeight.bold,
+                                        //height: 0.8461538461538461
+                                      ),),
+                                    ),
+                                    Text( ' due events', style: TextStyle(
+                                      color: Colors.orange,
+                                      fontFamily: 'SpaceGrotesk',
+                                      fontSize: 20,
+                                      letterSpacing: 0,
+                                      fontWeight: FontWeight.bold,
+                                      //height: 0.8461538461538461
+                                    ),)
+                                  ],
                                 ),
                               ),
-                              Center(child: Text("", style: TextStyle(fontSize: 18,color: Colors.white))),
+
+                              Expanded(
+                                child: TabBarView(
+                                  children: [
+                                    StreamBuilder<DocumentSnapshot>(
+                                      stream: FirebaseFirestore.instance
+                                          .collection('${authController.currentUserObj['orgId']}_leads_sch')
+                                          .doc(receivedList.id)
+                                          .snapshots(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return Container();
+                                        }
+
+                                        if (!snapshot.hasData || !snapshot.data!.exists) {
+                                          return Container();
+                                        }
+
+                                        final data = snapshot.data!.data() as Map<String, dynamic>;
+                                        List<String> pendingNotes = [];
+
+                                        data.forEach((key, value) {
+                                          if (value is Map<String, dynamic> && value['sts'] == 'pending') {
+                                            pendingNotes.add(value['notes'] ?? '');
+                                          }
+                                        });
+
+
+                                        if (pendingNotes.isEmpty) {
+                                          return Container();
+                                        }
+
+                                        return ListView.builder(
+                                          itemCount: pendingNotes.length,
+
+                                          itemBuilder: (context, index) {
+                                            return   Align(
+                                              alignment: Alignment.centerLeft,
+                                              child: Container(
+                                                width: width*0.9,
+                                               // height: height*0.08,
+                                                padding: EdgeInsets.all(16),
+                                                decoration: BoxDecoration(
+                                                  color:(profileController.isLightMode==true)?
+                                                  Color.fromRGBO(242, 242, 247, 1):
+                                                  Colors.white,
+                                                  borderRadius: BorderRadius.only(
+                                                    topRight: Radius.circular(16),
+                                                    bottomLeft: Radius.circular(16),
+                                                    bottomRight: Radius.circular(16),
+
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        pendingNotes[index],
+                                                        style: TextStyle(fontSize: height*0.016, fontWeight: FontWeight.bold),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    Obx(()=>
+                                    //  child:
+                                        ListView.builder(
+                                          itemCount: controller.response.length,
+                                          itemBuilder:(context,index)
+                                          {
+                                            final singlelog=controller.response[index];
+                                            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
+
+                                            String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+                                            return Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      color: (profileController.isLightMode==true)?
+                                                      Color.fromRGBO(242, 242, 247, 1):
+                                                      Colors.white,
+                                                    borderRadius: BorderRadius.circular(10)
+                                                  ),
+
+                                                  height: height*0.08,
+                                                  width: width*0.9,
+
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
+                                                    child: Row(
+                                                      children: [
+                                                        Text("${singlelog['type']}"),
+                                                        SizedBox(width: width*0.02,),
+                                                        Text("${singlelog['duration']}s"),
+                                                        Spacer(),
+                                                        Text("${formattedDate}"),
+
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                ),
+                                                Divider(color: Colors.white,height: 3,)
+                                              ],
+                                            );
+                                          }
+                                      ),
+                                    ),
+                                    StreamBuilder<List<Map<String, dynamic>>>(
+                                                stream: stream,
+                                                builder: (context, snapshot) {
+                                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                                    return Container();
+                                                  }
+
+                                                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                                    return Text('No data found');
+                                                  }
+
+                                                  var filteredData = snapshot.data!;
+                                                filteredData = snapshot.data!
+                                                      .where((item) => item['type'] == 'sts_change')
+                                                      .toList();
+
+                                                  return ListView.builder(
+                                                    itemCount: filteredData.length,
+                                                    itemBuilder: (context, index) {
+                                                      final item = filteredData[index];
+
+                                                    return  Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Container(
+                                width: width*0.9,
+                                //height: height*0.08,
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color:(profileController.isLightMode==true)?
+                                  Color.fromRGBO(242, 242, 247, 1):
+                                  Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(16),
+                                    bottomLeft: Radius.circular(16),
+                                    bottomRight: Radius.circular(16),
+
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                       "Changed Status from ${item['from']} to ${item['to']}",
+                                        style: TextStyle(fontSize: height*0.016, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                                        ),
+                                                        Divider(color: (profileController.isLightMode==false)?
+                                  Colors.black:
+                                                        Colors.white,)
+                                                      ],
+                                                    );
+                                                    },
+                                                  );
+                                                },
+                                                ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -768,7 +991,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
 
 
-               SizedBox(height: 15,),
+               SizedBox(height: 5,),
 
                /* SizedBox(height: 15,),
                 Column(

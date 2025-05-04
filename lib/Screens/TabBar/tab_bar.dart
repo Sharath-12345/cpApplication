@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:saleapp/BottomPopups/popup_projects.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/TabBar/tab_bar.dart';
 import 'package:saleapp/Screens/TabBar/tabbar_controller.dart';
@@ -38,7 +40,9 @@ class MyTabBar extends StatelessWidget
 
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.newLeadsStream,
+                    stream: (homeController.filterApplied==false)?
+                    homeController.newLeadsStream:
+                    homeController.newLeadsFilteredStream,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -53,7 +57,9 @@ class MyTabBar extends StatelessWidget
                 ),
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.followupLeads,
+                    stream: (homeController.filterApplied==false)?
+                    homeController.followupLeads:
+                    homeController.followupLeadsFiltered,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -68,7 +74,9 @@ class MyTabBar extends StatelessWidget
                 ),
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.visitfixedLeads,
+                    stream:(homeController.filterApplied==false)?
+                    homeController.visitfixedLeads:
+                     homeController.visitfixedLeadsFiltered,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -84,7 +92,9 @@ class MyTabBar extends StatelessWidget
 
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.visitdoneLeads,
+                    stream:(homeController.filterApplied==false)?
+                    homeController.visitdoneLeads:
+                   homeController.visitdoneLeadsFiltered,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -100,7 +110,9 @@ class MyTabBar extends StatelessWidget
 
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.negotiationsLeads,
+                    stream:(homeController.filterApplied==false)?
+                    homeController.negotiationsLeads:
+                    homeController.negotiationsLeadsFiltered,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -116,7 +128,9 @@ class MyTabBar extends StatelessWidget
 
                 Tab(
                   child: StreamBuilder<int>(
-                    stream: homeController.notIntrestedLeads,
+                    stream:(homeController.filterApplied==false)?
+                    homeController.notIntrestedLeads:
+                     homeController.notIntrestedLeadsFiltered,
                     builder: (context, snapshot) {
                       final count = snapshot.data ?? 0;
                       return CustomTab(
@@ -137,15 +151,22 @@ class MyTabBar extends StatelessWidget
                       width: MediaQuery.of(context).size.width * 0.25,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color:
-                            //: homeController.tabIndex == 6
-                            //?  Color.fromRGBO(89, 66, 60, 1)
-                           // : Color.fromRGBO(30, 30, 30, 1),
-                        Colors.white
+                          color:
+                          homeController.tabIndex == 6
+                              ?( (profileController.isLightMode==true) ?
+                          Color(0xFFE6E0FA):
+                          Color.fromRGBO(89, 66, 60, 1)):
+                          ( (profileController.isLightMode==true) ?
+                          Color.fromRGBO(242, 242, 247, 1):
+                          Color.fromRGBO(28, 28, 30, 1)
+                          )
                       ),
                       child:  Center(
                         child: Text("Projects",style: TextStyle(
-                          color: Colors.black,
+                          color:
+                          (profileController.isLightMode==true)?
+                              Colors.black:
+                          Colors.white,
                           fontFamily: 'SpaceGrotesk',
                           fontSize: 12,
                           letterSpacing: 0,
@@ -161,15 +182,22 @@ class MyTabBar extends StatelessWidget
                       width: MediaQuery.of(context).size.width * 0.30,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color:
-                        //homeController.tabIndex == 7
-                          //  ?  Color.fromRGBO(89, 66, 60, 1)
-                            //: Color.fromRGBO(30, 30, 30, 1),
-                        Colors.white
+                          color:
+                          homeController.tabIndex == 7
+                              ?( (profileController.isLightMode==true) ?
+                          Color(0xFFE6E0FA):
+                          Color.fromRGBO(89, 66, 60, 1)):
+                          ( (profileController.isLightMode==true) ?
+                          Color.fromRGBO(242, 242, 247, 1):
+                          Color.fromRGBO(28, 28, 30, 1)
+                          )
                       ),
                       child:  Center(
                         child: Text("Participants",style: TextStyle(
-                          color: Colors.black,
+                          color:
+                          (profileController.isLightMode==true)?
+                          Colors.black:
+                          Colors.white,
                           fontFamily: 'SpaceGrotesk',
                           fontSize: 12,
                           letterSpacing: 0,
@@ -193,27 +221,7 @@ class MyTabBar extends StatelessWidget
               Colors.black,
             ),
             SizedBox(height: height*0.03 ,),
-            Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: StreamBuilder<int>(
-                stream: homeController.getCurrentTabStream(homeController.tabIndex.value, homeController),
-                builder: (context, snapshot) {
-                  final count = snapshot.data ?? 0;
-                  return Text(
-                    'you have $count due events',
-                    style: TextStyle(
-                     color: (profileController.isLightMode==true)?
-                      Colors.black:
-                      Colors.white,
-                      fontFamily: 'SpaceGrotesk',
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
-              )
 
-            ),
            // SizedBox(height: height*0.02 ,),
 
           ],
@@ -247,7 +255,7 @@ class CustomTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
         ()=> Container(
-        height: MediaQuery.of(context).size.height * 0.07,
+      //  height: MediaQuery.of(context).size.height * 0.07,
 
 
         width: (title=="Negotiations " || title=="NotIntrested") ?
@@ -306,6 +314,10 @@ class CustomTab extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 
 

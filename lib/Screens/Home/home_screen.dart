@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,6 +21,7 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:saleapp/Auth/auth_controller.dart';
+import 'package:saleapp/BottomPopups/popup_projects.dart';
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/LeadDetails/LeadDetails.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
@@ -48,9 +50,12 @@ class _HomePageState extends State<HomePage> {
   final AuthController authController=Get.find<AuthController>();
   final  profileController = Get.find<ProfileController>();
 
+
+
   Iterable<CallLogResponse> callLogs = <CallLogResponse>[
     CallLogResponse(name: "Loading...", number: "0000000000")
   ];
+  var currentSelectedProject="";
 
   var leadsphonenumberlist=[];
 
@@ -63,7 +68,7 @@ class _HomePageState extends State<HomePage> {
 
   void getToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
-    print("FCM Token: $token");
+   // print("FCM Token: $token");
   }
 
 
@@ -153,9 +158,10 @@ class _HomePageState extends State<HomePage> {
     final auth=Get.find<AuthController>();
 
 
+
     fetchCallLogs();
     matchAndStoreCallLogs();
-    print("Home came");
+
 
     getToken();
 
@@ -221,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                         SliverAppBar(
                           backgroundColor:  (profileController.isLightMode==true)?
                           Colors.white:Color(0xff0D0D0D),
-                          expandedHeight: height*0.16,
+                          expandedHeight: height*0.14,
                           floating: false,
                           pinned: false,
                           flexibleSpace: FlexibleSpaceBar(
@@ -322,60 +328,64 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                      Spacer(),
                                      // SizedBox(width: width*0.028,),
-                                      Container(
-                                          width: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .width * 0.45,
-                                          height: MediaQuery
-                                              .of(context)
-                                              .size
-                                              .height * 0.120,
-                                          decoration: BoxDecoration(
-                                            color:(profileController.isLightMode==true)?
-                                            Color(0xFFE6E0FA):
-                                            Color.fromRGBO(89, 66, 60, 1),
+                                      Obx(
+                                          ()=> Container(
+                                            width: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width * 0.45,
+                                            height: MediaQuery
+                                                .of(context)
+                                                .size
+                                                .height * 0.120,
+                                            decoration: BoxDecoration(
+                                              color:(profileController.isLightMode==true)?
+                                              Color(0xFFE6E0FA):
+                                              Color.fromRGBO(89, 66, 60, 1),
 
-                                          ),
-                                          child: Padding(
-                                            padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment: CrossAxisAlignment
-                                                  .start,
-                                              children: [
-                                                StreamBuilder<int>(
-                                                  stream: homeController.totalLeadsStream,
-                                                  builder: (context, snapshot) {
-                                                    final total = snapshot.data ?? 0;
-                                                    return Text(
-                                                      "$total",
-                                                      style: TextStyle(
-                                                        color:(profileController.isLightMode==true) ?
-                                                        Colors.black:
-                                                        Colors.white,
-                                                        fontSize: 17,
-                                                        letterSpacing: 0,
-                                                        fontWeight: FontWeight.w600,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                                SizedBox(height: 4,),
-                                                Text("Leads", style: TextStyle(
-                                                  color:(profileController.isLightMode==true) ?
-                                                  Colors.black:
-                                                  Colors.white,
-                                                  fontFamily: 'SpaceGrotesk',
-                                                  fontSize: 17,
-                                                  letterSpacing: 0,
-                                                  fontWeight: FontWeight.w600,
-                                                  //height: 0.8461538461538461
-                                                ),),
-
-                                              ],
                                             ),
-                                          )
+                                            child: Padding(
+                                              padding: EdgeInsets.fromLTRB(20, 15, 0, 15),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  StreamBuilder<int>(
+                                                    stream: (homeController.filterApplied.value==false)?
+                                                    homeController.totalLeadsStream:
+                                                    homeController.totalLeadsFilteredStream,
+                                                    builder: (context, snapshot) {
+                                                      final total = snapshot.data ?? 0;
+                                                      return Text(
+                                                        "$total",
+                                                        style: TextStyle(
+                                                          color:(profileController.isLightMode==true) ?
+                                                          Colors.black:
+                                                          Colors.white,
+                                                          fontSize: 17,
+                                                          letterSpacing: 0,
+                                                          fontWeight: FontWeight.w600,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                  SizedBox(height: 4,),
+                                                  Text("Leads", style: TextStyle(
+                                                    color:(profileController.isLightMode==true) ?
+                                                    Colors.black:
+                                                    Colors.white,
+                                                    fontFamily: 'SpaceGrotesk',
+                                                    fontSize: 17,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.w600,
+                                                    //height: 0.8461538461538461
+                                                  ),),
+
+                                                ],
+                                              ),
+                                            )
+                                        ),
                                       )
                                     ],
                                   ),
@@ -397,159 +407,326 @@ class _HomePageState extends State<HomePage> {
                     },
                   body:
 
-                  RefreshIndicator(
-
-                    onRefresh:() async {
-                      await Future.delayed(
-                        const Duration(seconds: 1),
-
-                      );
-                      setState(() {
-
-                      });
-
-                    } ,
-                    child: SizedBox(
-
-
-                      child: TabBarView(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if(homeController.tabIndex.value<=5)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'new')
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
+                          Padding(
+                              padding: const EdgeInsets.only(left: 4,bottom: 10),
+                              child: StreamBuilder<int>(
+                                stream: (homeController.filterApplied==false)?
+                                homeController.getCurrentTabStream(homeController.tabIndex.value, homeController):
+                                homeController.getCurrentTabStreamFiltered(homeController.tabIndex.value, homeController),
+                                builder: (context, snapshot) {
+                                  final count = snapshot.data ?? 0;
+                                  return Text(
+                                    'you have $count due events',
+                                    style: TextStyle(
+                                      color: (profileController.isLightMode==true)?
+                                      Colors.black:
+                                      Colors.white,
+                                      fontFamily: 'SpaceGrotesk',
+                                      fontSize: height*0.02,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   );
-                                }
-
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "New");
-                              }
+                                },
+                              )
                           ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status',whereIn: [
-                                'followup','Followup',
-                              ])
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
-                                  );
-                                }
+                          Spacer(),
+                          Obx(() => InkWell(
+                            onTap: () async {
+                              String? selectedProject = await showBottomPopupProjects(context, currentSelectedProject);
 
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "FollowUp");
+                              if (selectedProject != null) {
+                                // Apply filter logic
+                                currentSelectedProject = selectedProject;
+                                homeController.currentSelectedProject.value = selectedProject;
+                                homeController.filterApplied.value = true;
+                              } else {
+                                currentSelectedProject = "";
+                                homeController.currentSelectedProject.value = "";
+                                homeController.filterApplied.value = false;
                               }
-                          ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'visitfixed')
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
-                                  );
-                                }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8),
+                                color: profileController.isLightMode ==true? Colors.white : Colors.grey[850],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    (homeController.currentSelectedProject.value.isNotEmpty)
+                                        ? (homeController.currentSelectedProject.value.length >= 14
+                                        ? "${homeController.currentSelectedProject.value.substring(0, 12)}.."
+                                        : homeController.currentSelectedProject.value)
+                                        : "Select Project",
+                                    style: TextStyle(
+                                      color: profileController.isLightMode == true ? Colors.black : Colors.white,
+                                      fontSize: height * 0.016,
+                                    ),
+                                  ),
 
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "Visit Fixed");
-                              }
-                          ),
+                                  const SizedBox(width: 6),
+                                  Icon(
+                                    Icons.arrow_drop_down,
+                                    color: profileController.isLightMode ==true? Colors.black : Colors.white,
+                                  ),
 
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'visitdone')
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
-                                  );
-                                }
+                                ],
+                              ),
+                            ),
+                          ))
 
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "Visit Done");
-                              }
-                          ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'negotiations')
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
-                                  );
-                                }
-
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "Negotiations");
-                              }
-                          ),
-                          StreamBuilder<QuerySnapshot>(
-                              stream: FirebaseFirestore.instance
-                                  .collection("${authController.currentUserObj['orgId']}_leads")
-                                  .where('Status', isEqualTo: 'notintrested')
-                                  .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return Center(child: CircularProgressIndicator());
-                                }
-                                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                                  return Center(
-                                    //child: Text("No new leads")
-                                  );
-                                }
-
-                                final docs = snapshot.data!.docs;
-                                return LeadsListView(
-                                    leadsList: docs, status: "Not Intrested");
-                              }
-                          ),
-
-
-                          Text("   "),
-                          Text("   "),
                         ],
                       ),
-                    ),
+                      SizedBox(height: height*0.02,),
+                      Expanded(
+                        child: TabBarView(
+                          children: [
+                            StreamBuilder<QuerySnapshot>(
+                                stream:(homeController.filterApplied==false)? FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'new')
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                             FirebaseFirestore.instance
+                            .collection("${authController.currentUserObj['orgId']}_leads")
+                                 .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                            .where('Status', isEqualTo: 'new')
+                            .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "New");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream: (homeController.filterApplied==false)?
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status',whereIn: [
+                                  'followup','Followup',
+                                ])
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                                    .where('Status',whereIn: [
+                                  'followup','Followup',
+                                ])
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "FollowUp");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream:(homeController.filterApplied==false)?
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'visitfixed')
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'visitfixed')
+                                    .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "Visit Fixed");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream:(homeController.filterApplied==false)?
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'visitdone')
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'visitdone')
+                                    .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "Visit Done");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream:(homeController.filterApplied==false)?
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'negotiations')
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'negotiations')
+                                    .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "Negotiations");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                                stream: (homeController.filterApplied==false)?
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'notintrested')
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots():
+                                FirebaseFirestore.instance
+                                    .collection("${authController.currentUserObj['orgId']}_leads")
+                                    .where('Status', isEqualTo: 'notintrested')
+                                    .where('Project', isEqualTo: homeController.currentSelectedProject.value)
+                                    .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                                    .snapshots(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+                                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                                    return Center(
+                                      //child: Text("No new leads")
+                                    );
+                                  }
+
+                                  final docs = snapshot.data!.docs;
+                                  return LeadsListView(
+                                      leadsList: docs, status: "Not Intrested");
+                                }
+                            ),
+                            StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection("${authController.currentUserObj['orgId']}_projects")
+                            // .where("status", isEqualTo: "ongoing")
+                                .snapshots(),
+                            // stream: DbQuery.instanace.getStreamCombineTasks(),
+                            builder: (context, snapshot) {
+                              //     if (!snapshot.hasData) {
+                              //   return CircularProgressIndicator();
+                              // }
+                              if (snapshot.hasError) {
+                                return const Center(
+                                  child: Text("Something went wrong! 😣..."),
+                                );
+                              } else if (snapshot.hasData) {
+                                // lets seperate between business vs personal
+
+                                var TotalTasks = snapshot.data!.docs.toList();
+
+                             //   print('pub dev is ${TotalTasks}');
+                               // print('pub dev isx ${controller2.currentUserObj['orgId']}');
+
+                                // particpantsIdA
+
+                                // return Text('Full Data');
+                                return Column(
+                                  children: [
+                                    Expanded(
+                                      child: MediaQuery.removePadding(
+                                        context: context,
+                                        removeTop: true,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: 10.0),
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              physics: const BouncingScrollPhysics(),
+                                              itemCount: snapshot.data?.docs.length,
+                                              itemBuilder: (context, i) {
+                                                var projData = snapshot.data?.docs[i];
+                                                var unitCounts;
+                                                try {
+                                                  unitCounts = projData?['totalUnitCount'] ?? 0;
+                                                } catch (e) {
+                                                  unitCounts = 'NA';
+                                                }
+
+                                                return _buildSingleHouse(context, projData);
+                                              }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Text('');
+                              }
+                            }),
+
+                            Text("   "),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
 
             ),
@@ -581,9 +758,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  double get maxExtent =>  MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.height * 0.15;
+  double get maxExtent =>  MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.height * 0.075;
   @override
-  double get minExtent =>  MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.height * 0.15;
+  double get minExtent =>  MediaQueryData.fromView(WidgetsBinding.instance.platformDispatcher.views.first).size.height * 0.075;
   @override
   bool shouldRebuild(covariant _TabBarDelegate oldDelegate) => false;
   }
@@ -639,7 +816,7 @@ class _LeadsListViewState extends State<LeadsListView> {
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width*90,
-                          height: MediaQuery.of(context).size.height*0.1,
+                         // height: MediaQuery.of(context).size.height*0.1,
                           decoration: BoxDecoration(
                             //  borderRadius: BorderRadius.circular(12),
                             color : (profileController.isLightMode==true)?
@@ -647,27 +824,31 @@ class _LeadsListViewState extends State<LeadsListView> {
                             Color.fromRGBO(28, 28, 30, 1),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(20, 9, 23, 4),
+                            padding: EdgeInsets.fromLTRB(20, 8, 23, 12),
                             child: Row(
                               children: [
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text("${single['Name']}",style: TextStyle(
                                         color: (profileController.isLightMode==true)?
                                             Colors.black:
                                         Colors.white,fontWeight: FontWeight.bold,
+                                        fontSize: 15,
                                         fontFamily: 'SpaceGrotesk'
                                     ),),
                                     Text("NA",style: TextStyle(
                                         color: (profileController.isLightMode==true)?
                                         Colors.black:
-                                        Colors.white,fontFamily: 'SpaceGrotesk'
+                                        Colors.white//,fontFamily: 'SpaceGrotesk'
+                                        ,fontSize: 11
                                     )),
                                     Text(widget.status,style: TextStyle(
                                         color: (profileController.isLightMode==true)?
                                         Colors.black:
-                                        Colors.white,fontFamily: 'SpaceGrotesk'
+                                        Colors.white,//fontFamily: 'SpaceGrotesk',
+                                      fontSize: 12
                                     ))
                                   ],
                                 ),
@@ -713,4 +894,164 @@ class _LeadsListViewState extends State<LeadsListView> {
     );
   }
 }
+Widget _buildSingleHouse(BuildContext context, projData) {
+  final profile=Get.find<ProfileController>();
+  String totalUnitCount =
+  projData?.data()?.containsKey('totalUnitCount') == true
+      ? projData['totalUnitCount'].toString()
+      : '0';
+  String soldUnitCount =
+  projData?.data()?.containsKey('soldUnitCount') == true
+      ? projData['soldUnitCount'].toString()
+      : '0';
+
+  return Card(
+
+     color:(profile.isLightMode==true)? null:  Colors.white,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(16),
+    ),
+    margin: EdgeInsets.only(bottom: 20),
+    clipBehavior: Clip.antiAliasWithSaveLayer,
+    child: InkWell(
+      onTap: () {
+        //Get.to(() => ProjectUnitScreen(projectDetails: projData));
+      },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      projData?['projectName'] ?? '',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
+                    ),
+                    Text(
+                      projData?['projectType']?['name'] ?? '',
+                      style: TextStyle(
+                        fontFamily: 'SpaceGrotesk',
+                        fontWeight: FontWeight.w600,
+                        color: Colors.green, // Customize to your theme
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: Colors.grey.withAlpha(180),
+                    ),
+                    SizedBox(width: 4),
+                    Text(
+                      projData?['location'] ?? '',
+
+                      style: TextStyle(color: Colors.grey,
+                        fontFamily: 'SpaceGrotesk',),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.king_bed,
+                            size: 16,
+                            color: Colors.grey.withAlpha(180),
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            totalUnitCount,
+                            style: TextStyle(color: Colors.grey,
+                              fontFamily: 'SpaceGrotesk',),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.bathtub,
+                            size: 16,
+                            color: Colors.grey.withAlpha(180),
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            '${projData?['area'] ?? ''}',
+                            style: TextStyle(color: Colors.grey,
+                              fontFamily: 'SpaceGrotesk',),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.square_foot,
+                            size: 16,
+                            color: Colors.grey.withAlpha(180),
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            soldUnitCount,
+                            style: TextStyle(color: Colors.grey,
+                              fontFamily: 'SpaceGrotesk',),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.aspect_ratio,
+                            size: 16,
+                            color: Colors.grey.withAlpha(180),
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            '${projData?['area'] ?? ''}',
+                            style: TextStyle(color: Colors.grey,
+                              fontFamily: 'SpaceGrotesk',),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 

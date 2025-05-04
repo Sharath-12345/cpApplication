@@ -7,9 +7,26 @@ class LeadDetailsController extends GetxController
 {
   final authController=Get.find<AuthController>();
 
+  var totaltasksvalue=0.obs;
+  var totalcalllogsvalue=0.obs;
+  var totalactivityvalue=0.obs;
+  var currenttabvalue=0.obs;
+
  RxInt tabIndex = 0.obs;
   chnageTabIndex(int index) {
     tabIndex(index);
+    if(index==1)
+      {
+        currenttabvalue.value=totalcalllogsvalue.value;
+      }
+    else if(index==2)
+      {
+        currenttabvalue.value=totalactivityvalue.value;
+      }
+    else
+      {
+        currenttabvalue.value=totaltasksvalue.value;
+      }
   }
 
 
@@ -24,6 +41,7 @@ class LeadDetailsController extends GetxController
 
 
 
+
   Future<void> printRowsByLuid(String luid) async {
    print(luid);
    print('${authController.currentUserObj['orgId']}_lead_call_logs');
@@ -31,6 +49,7 @@ class LeadDetailsController extends GetxController
        .from('${authController.currentUserObj['orgId']}_lead_call_logs') // Replace with actual table name
        .select()
        .eq('Luid', luid); // Filter rows where 'luid' matches
+   totalcalllogsvalue.value=response.length;
 
    if (response.isNotEmpty) {
      print("Rows with luid = $luid: $response");
