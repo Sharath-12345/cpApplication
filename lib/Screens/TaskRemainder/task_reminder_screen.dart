@@ -373,7 +373,8 @@ Widget build(BuildContext context) {
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton(
-              onPressed: () => _controller.completeTask(task),
+              onPressed: () {},
+                  //_controller.completeTask(task),
               style: OutlinedButton.styleFrom(
                 side: BorderSide(color: Colors.black),
                 shape: RoundedRectangleBorder(

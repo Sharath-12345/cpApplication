@@ -10,7 +10,7 @@ class TaskReminderController extends GetxController {
   final authController=Get.find<AuthController>();
 
 
-  var selectedMonth = 'April'.obs;
+  var selectedMonth = 'May'.obs;
   var selectedYear = DateTime.now().year.obs;
   var selectedDate = DateTime.now().day.obs;
   var selectedFilterIndex = 0.obs;

@@ -18,7 +18,8 @@ import 'package:flutter_contacts/flutter_contacts.dart';
 
 
 
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:saleapp/Auth/auth_controller.dart';
 import 'package:saleapp/BottomPopups/popup_projects.dart';
@@ -68,7 +69,7 @@ class _HomePageState extends State<HomePage> {
 
   void getToken() async {
     String? token = await FirebaseMessaging.instance.getToken();
-   // print("FCM Token: $token");
+    print("FCM Token: $token");
   }
 
 
@@ -137,11 +138,6 @@ class _HomePageState extends State<HomePage> {
 
         callLogs = await CallLog.fetchCallLogs();
         callLogs=callLogs.take(30).toList();
-        for(var sing in callLogs)
-          {
-           // print(sing.number);
-          }
-
 
       } catch (e) {
         print("Error fetching call logs: $e");
@@ -199,15 +195,21 @@ class _HomePageState extends State<HomePage> {
               centerTitle: false,
               title: Padding(
                 padding: const EdgeInsets.only(left: 0),
-                child: Text(
-                  'Leads Manager',
-                  style: TextStyle(
-                    color: (profileController.isLightMode==true)?
-                   Colors.black:Colors.white,
-                    fontFamily: 'SpaceGrotesk',
-                    fontSize: 22,
-                    letterSpacing: 0,
-                    fontWeight: FontWeight.bold,
+                child: InkWell(
+                  onTap: ()
+                  {
+                  // sendCallNotification("Sharath", "8186039554", "foirbem1SsumzDCwvIJUDR:APA91bEFagYIXF1PJXYaOFX_hXqqyUM669LgPSsOGqk3GK5SoJ8pbS_QX2wpi1rlYKz3NM4a4_O0f6g2aKcV4jmRM-T17r1C8hlpVHKCwV5pd6MKDwImS3A");
+                  },
+                  child: Text(
+                    'Leads Manager',
+                    style: TextStyle(
+                      color: (profileController.isLightMode==true)?
+                     Colors.black:Colors.white,
+                      fontFamily: 'SpaceGrotesk',
+                      fontSize: 22,
+                      letterSpacing: 0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -283,7 +285,7 @@ class _HomePageState extends State<HomePage> {
 
                                                       if (snapshot.hasError) {
                                                         return Text(
-                                                          "Error",
+                                                          "0",
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                             fontSize: 17,
@@ -441,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                             onTap: () async {
                               String? selectedProject = await showBottomPopupProjects(context, currentSelectedProject);
 
-                              if (selectedProject != null) {
+                              if (selectedProject != null && selectedProject!="All Projects") {
                                 // Apply filter logic
                                 currentSelectedProject = selectedProject;
                                 homeController.currentSelectedProject.value = selectedProject;
@@ -1054,4 +1056,19 @@ Widget _buildSingleHouse(BuildContext context, projData) {
   );
 }
 
+void sendCallNotification(String name, String number, String fcmToken) async {
+  final url = 'https://us-central1-redefine-erp.cloudfunctions.net/sendPushNotification';
+
+  final response = await http.post(
+    Uri.parse(url),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'name': name,
+      'number': number,
+      'fcmToken': fcmToken,
+    }),
+  );
+
+  print(response.body);
+}
 

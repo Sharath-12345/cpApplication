@@ -18,7 +18,7 @@ class MainActivity: FlutterActivity() {
             val channelId = "your_channel_id" // 👈 same as payload
             val channelName = "Call Notifications"
             val importance = NotificationManager.IMPORTANCE_HIGH
-            val soundUri = ("android.resource://" + packageName + "/raw/call_sound").toUri()
+            val soundUri = ("android.resource://" + packageName + "/raw/fbm_ring_notification").toUri()
 
             val audioAttributes = AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)

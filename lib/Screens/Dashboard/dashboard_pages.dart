@@ -364,7 +364,11 @@ class _DashboardPageState extends State<DashboardPage> {
             },
             padding: FxSpacing.x(16),
             height: 36,
-            child: FxText.bodyMedium(time)))
+
+            child: FxText.bodyMedium(time,color: Colors.white,),
+
+        ),
+        )
       ],
     );
   }

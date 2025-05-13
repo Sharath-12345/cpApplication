@@ -35,50 +35,74 @@ Future<String?> showBottomPopupProjects(BuildContext context, String? currentSel
                 }
 
                 return ListView(
-                  children: snapshot.data!.docs.map((doc) {
-                    final data = doc.data() as Map<String, dynamic>;
-                    final projectName = data['projectName'] ?? 'Unnamed Project';
-                    final projectType = data['projectType']['name'] ?? '';
-
-                    final isSelected = selectedProject == projectName;
-
-                    return Column(
-                      children : [
+                  children: [
+                    // 1. All Projects Option
+                    Column(
+                      children: [
                         ListTile(
-                        tileColor: isSelected ? Colors.blue.shade100 : null,
-                        title: Text(
-                          projectName,
-                          style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: MediaQuery.of(context).size.height * 0.018,
+                          tileColor: selectedProject == "All Projects" ? Colors.blue.shade100 : null,
+                          title: Text(
+                            "All Projects",
+                            style: TextStyle(
+                              fontFamily: 'SpaceGrotesk',
+                              fontSize: MediaQuery.of(context).size.height * 0.018,
+                            ),
                           ),
+                          onTap: () {
+                            Navigator.pop(context, "All Projects");
+                          },
                         ),
-                        trailing: Text(
-                          projectType,
-                          style: TextStyle(
-                            fontFamily: 'SpaceGrotesk',
-                            fontSize: MediaQuery.of(context).size.height * 0.014,
-                          ),
-                        ),
-                        onTap: () {
-                          // Toggle behavior
-                          if (isSelected) {
-                            Navigator.pop(context, null); // unselect
-                          } else {
-                            Navigator.pop(context, projectName); // select
-                          }
-                        },
-                      ),
                         Container(
                           width: MediaQuery.of(context).size.width * 0.8,
-                          child: Divider(
+                          child: Divider(),
+                        ),
+                      ],
+                    ),
 
+                    // 2. List from Firestore
+                    ...snapshot.data!.docs.map((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final projectName = data['projectName'] ?? 'Unnamed Project';
+                      final projectType = data['projectType']['name'] ?? '';
+
+                      final isSelected = selectedProject == projectName;
+
+                      return Column(
+                        children: [
+                          ListTile(
+                            tileColor: isSelected ? Colors.blue.shade100 : null,
+                            title: Text(
+                              projectName,
+                              style: TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: MediaQuery.of(context).size.height * 0.018,
+                              ),
+                            ),
+                            trailing: Text(
+                              projectType,
+                              style: TextStyle(
+                                fontFamily: 'SpaceGrotesk',
+                                fontSize: MediaQuery.of(context).size.height * 0.014,
+                              ),
+                            ),
+                            onTap: () {
+                              if (isSelected) {
+                                Navigator.pop(context, null); // unselect
+                              } else {
+                                Navigator.pop(context, projectName); // select
+                              }
+                            },
                           ),
-                        )
-                      ]
-                    );
-                  }).toList(),
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: Divider(),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ],
                 );
+
               },
             ),
           );

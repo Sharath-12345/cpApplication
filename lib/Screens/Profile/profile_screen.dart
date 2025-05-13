@@ -348,7 +348,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text('Switch to Dark Mode', textAlign: TextAlign.left, style: TextStyle(
+                        Text(
+                          (profileController.isLightMode==true)?
+                          'Switch to Dark Mode':
+                          'Switch to Light Mode'
+                          , textAlign: TextAlign.left, style: TextStyle(
                             color:  (profileController.isLightMode==true)?
                     Color.fromRGBO(14, 10, 31, 1):
                     Colors.white,
@@ -377,25 +381,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Colors.black
                     )
                 ),
-                child:   Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 15),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text('Logout', textAlign: TextAlign.left, style: TextStyle(
-                          color: (profileController.isLightMode==true)?
-                          Color.fromRGBO(14, 10, 31, 1):
-                          Colors.white,
-                          fontFamily: 'SpaceGrotesk',
-                          fontSize: height*0.02,
-                          letterSpacing: 0 /*percentages not used in flutter. defaulting to zero*/,
-                          fontWeight: FontWeight.normal,
-                          height: 1
-                      ),),
-                      Spacer(),
-                      Icon(Icons.chevron_right,size: height*0.03,color: (profileController.isLightMode==true)?
-                      Colors.black:Colors.white)
-                    ],
+                child:   InkWell(
+                  onTap: ()
+                  {
+                    authController.logout();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 0,horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text('Logout', textAlign: TextAlign.left, style: TextStyle(
+                            color: (profileController.isLightMode==true)?
+                            Color.fromRGBO(14, 10, 31, 1):
+                            Colors.white,
+                            fontFamily: 'SpaceGrotesk',
+                            fontSize: height*0.02,
+                            letterSpacing: 0 /*percentages not used in flutter. defaulting to zero*/,
+                            fontWeight: FontWeight.normal,
+                            height: 1
+                        ),),
+                        Spacer(),
+                        Icon(Icons.chevron_right,size: height*0.03,color: (profileController.isLightMode==true)?
+                        Colors.black:Colors.white)
+                      ],
+                    ),
                   ),
                 ),
               )

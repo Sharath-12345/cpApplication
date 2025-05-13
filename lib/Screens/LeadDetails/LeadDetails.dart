@@ -14,7 +14,9 @@ import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:omni_datetime_picker/omni_datetime_picker.dart';
+import 'package:call_log_new/call_log_new.dart';
 
+import '../../helpers/supaase_help.dart';
 import '../Profile/profile_controller.dart';
 
 class LeadDetailsScreen extends StatefulWidget
@@ -25,13 +27,14 @@ class LeadDetailsScreen extends StatefulWidget
   State<LeadDetailsScreen> createState() => _LeadDetailsScreenState();
 }
 
-class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
+class _LeadDetailsScreenState extends State<LeadDetailsScreen> with WidgetsBindingObserver {
   final HomeController homeController=Get.find<HomeController>();
   final AuthController authController=Get.find<AuthController>();
   final  profileController = Get.find<ProfileController>();
   var controller=Get.put<LeadDetailsController>(LeadDetailsController());
   var leadstatuschangecontroller=Get.put<StatusChangeLead>(StatusChangeLead());
   var argument = Get.arguments;
+
 
 
   final supabase = GetIt.instance<SupabaseClient>();
@@ -42,6 +45,10 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   var receivedList ;
   var calllogs;
   var currentStatus="new";
+  Iterable<CallLogResponse> callLogs = <CallLogResponse>[
+    CallLogResponse(name: "Loading...", number: "0000000000")
+  ];
+  bool isReturningFromCall = false;
 
 
 
@@ -51,11 +58,94 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
   void initState() {
     super.initState();
     receivedList=argument["leaddetails"];
+    WidgetsBinding.instance.addObserver(this);
 
 
 
     currentStatus="${receivedList['Status']}";
    controller.printRowsByLuid(receivedList.id);
+
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused) {
+      // App is going to background (call started)
+      isReturningFromCall = true;
+    } else if (state == AppLifecycleState.resumed && isReturningFromCall) {
+      // App came back to foreground after call
+      isReturningFromCall = false;
+
+      Future.delayed(Duration(seconds: 2), () async {
+        print("working");
+        callLogs = await CallLog.fetchCallLogs();
+        callLogs=callLogs.take(1).toList();
+        print(callLogs.first.number);
+        matchAndStoreCallLogs();
+        controller.currenttabvalue.value+=1;
+      });
+
+
+
+    }
+  }
+  Future<void> matchAndStoreCallLogs() async {
+
+
+    if(homeController.Totalleadslist!=null) {
+      List<Map<String, dynamic>> matchedLogs = [];
+
+      matchedLogs.add({
+        'call_log': callLogs.first,
+        'lead_id': receivedList.id
+      });
+
+
+
+
+
+
+      DbSupa.instance.getLeadCallLogs(authController.currentUserObj['orgId'])
+          .then((existingCallLogs) {
+        if (!existingCallLogs.isEmpty) {
+          for (var logandid in matchedLogs) {
+            var log = logandid['call_log'];
+            var lead_id = logandid['lead_id'];
+            var existsInSupabase = existingCallLogs!.any((supabaseLog) =>
+            supabaseLog['customerNo'] == log.number &&
+                supabaseLog['startTime'] == log.timestamp
+            );
+
+            // If call log doesn't exist in Supabase, insert it
+            // if (!existsInSupabase) {
+
+            //  print(authController.currentUserObj['orgId']);
+            //print(lead_id);
+            //print(log.number);
+
+
+            DbSupa.instance.addCallLog(
+                authController.currentUserObj['orgId'], lead_id, log);
+            //  }
+
+          }
+        } else {
+          for (var logandid in matchedLogs) {
+            var log = logandid['call_log'];
+            var lead_id = logandid['lead_id'];
+            DbSupa.instance.addCallLog(
+                authController.currentUserObj['orgId'], lead_id, log);
+          }
+        }
+      });
+    }
 
   }
 
@@ -189,8 +279,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: InkWell(
                         onTap: ()
-                        {
+                        async {
                           FlutterDirectCallerPlugin.callNumber(receivedList['Mobile']);
+
                         },
                         child: Container(
                           width: 35,
@@ -640,45 +731,60 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                 height: MediaQuery.of(context).size.height * 0.1,
                                 width: MediaQuery.of(context).size.width * 0.23,
                                 decoration: BoxDecoration(
-                                  color:
-                                  controller.tabIndex==1
-                                      ?( (profileController.isLightMode==true) ?
-                                  Color(0xFFE6E0FA):
-                                  Color.fromRGBO(89, 66, 60, 1)):
-                                  ( (profileController.isLightMode==true) ?
-                                  Color.fromRGBO(242, 242, 247, 1):
-                                  Color.fromRGBO(28, 28, 30, 1)
-                                  ),),
+                                  color: controller.tabIndex == 1
+                                      ? (profileController.isLightMode == true
+                                      ? Color(0xFFE6E0FA)
+                                      : Color.fromRGBO(89, 66, 60, 1))
+                                      : (profileController.isLightMode == true
+                                      ? Color.fromRGBO(242, 242, 247, 1)
+                                      : Color.fromRGBO(28, 28, 30, 1)),
+                                ),
                                 child: Center(
                                   child: Padding(
                                     padding: EdgeInsets.fromLTRB(7, 2, 10, 0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Obx(()=>
-                                          //child:
-                                          Text("${controller.response.length}",
+                                        /// 👉 Replace Obx with StreamBuilder to show dynamic length
+                                        StreamBuilder<List<Map<String, dynamic>>>(
+                                          stream: controller.getCallLogsStream(receivedList.id),
+                                          builder: (context, snapshot) {
+
+                                            int count = snapshot.data?.length ?? 0;
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                             // controller.totalcalllogsvalue.value = count;
+                                            });
+
+                                            return Text(
+                                              "$count",
                                               style: TextStyle(
-                                                  color:
-                                                  (profileController.isLightMode==true)?
-                                                  Colors.black:
-                                                  Colors.white, fontWeight: FontWeight.bold)),
-                                        ),
-                                        Text("Call log",
-                                            style: TextStyle(
-                                                color:
-                                                (profileController.isLightMode==true)?
-                                                Colors.black:
-                                                Colors.white,
+                                                color: profileController.isLightMode == true
+                                                    ? Colors.black
+                                                    : Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                fontFamily: 'SpaceGrotesk',
-                                                fontSize: 14)),
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+                                        Text(
+                                          "Call log",
+                                          style: TextStyle(
+                                            color: profileController.isLightMode == true
+                                                ? Colors.black
+                                                : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'SpaceGrotesk',
+                                            fontSize: 14,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+
                             Tab(
                               child: Container(
                                 //height: MediaQuery.of(context).size.height * 0.07,
@@ -721,15 +827,20 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                           ),
                                         );
                                       }
+                                      var filteredData = snapshot.data!;
+                                      filteredData = snapshot.data!
+                                          .where((item) => item['type'] == 'sts_change')
+                                          .toList();
+                                      var count=filteredData.length;
+                                      controller.totalactivityvalue.value=filteredData.length;
 
-                                      final count = snapshot.data!.length;
-                                      controller.totalactivityvalue.value=count;
-
-                                      return Text(
-                                        '$count',
-                                        style: TextStyle(
-                                          color: profileController.isLightMode==true ? Colors.black : Colors.white,
-                                          fontWeight: FontWeight.bold,
+                                      return Obx(
+                                        ()=> Text(
+                                          "${count}",
+                                          style: TextStyle(
+                                            color: profileController.isLightMode==true ? Colors.black : Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       );
                                     },
@@ -758,8 +869,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                         SizedBox(
                           height: height,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height:height*0.03 ),
+                              SizedBox(height:height*0.01 ),
                               Padding(
                                 padding: const EdgeInsets.only(left: 0),
                                 child: Row(
@@ -803,6 +915,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                               Expanded(
                                 child: TabBarView(
                                   children: [
+
                                     StreamBuilder<DocumentSnapshot>(
                                       stream: FirebaseFirestore.instance
                                           .collection('${authController.currentUserObj['orgId']}_leads_sch')
@@ -810,11 +923,11 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                           .snapshots(),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return Container();
+                                          return SizedBox.shrink();
                                         }
 
                                         if (!snapshot.hasData || !snapshot.data!.exists) {
-                                          return Container();
+                                          return SizedBox.shrink();
                                         }
 
                                         final data = snapshot.data!.data() as Map<String, dynamic>;
@@ -828,10 +941,12 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
 
 
                                         if (pendingNotes.isEmpty) {
-                                          return Container();
+                                          return SizedBox.shrink();
                                         }
 
                                         return ListView.builder(
+                                          padding: const EdgeInsets.only(top: 12),
+
                                           itemCount: pendingNotes.length,
 
                                           itemBuilder: (context, index) {
@@ -869,52 +984,71 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                         );
                                       },
                                     ),
-                                    Obx(()=>
-                                    //  child:
-                                        ListView.builder(
-                                          itemCount: controller.response.length,
-                                          itemBuilder:(context,index)
-                                          {
-                                            final singlelog=controller.response[index];
-                                            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime']);
+                                    StreamBuilder<List<Map<String, dynamic>>>(
+                                      stream: controller.getCallLogsStream(receivedList.id), // pass LUID here
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                          return Center(child: CircularProgressIndicator());
+                                        }
+
+                                        if (snapshot.hasError) {
+                                          return Center(child: Text("Error: ${snapshot.error}"));
+                                        }
+
+                                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                                          return Center(child: Text("No call logs found"));
+                                        }
+
+                                        final logs = snapshot.data!;
+
+                                        return ListView.builder(
+                                          padding: const EdgeInsets.only(top: 12),
+                                          itemCount: logs.length,
+                                          itemBuilder: (context, index) {
+                                            final singlelog = logs[index];
+                                            DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(singlelog['startTime'].toInt());
+
 
                                             String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+
                                             return Column(
-                                              mainAxisAlignment: MainAxisAlignment.start,
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Container(
                                                   decoration: BoxDecoration(
-                                                      color: (profileController.isLightMode==true)?
-                                                      Color.fromRGBO(242, 242, 247, 1):
-                                                      Colors.white,
-                                                    borderRadius: BorderRadius.circular(10)
+                                                    color: profileController.isLightMode == true
+                                                        ? Color.fromRGBO(242, 242, 247, 1)
+                                                        : Colors.white,
+                                                    borderRadius: BorderRadius.circular(10),
                                                   ),
-
-                                                  height: height*0.08,
-                                                  width: width*0.9,
-
+                                                  height: height * 0.08,
+                                                  width: width * 0.9,
                                                   child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(10, 0, 10,0),
+                                                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                                     child: Row(
                                                       children: [
                                                         Text("${singlelog['type']}"),
-                                                        SizedBox(width: width*0.02,),
+                                                        SizedBox(width: width * 0.02),
                                                         Text("${singlelog['duration']}s"),
                                                         Spacer(),
-                                                        Text("${formattedDate}"),
-
+                                                        Text(formattedDate),
                                                       ],
                                                     ),
                                                   ),
-
                                                 ),
-                                                Divider(color: Colors.white,height: 3,)
+                                                Divider(
+                                                  color: profileController.isLightMode == false
+                                                      ? Colors.black
+                                                      : Colors.white,
+                                                  height: 6,
+                                                )
                                               ],
                                             );
-                                          }
-                                      ),
+                                          },
+                                        );
+                                      },
                                     ),
+
                                     StreamBuilder<List<Map<String, dynamic>>>(
                                                 stream: stream,
                                                 builder: (context, snapshot) {
@@ -930,8 +1064,10 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                                 filteredData = snapshot.data!
                                                       .where((item) => item['type'] == 'sts_change')
                                                       .toList();
+                                                controller.activitycount.value=filteredData.length;
 
                                                   return ListView.builder(
+                                                    padding: const EdgeInsets.only(top: 12),
                                                     itemCount: filteredData.length,
                                                     itemBuilder: (context, index) {
                                                       final item = filteredData[index];
@@ -968,7 +1104,8 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen> {
                                                         ),
                                                         Divider(color: (profileController.isLightMode==false)?
                                   Colors.black:
-                                                        Colors.white,)
+                                                        Colors.white,
+                                                        height: 6,)
                                                       ],
                                                     );
                                                     },

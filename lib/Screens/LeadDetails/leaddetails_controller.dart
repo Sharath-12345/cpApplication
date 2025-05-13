@@ -7,10 +7,11 @@ class LeadDetailsController extends GetxController
 {
   final authController=Get.find<AuthController>();
 
-  var totaltasksvalue=0.obs;
+  var totaltasksvalue=1.obs;
   var totalcalllogsvalue=0.obs;
   var totalactivityvalue=0.obs;
-  var currenttabvalue=0.obs;
+  var currenttabvalue=1.obs;
+  RxInt activitycount=0.obs;
 
  RxInt tabIndex = 0.obs;
   chnageTabIndex(int index) {
@@ -37,7 +38,14 @@ class LeadDetailsController extends GetxController
 
   final SupabaseClient supabase = GetIt.instance<SupabaseClient>();
 
-
+  Stream<List<Map<String, dynamic>>> getCallLogsStream(String luid) {
+    return supabase
+        .from('${authController.currentUserObj['orgId']}_lead_call_logs')
+        .stream(primaryKey: ['id']) // Use your real primary key field
+        .eq('Luid', luid)
+        .order('startTime') // Optional
+        .map((event) => event);
+  }
 
 
 

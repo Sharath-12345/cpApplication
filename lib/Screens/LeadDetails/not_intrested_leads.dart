@@ -46,6 +46,15 @@ class _NotIntrestedLeadsState extends State<NotIntrestedLeads> {
          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
            children: [
+             Align(
+               alignment: Alignment.centerLeft,
+               child: IconButton(
+                 icon: Icon(Icons.chevron_left, color: Colors.black),
+                 onPressed: () {
+                   Navigator.pop(context); // Go back to the previous screen
+                 },
+               ),
+             ),
              Center(
                child: Container(
                  height: height*0.14,
