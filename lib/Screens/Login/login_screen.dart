@@ -122,35 +122,40 @@ class _LoginScreenState extends State<LoginScreen> {
                               SizedBox(height: screenHeight * 0.03),
 
                               // Agree & Continue Button
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.purple,
-                                    padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    // Handle login
-                                    String email = emailController.text.trim();
-                                    String password = passwordController.text.trim();
-                                    authController.login(email, password);
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Agree & Continue",
-                                        style: TextStyle(
-                                          fontSize: screenWidth * 0.05,
-                                          color: Colors.white,
-                                        ),
+                              Obx(
+                                ()=> SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.purple,
+                                      padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                      SizedBox(width: screenWidth * 0.02),
-                                      Icon(Icons.arrow_forward, color: Colors.white),
-                                    ],
+                                    ),
+                                    onPressed: () {
+                                      // Handle login
+                                      String email = emailController.text.trim();
+                                      String password = passwordController.text.trim();
+                                      authController.login(email, password);
+                                    },
+                                    child:
+                                    (authController.isLoading.value==false)?
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Agree & Continue",
+                                          style: TextStyle(
+                                            fontSize: screenWidth * 0.05,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(width: screenWidth * 0.02),
+                                        Icon(Icons.arrow_forward, color: Colors.white),
+                                      ],
+                                    ):
+                                    CircularProgressIndicator(color: Colors.white,)
                                   ),
                                 ),
                               ),

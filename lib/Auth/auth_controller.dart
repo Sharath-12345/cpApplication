@@ -18,6 +18,8 @@ class AuthController extends GetxController {
 
   var currentUserObj = {}.obs;
 
+  RxBool isLoading = false.obs;
+
   final  currentUser = FirebaseAuth.instance.currentUser;
   Rx<User?> firebaseUser = Rx<User?>(null);
   void setOrgId(var newOrgId) {
@@ -72,13 +74,15 @@ class AuthController extends GetxController {
   Future<void> login(String email, String password) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       try {
-        await _auth.signInWithEmailAndPassword(
+        isLoading.value=true;
+       await  _auth.signInWithEmailAndPassword(
             email: email, password: password);
 
           await requestCallPermission();
-         await storeDetailsInLocal();
+         //await storeDetailsInLocal();
         await getLoggedInUserDetails();
         snackBarMsg("Sucess");
+        isLoading.value=false;
        Get.offAll(() => SuperHomePage());
        updateFCMToken();
        listenToTokenRefresh();
@@ -89,6 +93,7 @@ class AuthController extends GetxController {
       } catch (e) {
          snackBarMsg("Error! No User Found");
          print(e.toString());
+         isLoading.value=false;
         // snackBarMsg("Error! Please try again");
       }
 
