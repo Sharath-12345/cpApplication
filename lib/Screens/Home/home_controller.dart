@@ -83,7 +83,7 @@ class HomeController extends GetxController
 
    Stream<int> get totaltasksStream =>FirebaseFirestore.instance
        .collection("${authController.currentUserObj['orgId']}_assignedTasks")
-       .where("to_uid", isEqualTo: authController.currentUser?.uid)
+        .where("to_uid", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
        .where('status', whereIn: [
      'InProgress',
      'Completed'
@@ -335,7 +335,7 @@ class HomeController extends GetxController
 
 
     var totalLeadsList= ref
-        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .where("assignedTo", isEqualTo: FirebaseAuth.instance.currentUser?.uid)
         .where("Status", whereIn: [
       'new',
       'followup',

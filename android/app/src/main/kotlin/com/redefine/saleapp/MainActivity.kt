@@ -13,6 +13,7 @@ import androidx.core.net.toUri
 class MainActivity: FlutterActivity() {
     override fun onCreate(savedInstanceState: android.os.Bundle?) {
         super.onCreate(savedInstanceState)
+        val resId = resources.getIdentifier("fbm_ring_notification", "raw", packageName)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "your_channel_id" // 👈 same as payload
