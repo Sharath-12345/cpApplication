@@ -10,7 +10,7 @@ class TaskReminderController extends GetxController {
   final authController=Get.find<AuthController>();
 
 
-  var selectedMonth = 'May'.obs;
+
   var selectedYear = DateTime.now().year.obs;
   var selectedDate = DateTime.now().day.obs;
   var selectedFilterIndex = 0.obs;
@@ -31,6 +31,10 @@ class TaskReminderController extends GetxController {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
+  final currentMonthIndex = DateTime.now().month - 1;
+  var selectedMonth;
+
+
 
    List<String> filters = ['All 5', 'To Do 2', 'Completed 4', 'Pending 1'].obs;
   
@@ -67,6 +71,7 @@ class TaskReminderController extends GetxController {
   void onInit() {
     // TODO: implement onInit
     super.onInit();
+    selectedMonth = months[currentMonthIndex].obs;
     getTotalTasks();
     getCompletedTasks();
     getPendingtasks();

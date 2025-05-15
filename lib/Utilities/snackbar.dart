@@ -7,7 +7,7 @@ snackBarMsg(String title,
     bool snackPostionTop = false,
     bool enableMsgBtn = false,
     String btnMsg = 'Undo',
-    int animationDuration = 3,
+    int animationDuration = 1,
     VoidCallback? onTap}) {
   Get.snackbar(title, message ?? '',
       colorText: Colors.white,
