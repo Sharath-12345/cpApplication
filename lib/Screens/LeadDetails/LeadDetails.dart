@@ -78,7 +78,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
       isReturningFromCall = false;
 
       Future.delayed(Duration(seconds: 2), () async {
-        print("working");
+        print("method started");
         callLogs = await CallLog.fetchCallLogs();
         callLogs = callLogs.take(1).toList();
         print(callLogs.first.number);
@@ -88,161 +88,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
       });
     }
   }
-  int getWeekNumber(DateTime date) {
-    final mondayFirstDate = date.subtract(Duration(days: date.weekday - 1));
-    final firstDayOfYear = DateTime(date.year, 1, 1);
-    final daysDifference = mondayFirstDate.difference(firstDayOfYear).inDays;
-    return ((daysDifference + firstDayOfYear.weekday) / 7).ceil();
-  }
-
-
-  Future<void> saveByDayWeekMonth(int durationinseconds)
-  async {
-    final now = DateTime.now();
-
-    String dayOfYear = DateFormat("D").format(now);
-    int weekOfYear = getWeekNumber(now);
-    int month = now.month;
-    int year = now.year;
-
-    print("Day number: $dayOfYear");
-    print("Week number: $weekOfYear");
-    print("Month number: $month");
-
-    print("Year: $year");
-
-    final client = GetIt.instance<SupabaseClient>();
-    var uid=FirebaseAuth.instance.currentUser?.uid;
-    if(uid!=null)
-      {
-        final tableName = '${authController.currentUserObj['orgId']}_sales_emp_kpi';
-
-        final existing = await client
-            .from(tableName)
-            .select('talktime')
-            .eq('uid', uid)
-            .eq('period', "D")
-            .eq('year', year)
-            .eq('value', dayOfYear)
-            .maybeSingle();
-
-        if (existing == null) {
-          // Row does not exist → Insert new
-          await client.from(tableName).insert({
-            'uid': uid,
-            'period': "D",
-            'year': year,
-            'value': dayOfYear,
-            'talktime': durationinseconds,
-          });
-        } else {
-          // Row exists → Update talktime
-          final previousTalktime = existing['talktime'] ?? 0;
-          final newTalktime = previousTalktime + durationinseconds;
-
-          await client
-              .from(tableName)
-              .update({'talktime': newTalktime})
-              .match({
-            'uid': uid,
-            'period': "D",
-            'year': year,
-            'value': dayOfYear,
-          });
-        }
 
 
 
-
-        final existing2 = await client
-            .from(tableName)
-            .select('talktime')
-            .eq('uid', uid)
-            .eq('period', "W")
-            .eq('year', year)
-            .eq('value', weekOfYear)
-            .maybeSingle();
-
-        if (existing2 == null) {
-          // Row does not exist → Insert new
-          await client.from(tableName).insert({
-            'uid': uid,
-            'period': "W",
-            'year': year,
-            'value': weekOfYear,
-            'talktime': durationinseconds,
-          });
-        } else {
-          // Row exists → Update talktime
-          final previousTalktime = existing2['talktime'] ?? 0;
-          final newTalktime = previousTalktime + durationinseconds;
-
-          await client
-              .from(tableName)
-              .update({'talktime': newTalktime})
-              .match({
-            'uid': uid,
-            'period': "W",
-            'year': year,
-            'value': weekOfYear,
-          });
-        }
-
-
-
-
-
-        final existing3 = await client
-            .from(tableName)
-            .select('talktime')
-            .eq('uid', uid)
-            .eq('period', "M")
-            .eq('year', year)
-            .eq('value', month)
-            .maybeSingle();
-
-        if (existing3 == null) {
-          // Row does not exist → Insert new
-          await client.from(tableName).insert({
-            'uid': uid,
-            'period': "M",
-            'year': year,
-            'value':month,
-            'talktime': durationinseconds,
-          });
-        } else {
-          // Row exists → Update talktime
-          final previousTalktime = existing3['talktime'] ?? 0;
-          final newTalktime = previousTalktime + durationinseconds;
-
-          await client
-              .from(tableName)
-              .update({'talktime': newTalktime})
-              .match({
-            'uid': uid,
-            'period': "M",
-            'year': year,
-            'value': month,
-          });
-        }
-
-
-
-
-
-
-  }
-
-
-
-
-
-
-
-
-
-
-  }
 
 
 
@@ -250,10 +98,28 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
   Future<void> matchAndStoreCallLogs() async {
     if (homeController.Totalleadslist != null) {
       List<Map<String, dynamic>> matchedLogs = [];
+      print("Method started for match and store logs");
 
-      matchedLogs.add({'call_log': callLogs.first, 'lead_id': receivedList.id});
+
+      for (var call in callLogs!) {
+        for (var lead in homeController.Totalleadslist) {
+          if (call.number == lead['Mobile']) {
+           // print(call.number);
+            print("Added in matching call");
+            matchedLogs.add({
+              'call_log': call,
+              'lead_id': lead.id
+            });
+          }
+        }
+      }
+
+
+      //matchedLogs.add({'call_log': callLogs.first, 'lead_id': receivedList.id});
       int? durationTime=0;
       durationTime=callLogs.first.duration;
+
+      print("Matching list length :${matchedLogs.length}");
 
       DbSupa.instance
           .getLeadCallLogs(authController.currentUserObj['orgId'])
@@ -279,7 +145,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
                   lead_id,
                   log,
                 );
-                saveByDayWeekMonth(durationTime!);
+               // saveByDayWeekMonth(durationTime!);
                 //print("Duration is : ${durationTime}");
 
 
@@ -296,7 +162,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
                   lead_id,
                   log,
                 );
-                saveByDayWeekMonth(durationTime!);
+                //saveByDayWeekMonth(durationTime!);
 
 
 
@@ -305,6 +171,10 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
             }
           });
     }
+    else
+      {
+        print("Total lead list empty");
+      }
   }
 
   @override
@@ -925,7 +795,9 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "${receivedList['assignedToObj']['roles'][0]}",
+                                    "${receivedList['assignedToObj']?['roles'] != null && receivedList['assignedToObj']['roles'].isNotEmpty
+                                        ? receivedList['assignedToObj']['roles'][0]
+                                        : ''}",
                                     style: GoogleFonts.outfit(
                                       color:
                                           (profileController.isLightMode ==
@@ -1998,7 +1870,8 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
                                       if (snapshot.hasError) {
                                         return Center(
                                           child: Text(
-                                            "Error: ${snapshot.error}",
+                                            ""
+                                            //"Error: ${snapshot.error}",
                                           ),
                                         );
                                       }

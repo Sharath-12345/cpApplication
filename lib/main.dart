@@ -18,21 +18,36 @@ import 'Auth/auth_controller.dart';
 import 'Screens/Login/login_screen.dart';
 import 'Screens/SuperHomePage/superhomepage_screen.dart';
 import 'firebase_options.dart';
+import 'package:url_launcher/url_launcher.dart';
 void getLeadCallLogs(orgId) async {
   final client = GetIt.instance<SupabaseClient>();
   final response = await client
       .from('${orgId}_lead_call_logs')
       .select();
   print(response);
-
-
-
-
 }
+
+
+
+void launchDialPad(String phoneNumber) async {
+  final Uri telUri = Uri(scheme: 'tel', path: phoneNumber);
+
+  if (await canLaunchUrl(telUri)) {
+    await launchUrl(telUri);
+  } else {
+    print('Could not launch dial pad');
+  }
+}
+
+
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print("Handling a background message: ${message.messageId}");
   print("message ${message.notification?.body}");
+  print("working");
+  String? phonenumber="";
+   launchDialPad("999999999");
 }
 
 Future<void> clickOnNotification()
@@ -85,6 +100,9 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   clickOnNotification();
 
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    print("🟢 Foreground message received: ${message.messageId}");
+  });
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Only allow portrait mode
   ]).then((_) {
