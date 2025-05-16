@@ -100,8 +100,19 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
       List<Map<String, dynamic>> matchedLogs = [];
       print("Method started for match and store logs");
 
+      print("here");
 
-      for (var call in callLogs!) {
+      if(receivedList['Mobile']==callLogs.first.number)
+        {
+          matchedLogs.add({
+            'call_log': callLogs.first,
+            'lead_id': receivedList.id
+          });
+          print("Added in matched list");
+        }
+
+
+     /* for (var call in callLogs) {
         for (var lead in homeController.Totalleadslist) {
           if (call.number == lead['Mobile']) {
            // print(call.number);
@@ -112,7 +123,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
             });
           }
         }
-      }
+      }*/
 
 
       //matchedLogs.add({'call_log': callLogs.first, 'lead_id': receivedList.id});

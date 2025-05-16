@@ -34,6 +34,7 @@ class DbSupa {
 
   addCallLog(orgId, leadDocId,data)async {
 
+    print("Came into real adding list method");
 
     final client = GetIt.instance<SupabaseClient>();
     final response = await client
@@ -63,7 +64,7 @@ class DbSupa {
     if(response!=null)
       {
 
-        saveByDayWeekMonth(data.duration);
+        //saveByDayWeekMonth(data.duration);
       }
    //print('Call log  inserted successfully ${response}');
   // var callLog = (response as List).cast<Map<String, dynamic>>();
