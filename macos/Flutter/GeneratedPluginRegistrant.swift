@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import app_links
-import call_log_new
 import cloud_firestore
 import firebase_analytics
 import firebase_auth
@@ -18,7 +17,6 @@ import url_launcher_macos
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   AppLinksMacosPlugin.register(with: registry.registrar(forPlugin: "AppLinksMacosPlugin"))
-  CallLogPlugin.register(with: registry.registrar(forPlugin: "CallLogPlugin"))
   FLTFirebaseFirestorePlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseFirestorePlugin"))
   FLTFirebaseAnalyticsPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAnalyticsPlugin"))
   FLTFirebaseAuthPlugin.register(with: registry.registrar(forPlugin: "FLTFirebaseAuthPlugin"))

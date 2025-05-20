@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
-  call_log_new
   cloud_firestore
   firebase_auth
   firebase_core

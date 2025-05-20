@@ -3,7 +3,6 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  call_log_new
   gtk
   url_launcher_linux
 )

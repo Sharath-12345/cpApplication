@@ -18,7 +18,8 @@ import 'package:saleapp/Screens/LeadDetails/not_intrested_leads.dart';
 import 'package:saleapp/Screens/LeadDetails/visitdone_leads.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 // import 'package:omni_datetime_picker/omni_datetime_picker.dart';
-import 'package:call_log_new/call_log_new.dart';
+//import 'package:call_log_new/call_log_new.dart';
+import 'package:call_log/call_log.dart';
 
 import '../../helpers/supaase_help.dart';
 import '../Profile/profile_controller.dart';
@@ -46,8 +47,8 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
   var receivedList;
   var calllogs;
   var currentStatus = "new";
-  Iterable<CallLogResponse> callLogs = <CallLogResponse>[
-    CallLogResponse(name: "Loading...", number: "0000000000"),
+  Iterable<CallLogEntry> callLogs = <CallLogEntry>[
+    CallLogEntry(name: "Loading...", number: "0000000000"),
   ];
   bool isReturningFromCall = false;
 
@@ -79,7 +80,7 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
 
       Future.delayed(Duration(seconds: 2), () async {
         print("method started");
-        callLogs = await CallLog.fetchCallLogs();
+        callLogs = await CallLog.get();
         callLogs = callLogs.take(1).toList();
         print(callLogs.first.number);
         matchAndStoreCallLogs();

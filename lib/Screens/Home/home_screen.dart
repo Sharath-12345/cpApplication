@@ -1,6 +1,7 @@
 
 
-import 'package:call_log_new/call_log_new.dart';
+//import 'package:call_log_new/call_log_new.dart';
+import 'package:call_log/call_log.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -53,8 +54,8 @@ class _HomePageState extends State<HomePage> {
 
 
 
-  Iterable<CallLogResponse> callLogs = <CallLogResponse>[
-    CallLogResponse(name: "Loading...", number: "0000000000")
+  Iterable<CallLogEntry> callLogs = <CallLogEntry>[
+    CallLogEntry(name: "Loading...", number: "0000000000")
   ];
   var currentSelectedProject="";
 
@@ -136,7 +137,7 @@ class _HomePageState extends State<HomePage> {
         await Permission.contacts.request().isGranted) {
       try {
 
-        callLogs = await CallLog.fetchCallLogs();
+        callLogs = await CallLog.get();
         callLogs=callLogs.take(30).toList();
 
       } catch (e) {

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_direct_caller_plugin/flutter_direct_caller_plugin.dart';
 import 'package:get/get.dart';
+import 'package:bg_launcher/bg_launcher.dart';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 import 'package:saleapp/Screens/Home/home_controller.dart';
 import 'package:saleapp/Screens/SignUp/onBoradingScreen.dart';
@@ -19,6 +21,8 @@ import 'Screens/Login/login_screen.dart';
 import 'Screens/SuperHomePage/superhomepage_screen.dart';
 import 'firebase_options.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+
 void getLeadCallLogs(orgId) async {
   final client = GetIt.instance<SupabaseClient>();
   final response = await client
@@ -38,6 +42,7 @@ void launchDialPad(String phoneNumber) async {
     print('Could not launch dial pad');
   }
 }
+int count=1;
 
 
 @pragma('vm:entry-point')
@@ -46,8 +51,20 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("Handling a background message: ${message.messageId}");
   print("message ${message.notification?.body}");
   print("working");
-  String? phonenumber="";
-   launchDialPad("999999999");
+  BgLauncher.bringAppToForeground();
+  //await Future.delayed(Duration(seconds: 5));
+  print("Bought to foreground");
+  String? phone_number="123";
+  await Future.delayed(Duration(seconds:2));
+
+  phone_number=message.notification?.body;
+  //launchDialPad("9999");
+ await FlutterPhoneDirectCaller.callNumber(phone_number!);
+  Future.delayed(Duration(seconds: 2) );
+  FlutterPhoneDirectCaller.callNumber(phone_number!);
+ //await FlutterDirectCallerPlugin.callNumber(phone_number!);
+
+
 }
 
 Future<void> clickOnNotification()
@@ -62,6 +79,7 @@ async {
     //print(number);
 
     FlutterDirectCallerPlugin.callNumber(phone_number!);
+
 
   });
 
@@ -102,6 +120,12 @@ Future<void> main() async {
 
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("🟢 Foreground message received: ${message.messageId}");
+    String? phone_number=message.notification?.body;
+    print(phone_number);
+    print("Working");
+
+    FlutterDirectCallerPlugin.callNumber(phone_number!);
+
   });
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Only allow portrait mode
