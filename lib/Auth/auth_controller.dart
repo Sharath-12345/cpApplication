@@ -79,6 +79,7 @@ class AuthController extends GetxController {
             email: email, password: password);
 
           await requestCallPermission();
+          await requestBriningAppForeground();
          //await storeDetailsInLocal();
         await getLoggedInUserDetails();
         snackBarMsg("Sucess");
@@ -168,5 +169,21 @@ class AuthController extends GetxController {
       print("Call permission denied");
     }
   }
+  Future<void> requestBriningAppForeground() async {
+    var status = await Permission.systemAlertWindow.status;
+
+    if (!status.isGranted) {
+      status = await Permission.systemAlertWindow.request();
+    }
+
+
+    if (status.isGranted) {
+    } else {
+      print("Call permission denied");
+    }
+  }
+
+
+
 
 }

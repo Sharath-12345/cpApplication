@@ -46,7 +46,7 @@ class HomePage extends StatefulWidget
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
 
   final HomeController homeController= Get.find<HomeController>();
   final AuthController authController=Get.find<AuthController>();
@@ -58,14 +58,55 @@ class _HomePageState extends State<HomePage> {
     CallLogEntry(name: "Loading...", number: "0000000000")
   ];
   var currentSelectedProject="";
+  bool isReturningFromCall = false;
+
+
 
   var leadsphonenumberlist=[];
 
   @override
    initState()  {
+    WidgetsBinding.instance.addObserver(this);
+    //initAsync();
    fetchCallLogs();
-   matchAndStoreCallLogs();
+   //matchAndStoreCallLogs();
   }
+  Future<void> _initAsync() async {
+    await fetchCallLogs();           // wait for this to complete
+    //await matchAndStoreCallLogs();  // then call this
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    if (state == AppLifecycleState.paused) {
+      // App is going to background (call started)
+      isReturningFromCall = true;
+    } else if (state == AppLifecycleState.resumed && isReturningFromCall) {
+      // App came back to foreground after call
+      isReturningFromCall = false;
+
+      Future.delayed(Duration(seconds: 2), () async {
+        print("method started");
+        callLogs = await CallLog.get();
+        callLogs = callLogs.take(1).toList();
+        print(callLogs.first.number);
+        matchAndStoreCallLogs();
+
+       // controller.currenttabvalue.value += 1;
+      });
+    }
+  }
+
+
+
 
 
   void getToken() async {
@@ -76,12 +117,14 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> matchAndStoreCallLogs() async {
 
-
+   print("Match And Store Started");
     if(homeController.Totalleadslist!=null) {
       List<Map<String, dynamic>> matchedLogs = [];
 
+      print("Control Came here");
 
-      for (var call in callLogs!) {
+
+      for (var call in callLogs) {
         for (var lead in homeController.Totalleadslist) {
           if (call.number == lead['Mobile']) {
             print(call.number);
@@ -132,13 +175,46 @@ class _HomePageState extends State<HomePage> {
 
   }
 
-  void fetchCallLogs() async {
+  Future<void> fetchCallLogs() async {
+    print("Fetching Call Log Started");
     if (await Permission.phone.request().isGranted &&
         await Permission.contacts.request().isGranted) {
       try {
 
+
+
+
         callLogs = await CallLog.get();
-        callLogs=callLogs.take(30).toList();
+        callLogs=callLogs.take(100).toList();
+
+        print(callLogs.first);
+       /*for (CallLogEntry entry in callLogs) {
+          print(CallLogEntry);
+          print('Number: ${entry.number}');
+          print('Name: ${entry.name}');
+          print('Type: ${entry.callType}');
+          print('Date: ${DateTime.fromMillisecondsSinceEpoch(entry.timestamp ?? 0)}');
+          print('Duration: ${entry.duration} seconds');
+
+          print('----------------------------------');
+        }*/
+
+       
+        print("Call Logs fetched");
+        await matchAndStoreCallLogs();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       } catch (e) {
         print("Error fetching call logs: $e");
@@ -157,7 +233,7 @@ class _HomePageState extends State<HomePage> {
 
 
     fetchCallLogs();
-    matchAndStoreCallLogs();
+   // matchAndStoreCallLogs();
 
 
     getToken();
@@ -834,13 +910,20 @@ class _LeadsListViewState extends State<LeadsListView> {
                                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("${single['Name']}",style: TextStyle(
-                                        color: (profileController.isLightMode==true)?
-                                            Colors.black:
-                                        Colors.white,fontWeight: FontWeight.bold,
+                                    Text(
+                                      (single['Name'] as String).length > 30
+                                          ? "${(single['Name'] as String).substring(0, 30)}..."
+                                          : single['Name'],
+                                      style: TextStyle(
+                                        color: profileController.isLightMode == true
+                                            ? Colors.black
+                                            : Colors.white,
+                                        fontWeight: FontWeight.bold,
                                         fontSize: 15,
-                                        fontFamily: 'SpaceGrotesk'
-                                    ),),
+                                        fontFamily: 'SpaceGrotesk',
+                                      ),
+                                    ),
+
                                     Text("NA",style: TextStyle(
                                         color: (profileController.isLightMode==true)?
                                         Colors.black:

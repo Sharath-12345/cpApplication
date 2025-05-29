@@ -34,38 +34,41 @@ class DbSupa {
 
   addCallLog(orgId, leadDocId,data)async {
 
-    print("Came into real adding list method");
 
-    final client = GetIt.instance<SupabaseClient>();
-    final response = await client
-        .from('${orgId}_lead_call_logs')
-        .upsert([
-      {
-        'type': data.callType.toString().replaceAll('CallType.', ''),
-        'subtype': data.callType.toString().replaceAll('CallType.', ''),
-        'T': DateTime.now().millisecondsSinceEpoch,
-        'Luid': leadDocId,
-        'dailedBy': FirebaseAuth.instance.currentUser!.email,
-        'payload': {},
-        'customerNo' : data.number,
-        'fromPhNo': '',
-        'duration': data.duration,
-        'startTime': data.timestamp!.toInt(),
-      },
-    ]).select();
 
-    if (response.isNotEmpty) {
-      print("✅ Call log added successfully: ${response.first}");
-    } else {
-      print(response);
-      print("❌ Failed to add call log or no row was returned.");
+    try
+    {
+      print("Came into real adding list method");
+      print("Lead Uid : ${leadDocId}");
+
+      final client = GetIt.instance<SupabaseClient>();
+      final response = await client
+          .from('${orgId}_lead_call_logs')
+          .upsert([
+        {
+          'type': data.callType.toString().replaceAll('CallType.', ''),
+          'subtype': data.callType.toString().replaceAll('CallType.', ''),
+          'T': DateTime.now().millisecondsSinceEpoch,
+          'Luid': leadDocId,
+          'dailedBy': FirebaseAuth.instance.currentUser!.email,
+          'payload': {},
+          'customerNo' : data.number,
+          'fromPhNo': '',
+          'duration': data.duration,
+          'startTime': data.timestamp!.toInt(),
+        },
+      ]).select();
+      saveByDayWeekMonth(data.callType.toString(),data.duration);
+
+    }
+    catch (e, stackTrace)
+    {
+
+      print('Error while fetching call logs: $e');
+      print('StackTrace: $stackTrace');
     }
 
-    if(response!=null)
-      {
 
-        //saveByDayWeekMonth(data.duration);
-      }
    //print('Call log  inserted successfully ${response}');
   // var callLog = (response as List).cast<Map<String, dynamic>>();
     //print('call inserted successfully ${callLog}');
@@ -79,22 +82,149 @@ class DbSupa {
   }
 
 
-  Future<void> saveByDayWeekMonth(int durationinseconds)
+
+  Future<void> saveBy(int durationinseconds,var type,String calltype)
   async {
+
+
     final now = DateTime.now();
+    bool Outgoing=true;
+    if(calltype=="outgoing")
+      {
+        Outgoing=true;
+      }
+    else
+      {
+        Outgoing=false;
+      }
 
     String dayOfYear = DateFormat("D").format(now);
+    int dayOfYearInt = int.parse(dayOfYear);
     int weekOfYear = getWeekNumber(now);
     int month = now.month;
     int year = now.year;
 
-    print("Day number: $dayOfYear");
-    print("Week number: $weekOfYear");
-    print("Month number: $month");
+    int value=0;
+    if(type=="D")
+      {
+        value=dayOfYearInt;
+      }
+    else if(type=="W")
+      {
+        value=weekOfYear;
+      }
+    else if(type=="M")
+      {
+        value=month;
+      }
 
-    print("Year: $year");
+
 
     final client = GetIt.instance<SupabaseClient>();
+    var uid=FirebaseAuth.instance.currentUser?.uid;
+    if(uid!=null)
+    {
+      final tableName = '${controller.currentUserObj['orgId']}_sales_emp_kpi';
+
+      final existing = await client
+          .from(tableName)
+          .select('talktime,totalCallsCount,totalIncomingCallsCount,totalOutGoingCallsCount,'
+          'totalIncomingAnswered,totalOutgoingAnswered,totalIncomingSeconds,totalOutgoingSeconds')
+          .eq('uid', uid)
+          .eq('period', type)
+          .eq('year', year)
+          .eq('value',value)
+          .maybeSingle();
+
+      if (existing == null) {
+        print("adding");
+        // Row does not exist → Insert new
+        await client.from(tableName).insert({
+          'uid': uid,
+          'period': type,
+          'year': year,
+          'value': value,
+          'talktime': durationinseconds,
+          'totalCallsCount':1,
+          'totalIncomingCallsCount':((Outgoing==true)?0: 1),
+          'totalOutGoingCallsCount':((Outgoing==true)?1: 0),
+          'totalIncomingAnswered':((Outgoing==false) && durationinseconds>0) ,
+          'totalOutgoingAnswered':(Outgoing==true) && durationinseconds>0,
+          'totalIncomingSeconds':durationinseconds,
+          'totalOutgoingSeconds':durationinseconds
+
+        });
+        print("existing: ${existing}");
+
+      } else {
+        //print("adding");
+        // Row exists → Update talktime
+        final previousTalktime = existing['talktime'] ;
+       // print('TalkTime : ${previousTalktime}');
+        final newTalktime = previousTalktime + durationinseconds;
+
+
+        final previoustotalCallsCount=existing['totalCallsCount'];
+        print("Previous Total Calls : ${previoustotalCallsCount}");
+        final newCallsCount=previoustotalCallsCount+1;
+        final previousIncomingCallsCount=existing['totalIncomingCallsCount'];
+        final newIncomingCallsCount=previousIncomingCallsCount+((Outgoing==true)? 0:1);
+        final previousOutGoingCallsCount=existing['totalOutGoingCallsCount'];
+        final newOutGoingCallsCount=previousOutGoingCallsCount+((Outgoing==true)? 1:0);
+        final previousIncomingAnswered=existing['totalIncomingAnswered'];
+        final newIncomingAnswered=previousIncomingAnswered+
+            ( ((Outgoing==false) && durationinseconds>0)?1 :0);
+        final previousOutgoingAnswered=existing['totalOutgoingAnswered'];
+        final newOutgoingAnswered=previousOutgoingAnswered+
+            ( ((Outgoing==true) && durationinseconds>0)?1 :0);
+
+        final previousIncomingSeconds=existing['totalIncomingSeconds'];
+        final newIncomingSeconds=previousIncomingSeconds+
+            ((Outgoing==false) ? durationinseconds : 0);
+
+        final previousOutgoingSeconds=existing['totalOutgoingSeconds'];
+        final newOutgoingSeconds=previousOutgoingSeconds +
+            ( (Outgoing==true) ? durationinseconds : 0);
+
+
+
+        await client
+            .from(tableName)
+            .update({
+          'talktime': newTalktime,
+          'totalCallsCount':newCallsCount,
+          'totalIncomingCallsCount':newIncomingCallsCount,
+          'totalOutGoingCallsCount':newOutGoingCallsCount,
+          'totalIncomingAnswered':newIncomingAnswered,
+          'totalOutgoingAnswered':newOutgoingAnswered,
+          'totalIncomingSeconds':newIncomingSeconds,
+          'totalOutgoingSeconds':newOutgoingSeconds
+
+            })
+            .match({
+          'uid': uid,
+          'period': type,
+          'year': year,
+          'value':value,
+
+        });
+      }
+
+  }
+
+
+
+  }
+
+  Future<void> saveByDayWeekMonth(String callType,int durationinseconds)
+  async {
+
+
+    saveBy(durationinseconds, "D",callType);
+    saveBy(durationinseconds, "W",callType);
+    saveBy(durationinseconds, "M",callType);
+
+    /* final client = GetIt.instance<SupabaseClient>();
     var uid=FirebaseAuth.instance.currentUser?.uid;
     if(uid!=null)
     {
@@ -209,18 +339,7 @@ class DbSupa {
           'year': year,
           'value': month,
         });
-      }
-
-
-
-
-
-
-    }
-
-
-
-
+      }*/
 
 
 

@@ -60,8 +60,11 @@ class _LeadDetailsScreenState extends State<LeadDetailsScreen>
 
     currentStatus = "${receivedList['Status']}";
     controller.printRowsByLuid(receivedList.id);
-
   }
+
+
+
+
 
   @override
   void dispose() {
