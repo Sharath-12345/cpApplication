@@ -118,6 +118,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
   Future<void> matchAndStoreCallLogs() async {
 
    print("Match And Store Started");
+   await homeController.getleads();
     if(homeController.Totalleadslist!=null) {
       List<Map<String, dynamic>> matchedLogs = [];
 
