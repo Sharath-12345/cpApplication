@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
       // App came back to foreground after call
       isReturningFromCall = false;
 
-      Future.delayed(Duration(seconds: 2), () async {
+    /*  Future.delayed(Duration(seconds: 2), () async {
         print("method started");
         callLogs = await CallLog.get();
         callLogs = callLogs.take(1).toList();
@@ -101,7 +101,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver{
         matchAndStoreCallLogs();
 
        // controller.currenttabvalue.value += 1;
-      });
+      });*/
     }
   }
 

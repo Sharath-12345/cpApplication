@@ -50,7 +50,7 @@ class FxAppTheme {
         actionsIconTheme: IconThemeData(color: Color(0xff495057))),
 
     /// Card Theme
-    cardTheme: CardTheme(color: Color(0xfff0f0f0)),
+    //cardTheme: CardTheme(color: Color(0xfff0f0f0)),
     cardColor: Color(0xfff0f0f0),
 
     /// Floating Action Theme
@@ -72,14 +72,15 @@ class FxAppTheme {
     BottomAppBarTheme(color: Color(0xffeeeeee), elevation: 2),
 
     /// Tab bar Theme
-    tabBarTheme: TabBarTheme(
-      unselectedLabelColor: Color(0xff495057),
-      labelColor: Color(0xff3d63ff),
+    tabBarTheme: TabBarThemeData(
+      labelColor: const Color(0xff3d63ff),
+      unselectedLabelColor: const Color(0xff495057),
       indicatorSize: TabBarIndicatorSize.label,
-      indicator: UnderlineTabIndicator(
+      indicator: const UnderlineTabIndicator(
         borderSide: BorderSide(color: Color(0xff3d63ff), width: 2.0),
       ),
     ),
+
 
     /// CheckBox theme
     checkboxTheme: CheckboxThemeData(
@@ -163,7 +164,7 @@ class FxAppTheme {
     appBarTheme: AppBarTheme(backgroundColor: Color(0xff0D0D0D)),
 
     /// Card Theme
-    cardTheme: CardTheme(color: Color(0xff222327)),
+  //  cardTheme: CardTheme(color: Color(0xff222327)),
     cardColor: Color(0xff222327),
 
     /// Input (Text-Field) Theme
@@ -200,11 +201,11 @@ class FxAppTheme {
     BottomAppBarTheme(color: Color(0xff464c52), elevation: 2),
 
     /// Tab bar Theme
-    tabBarTheme: TabBarTheme(
-      unselectedLabelColor: Color(0xff495057),
-      labelColor: Color(0xff069DEF),
+    tabBarTheme: TabBarThemeData(
+      labelColor: const Color(0xff069DEF),
+      unselectedLabelColor: const Color(0xff495057),
       indicatorSize: TabBarIndicatorSize.label,
-      indicator: UnderlineTabIndicator(
+      indicator: const UnderlineTabIndicator(
         borderSide: BorderSide(color: Color(0xff069DEF), width: 2.0),
       ),
     ),

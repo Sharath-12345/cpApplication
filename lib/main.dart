@@ -47,7 +47,7 @@ int count=1;
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+ /* await Firebase.initializeApp();
   print("Handling a background message: ${message.messageId}");
   print("message ${message.notification?.body}");
   print("working");
@@ -64,7 +64,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   FlutterPhoneDirectCaller.callNumber(phone_number!);
  //await FlutterDirectCallerPlugin.callNumber(phone_number!);
 
-
+*/
 }
 
 Future<void> clickOnNotification()
@@ -118,7 +118,7 @@ Future<void> main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   clickOnNotification();
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+ /* FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     print("🟢 Foreground message received: ${message.messageId}");
     String? phone_number=message.notification?.body;
     print(phone_number);
@@ -126,7 +126,7 @@ Future<void> main() async {
 
     FlutterDirectCallerPlugin.callNumber(phone_number!);
 
-  });
+  });*/
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,  // Only allow portrait mode
   ]).then((_) {

@@ -48,5 +48,6 @@ flutter {
     source = "../.."
 }
 dependencies {
+    implementation("com.google.firebase:firebase-messaging-ktx:24.1.1")
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }
